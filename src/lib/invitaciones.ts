@@ -296,7 +296,7 @@ export const PREGUNTAS = [
 
 /* ── Contacto ──────────────────────────────────────────────── */
 
-export const WHATSAPP_NUMERO = "543515555123";
+export const WHATSAPP_NUMERO = "5493513781063";
 
 export const whatsappPara = (texto: string) =>
   `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(texto)}`;
