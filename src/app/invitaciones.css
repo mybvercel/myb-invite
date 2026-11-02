@@ -1,0 +1,321 @@
+/* Todo el CSS de Tu Invitación Digital vive bajo .tid para no afectar al
+   resto de mybdigitals.com. Es un producto aparte, con su propia identidad. */
+
+.tid {
+  /* Blanco y verde son los principales. El negro es secundario: entra en el
+     texto y en las tarjetas, nunca como fondo de la página. */
+  --blanco: #ffffff;
+  --hueso: #f3f6f3;
+  --verde: #2e6f4e;
+  --verde-hondo: #23553c;
+  --verde-vel: rgba(46, 111, 78, 0.08);
+  --verde-linea: rgba(46, 111, 78, 0.22);
+
+  --negro: #0d1210;
+  --gris: #55605a;
+  --gris-tenue: #7d867f;
+
+  --linea: rgba(13, 18, 16, 0.11);
+  --linea-fuerte: rgba(13, 18, 16, 0.24);
+
+  --sombra: 0 1px 2px rgba(13, 18, 16, 0.04), 0 8px 28px rgba(13, 18, 16, 0.06);
+  --sombra-alta: 0 20px 60px rgba(13, 18, 16, 0.13);
+
+  /* Curvas fuertes: las de CSS por defecto no tienen carácter. */
+  --salida: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --ancho: 72rem;
+  --medida: 56ch;
+
+  --fuente: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+
+  color: var(--negro);
+  font-family: var(--fuente);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+.tid *,
+.tid *::before,
+.tid *::after { box-sizing: border-box; }
+
+.tid-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(52rem 32rem at 50% -12%, var(--verde-vel), transparent 70%),
+    var(--blanco);
+  pointer-events: none;
+}
+
+.tid-capa { position: relative; z-index: 1; }
+
+.tid ::selection { background: var(--verde); color: #fff; }
+.tid :focus-visible { outline: 2px solid var(--verde); outline-offset: 3px; border-radius: 4px; }
+
+.tid p, .tid h1, .tid h2, .tid h3, .tid ul, .tid ol { margin: 0; }
+.tid ul, .tid ol { padding: 0; list-style: none; }
+.tid img { max-width: 100%; display: block; }
+.tid a { color: inherit; text-decoration: none; }
+.tid button { font: inherit; }
+
+/* ── Tipografía ────────────────────────────────────────────── */
+
+.tid-titulo {
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+}
+.tid-h1 { font-size: clamp(2rem, 4.4vw, 3.3rem); }
+.tid-h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
+
+/* El salto de 300 a 700 es lo que le da carácter a Montserrat. */
+.tid-fuerte { font-weight: 700; color: var(--verde); }
+
+.tid-plomo { color: var(--gris); font-size: clamp(1rem, 1.4vw, 1.1rem); max-width: var(--medida); }
+.tid-nota { font-size: 0.82rem; color: var(--gris-tenue); }
+
+/* ── Estructura ────────────────────────────────────────────── */
+
+.tid-marco { width: 100%; max-width: var(--ancho); margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
+.tid-marco--angosto { max-width: 46rem; }
+.tid-seccion { padding-block: clamp(3.5rem, 7vw, 6rem); }
+/* Franja tenue para separar secciones sin dibujar una línea. */
+.tid-seccion--tenue { background: var(--hueso); }
+
+.tid-encabezado { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.tid-encabezado--centro { align-items: center; text-align: center; }
+.tid-encabezado--centro .tid-plomo { text-align: center; }
+
+/* ── Botones ───────────────────────────────────────────────── */
+
+.tid-boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.9rem 1.6rem;
+  font-size: 0.9rem; font-weight: 600;
+  border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+  transition: background-color 200ms var(--salida), color 200ms var(--salida),
+              border-color 200ms var(--salida), transform 120ms var(--salida);
+}
+.tid-boton--lleno { background: var(--verde); color: #fff; }
+.tid-boton--lleno:hover { background: var(--verde-hondo); }
+.tid-boton--linea { border-color: var(--linea-fuerte); color: var(--negro); background: transparent; }
+.tid-boton--linea:hover { border-color: var(--verde); color: var(--verde); }
+/* El botón tiene que acusar recibo del click. */
+.tid-boton:active { transform: scale(0.97); }
+
+/* ── Barra ─────────────────────────────────────────────────── */
+
+.tid-barra {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--linea);
+}
+.tid-barra__interior { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 4.2rem; }
+.tid-logo { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; }
+.tid-logo__marca { border-radius: 6px; }
+.tid-barra__cta { padding: 0.62rem 1.2rem; font-size: 0.82rem; }
+
+/* ── Encabezado ────────────────────────────────────────────── */
+
+.tid-hero { padding-top: clamp(3rem, 6vw, 5rem); text-align: center; }
+.tid-hero__interior { display: flex; flex-direction: column; align-items: center; }
+.tid-hero__titulo { margin-top: 1.1rem; max-width: 24ch; }
+.tid-hero__bajada { margin-top: 1.3rem; text-align: center; }
+
+/* ── Elección de evento ────────────────────────────────────── */
+
+.tid-eleccion { margin-top: clamp(2.5rem, 5vw, 3.5rem); width: 100%; }
+.tid-eleccion__grilla { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 46rem) { .tid-eleccion__grilla { grid-template-columns: repeat(3, 1fr); } }
+
+.tid-tarjeta {
+  width: 100%; cursor: pointer; text-align: left;
+  background: transparent; border: 0; padding: 0; border-radius: 1rem;
+  transition: transform 260ms var(--salida);
+}
+.tid-tarjeta:hover { transform: translateY(-4px); }
+.tid-tarjeta:active { transform: translateY(-1px) scale(0.99); }
+
+.tid-tarjeta__cara {
+  height: 100%;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 1.4rem;
+  padding: 1.4rem;
+  color: #fff;
+}
+.tid-tarjeta__icono {
+  width: 2.6rem; height: 2.6rem; border-radius: 0.8rem;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.tid-tarjeta__titulo { display: block; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
+.tid-tarjeta__gancho { display: block; margin-top: 0.3rem; font-size: 0.85rem; color: rgba(255, 255, 255, 0.74); line-height: 1.45; }
+.tid-tarjeta__pie { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 700; color: #fff; }
+.tid-tarjeta__flecha { transition: transform 260ms var(--salida); }
+.tid-tarjeta:hover .tid-tarjeta__flecha { transform: translateX(3px); }
+
+.tid-tarjeta[aria-pressed="true"] .tid-tarjeta__icono { background: #fff; border-color: #fff; color: var(--verde-hondo); }
+
+/* ── Resultado ─────────────────────────────────────────────── */
+
+.tid-resultado { animation: tid-aparecer 480ms var(--salida) both; }
+@keyframes tid-aparecer {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Modelos ───────────────────────────────────────────────── */
+
+.tid-modelos { display: grid; gap: clamp(0.85rem, 2vw, 1.4rem); grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 48rem) { .tid-modelos { grid-template-columns: repeat(4, 1fr); } }
+
+.tid-modelo { display: flex; flex-direction: column; gap: 0.65rem; }
+.tid-modelo__marco {
+  position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden;
+  border-radius: 12px; background: var(--hueso);
+  border: 1px solid var(--linea); box-shadow: var(--sombra);
+}
+.tid-modelo__img { object-fit: cover; transition: transform 700ms var(--salida); }
+.tid-modelo:hover .tid-modelo__img { transform: scale(1.06); }
+.tid-modelo__abrir {
+  position: absolute; inset-inline: 0.55rem; bottom: 0.55rem;
+  padding: 0.5rem; border-radius: 8px; text-align: center;
+  background: rgba(255, 255, 255, 0.95); color: var(--negro);
+  font-size: 0.72rem; font-weight: 700;
+  opacity: 0; transform: translateY(0.4rem);
+  transition: opacity 240ms var(--salida), transform 240ms var(--salida);
+}
+.tid-modelo:hover .tid-modelo__abrir,
+.tid-modelo:focus-visible .tid-modelo__abrir { opacity: 1; transform: none; }
+.tid-modelo__nombre { font-size: 0.9rem; font-weight: 600; }
+
+.tid-vacio {
+  display: flex; flex-direction: column; align-items: center; gap: 1.2rem;
+  padding: clamp(2.5rem, 6vw, 4rem) 1.5rem; text-align: center;
+  border: 1px dashed var(--verde-linea); border-radius: 16px; background: var(--verde-vel);
+}
+
+.tid-modelos + .tid-vacio { margin-top: clamp(1.75rem, 4vw, 2.5rem); padding-block: clamp(1.75rem, 4vw, 2.5rem); }
+
+/* ── Qué incluye ───────────────────────────────────────────── */
+
+.tid-incluye { display: grid; gap: 0.4rem 2rem; grid-template-columns: 1fr; }
+@media (min-width: 40rem) { .tid-incluye { grid-template-columns: repeat(2, 1fr); } }
+.tid-incluye li { display: flex; align-items: flex-start; gap: 0.65rem; padding-block: 0.5rem; font-size: 0.92rem; color: var(--gris); }
+.tid-incluye__tilde { flex-shrink: 0; margin-top: 0.15rem; color: var(--verde); }
+
+/* ── Precios ───────────────────────────────────────────────── */
+
+.tid-planes { display: grid; gap: 1rem; grid-template-columns: 1fr; align-items: stretch; }
+@media (min-width: 54rem) { .tid-planes { grid-template-columns: repeat(3, 1fr); } }
+
+.tid-plan {
+  position: relative; display: flex; flex-direction: column;
+  padding: 1.9rem 1.5rem;
+  background: var(--blanco);
+  border: 1px solid var(--linea); border-radius: 16px;
+  box-shadow: var(--sombra);
+}
+/* El plan recomendado es el único bloque verde de la sección: se ve solo. */
+.tid-plan--destacado { background: var(--verde); border-color: var(--verde); color: #fff; box-shadow: var(--sombra-alta); }
+.tid-plan__cinta {
+  position: absolute; top: -0.65rem; left: 1.5rem;
+  padding: 0.22rem 0.65rem; border-radius: 999px;
+  background: var(--negro); color: #fff;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.tid-plan__nombre { font-size: 1.15rem; font-weight: 700; }
+.tid-plan__precio { margin-top: 1rem; display: flex; align-items: baseline; gap: 0.35rem; }
+.tid-plan__monto { font-size: 2.1rem; font-weight: 300; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.tid-plan__moneda { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; color: var(--gris-tenue); }
+.tid-plan__unico { margin-top: 0.3rem; font-size: 0.78rem; color: var(--gris-tenue); }
+.tid-plan--destacado .tid-plan__moneda,
+.tid-plan--destacado .tid-plan__unico { color: rgba(255, 255, 255, 0.72); }
+
+.tid-plan__items { margin-top: 1.4rem; margin-bottom: 1.8rem; display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.87rem; color: var(--gris); }
+.tid-plan--destacado .tid-plan__items { color: rgba(255, 255, 255, 0.92); }
+.tid-plan__items li { position: relative; padding-left: 1.15rem; }
+.tid-plan__items li::before {
+  content: ""; position: absolute; left: 0; top: 0.6em;
+  width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--verde);
+}
+.tid-plan--destacado .tid-plan__items li::before { background: #fff; }
+.tid-plan__cta { margin-top: auto; width: 100%; }
+.tid-plan--destacado .tid-boton--lleno { background: #fff; color: var(--verde-hondo); }
+.tid-plan--destacado .tid-boton--lleno:hover { background: var(--hueso); }
+
+.tid-moneda { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.9rem; font-size: 0.78rem; color: var(--gris-tenue); }
+.tid-moneda__boton {
+  background: transparent; border: 1px solid var(--linea); border-radius: 999px;
+  padding: 0.2rem 0.6rem; color: var(--gris); cursor: pointer; font-size: 0.75rem; font-weight: 600;
+  transition: border-color 180ms var(--salida), color 180ms var(--salida);
+}
+.tid-moneda__boton:hover { border-color: var(--verde); color: var(--verde); }
+
+/* ── Reseñas ───────────────────────────────────────────────── */
+
+.tid-resenas { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 48rem) { .tid-resenas { grid-template-columns: repeat(3, 1fr); } }
+.tid-resena { padding: 1.6rem; background: var(--blanco); border: 1px solid var(--linea); border-radius: 14px; box-shadow: var(--sombra); }
+.tid-resena__texto { font-size: 0.92rem; color: var(--gris); line-height: 1.6; }
+.tid-resena__quien { margin-top: 1.1rem; font-size: 0.82rem; font-weight: 700; }
+.tid-resena__evento { font-size: 0.78rem; color: var(--gris-tenue); }
+
+/* ── Preguntas ─────────────────────────────────────────────── */
+
+.tid-faq__item { border-top: 1px solid var(--linea); }
+.tid-faq__item:last-child { border-bottom: 1px solid var(--linea); }
+.tid-faq__boton {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  padding: 1.25rem 0; cursor: pointer; background: transparent; border: 0; text-align: left; color: var(--negro);
+}
+.tid-faq__pregunta { font-size: 0.98rem; font-weight: 600; }
+.tid-faq__signo { position: relative; flex-shrink: 0; width: 0.85rem; height: 0.85rem; }
+.tid-faq__signo::before,
+.tid-faq__signo::after {
+  content: ""; position: absolute; inset: 0; margin: auto; background: var(--verde);
+  transition: transform 260ms var(--salida), opacity 260ms var(--salida);
+}
+.tid-faq__signo::before { width: 100%; height: 1.5px; }
+.tid-faq__signo::after { width: 1.5px; height: 100%; }
+.tid-faq__signo--abierto::after { transform: rotate(90deg); opacity: 0; }
+.tid-faq__respuesta { padding-bottom: 1.35rem; max-width: var(--medida); font-size: 0.92rem; color: var(--gris); }
+
+/* ── Globo de WhatsApp ─────────────────────────────────────── */
+
+.tid-globo {
+  position: fixed; right: 1.15rem; bottom: 1.15rem; z-index: 50;
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.85rem 1.15rem; border-radius: 999px;
+  background: #1fa855; color: #fff;
+  font-size: 0.88rem; font-weight: 600;
+  box-shadow: 0 10px 30px rgba(13, 18, 16, 0.22);
+  transition: transform 200ms var(--salida), background-color 200ms var(--salida);
+}
+.tid-globo:hover { background: #189247; transform: translateY(-2px); }
+.tid-globo:active { transform: translateY(0) scale(0.97); }
+.tid-globo__texto { display: none; }
+@media (min-width: 30rem) { .tid-globo__texto { display: inline; } }
+
+/* ── Pie ───────────────────────────────────────────────────── */
+
+.tid-pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 3rem; }
+.tid-pie__interior { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem; }
+.tid-pie__enlace { color: var(--verde); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tid *, .tid *::before, .tid *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .tid-tarjeta:hover, .tid-globo:hover { transform: none; }
+  .tid-modelo:hover .tid-modelo__img { transform: none; }
+}

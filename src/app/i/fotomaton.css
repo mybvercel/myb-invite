@@ -1,0 +1,424 @@
+/* Estilo fotomatón. Todo bajo .fm / .fm-* para no tocar a Rosa.
+   Criterios y por qués: .claude/skills/invitacion-fotomaton/SKILL.md */
+
+.inv {
+  --terciopelo-hondo: #3a050a;
+  --crema: #f3e7d3;
+  --crema-tenue: rgba(243, 231, 211, 0.72);
+}
+
+/* ── Terciopelo ─────────────────────────────────────────────────
+   Tres cosas lo hacen terciopelo y no "fondo rojo": el pelo (rayas finísimas
+   verticales), la luz que cae arriba al centro, y el borde que se hunde en
+   sombra. Sin el pelo se ve plástico; sin la sombra, plano. */
+.fm-terciopelo {
+  background:
+    radial-gradient(90% 55% at 50% 18%, rgba(255, 110, 110, 0.16), transparent 62%),
+    radial-gradient(120% 70% at 50% 115%, rgba(10, 0, 2, 0.55), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, #7d101a 0%, #62101a 45%, #45070d 100%);
+  color: var(--crema);
+}
+
+/* ── Tipografía sobre terciopelo ── */
+.fm-volanta {
+  font-family: var(--serif);
+  font-size: 0.66rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--crema-tenue);
+}
+
+.fm-nombres {
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(2.3rem, 11vw, 3.3rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--crema);
+  /* Un halo apenas dorado: la tinta sobre terciopelo no es plana. */
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 0 18px rgba(233, 196, 120, 0.18);
+}
+
+/* ── Portada ── */
+.fm-portada {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--terciopelo-hondo);
+  transition-property: opacity;
+  transition-timing-function: ease-out;
+  cursor: pointer;
+}
+
+.fm-portada__columna {
+  position: relative;
+  height: 100%;
+  max-width: var(--columna);
+  margin-inline: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.4rem, 1.6svh, 0.9rem);
+  padding: calc(env(safe-area-inset-top) + 1rem) 1.25rem calc(env(safe-area-inset-bottom) + 1rem);
+  text-align: center;
+}
+
+.fm-abrir {
+  margin-top: clamp(0.6rem, 2.5svh, 1.6rem);
+  padding: 0.9rem 1.4rem;
+  min-height: 44px;
+  font-family: var(--serif);
+  font-size: 0.7rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--crema);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.5s;
+  animation: inv-respira 3.2s ease-in-out infinite;
+}
+
+/* ── La cabina: el marco con la ranura ──
+   El ancho también depende del alto de la pantalla: en un celular chico o
+   girado, el marco se achica para que entren los nombres y el botón. */
+.fm-cabina {
+  position: relative;
+  width: min(78%, 22rem, calc(56svh * 0.682));
+  aspect-ratio: 300 / 440;
+  container-type: inline-size;
+}
+
+.fm-marco {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* La salida de la tira: arranca justo en el borde de abajo de la ranura
+   (y = 104 de 440 en el SVG) y recorta todo lo que está adentro de la
+   máquina. Si se mueve la ranura en Marco.tsx, se mueve esto. */
+.fm-salida {
+  position: absolute;
+  left: 35.5%;
+  width: 29%;
+  top: 23.6%;
+  bottom: 13%;
+  overflow: hidden;
+}
+
+/* Cerrada, sólo asoma la punta: el último cuadro y la fecha, que es lo que
+   sale primero de una cabina. */
+.fm-tira-mov {
+  transform: translateY(-58%);
+}
+
+.fm-tira-mov--imprime {
+  animation: fm-imprime 2.5s both;
+}
+
+/* A tirones, como el rodillo de una cabina: avanza, frena, avanza. Nunca un
+   deslizamiento continuo, que se lee como una animación de web. */
+@keyframes fm-imprime {
+  0%   { transform: translateY(-58%); animation-timing-function: cubic-bezier(0.3, 0.6, 0.4, 1); }
+  20%  { transform: translateY(-44%); }
+  30%  { transform: translateY(-44%); animation-timing-function: cubic-bezier(0.3, 0.6, 0.4, 1); }
+  50%  { transform: translateY(-29%); }
+  60%  { transform: translateY(-29%); animation-timing-function: cubic-bezier(0.3, 0.6, 0.4, 1); }
+  80%  { transform: translateY(-13%); }
+  88%  { transform: translateY(-13%); animation-timing-function: cubic-bezier(0.25, 0.8, 0.3, 1); }
+  100% { transform: translateY(0); }
+}
+
+/* La máquina tiembla apenas mientras imprime. */
+.fm-cabina--imprime { animation: fm-zumbido 0.16s steps(2) 14 alternate; }
+@keyframes fm-zumbido {
+  from { transform: translateX(-0.4px); }
+  to   { transform: translateX(0.4px); }
+}
+
+/* ── La tira ── */
+.fm-tira {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5cqw;
+  padding: 5cqw 5cqw 0;
+  background: #f5efe3;
+  box-shadow: 0 2px 6px rgba(20, 2, 4, 0.45);
+}
+
+.fm-tira img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.fm-tira__fecha {
+  padding: 3.5cqw 0 4.5cqw;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: max(0.5rem, 3.4cqw);
+  letter-spacing: 0.06em;
+  color: #4d3d33;
+  text-align: right;
+}
+
+/* ── Collage ── */
+.fm-collage {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2.2rem, 9vw, 3.5rem) 1rem clamp(1.5rem, 6vw, 2.5rem);
+  text-align: center;
+}
+
+.fm-cabina--collage {
+  width: min(94%, 27rem, calc(62svh * 0.682));
+  /* Mientras se va la portada, abajo sólo hay terciopelo liso: el marco del
+     collage aparece después, y recién ahí se pegan las piezas. */
+  opacity: 0;
+}
+
+.fm-cabina--collage[data-abierta="true"] {
+  animation: fm-aparece 0.7s ease-out both;
+}
+
+@keyframes fm-aparece { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
+
+.fm-pieza {
+  position: absolute;
+  /* Capa propia: las piezas tienen filtros de luz caros; se rasterizan una
+     vez y la animación sólo mueve la capa. */
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translateY(-14px) rotate(var(--giro)) scale(1.04);
+}
+
+/* Cada pieza cae y se asienta, en orden, como si la pegaran a mano. */
+[data-abierta="true"] > .fm-pieza {
+  animation: fm-pegar 0.9s var(--salida) both;
+  animation-delay: calc(var(--d, 0ms) + 450ms);
+}
+
+@keyframes fm-pegar {
+  from { opacity: 0; transform: translateY(-18px) rotate(calc(var(--giro) - 5deg)) scale(1.06); }
+  to   { opacity: 1; transform: translateY(0) rotate(var(--giro)) scale(1); }
+}
+
+.fm-pieza__svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.fm-pieza--papel   { --giro: -8deg; left: -4%;  top: 3%;     width: 56%; }
+.fm-pieza--tira    { --giro: 6deg;  right: -3%; top: 8%;     width: 27%; }
+.fm-pieza--corazon { --giro: -7deg; left: -2%;  bottom: 7%;  width: 43%; }
+.fm-pieza--disco   { --giro: 0deg;  right: 0;   bottom: 5%;  width: 34%; }
+
+/* Los nombres grabados en la placa: tinta un tono más oscuro que el oro, con
+   luz abajo y sombra arriba, que es como se lee algo hundido en el metal. */
+.fm-grabado {
+  position: absolute;
+  inset: 30% 14% 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--script);
+  font-size: 15cqw;
+  line-height: 0.95;
+  color: #7b5820;
+  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.55), 0 -1px 0 rgba(60, 35, 5, 0.35);
+  opacity: 0;
+}
+
+.fm-grabado__dos { display: block; }
+.fm-grabado__amper { display: block; font-family: var(--serif); font-style: italic; font-size: 0.5em; line-height: 1.3; }
+
+[data-abierta="true"] > .fm-grabado { animation: fm-aparece 0.9s ease-out 0.35s both; }
+
+.fm-pieza__guarda {
+  position: absolute;
+  inset: 20% 12% 18% 14%;
+  display: grid;
+  place-items: center;
+  font-family: var(--script);
+  font-size: 9.2cqw;
+  line-height: 1.02;
+  color: #7a0f18;
+  transform: rotate(-6deg);
+}
+
+.fm-pieza__corazon-texto {
+  position: absolute;
+  /* La zona ancha del corazón: arriba de la punta y debajo de los lóbulos. */
+  inset: 24% 14% 32%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  color: var(--crema);
+  text-shadow: 0 1px 2px rgba(40, 2, 6, 0.45);
+  transform: rotate(-8deg);
+}
+
+.fm-corazon__dia {
+  font-size: 8.8cqw;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.fm-corazon__anio {
+  margin-top: 0.35em;
+  font-size: 4.2cqw;
+  letter-spacing: 0.32em;
+  line-height: 1;
+  /* El tracking agrega aire a la derecha de la última cifra: se compensa
+     para que el año quede centrado bajo el día. */
+  margin-right: -0.32em;
+}
+
+/* ── El disco ── */
+/* Vinilo: surcos finos de verdad (cada 1.6px), dos reflejos opuestos que
+   cruzan el disco como los de una lámpara, y el canto levantado. */
+.fm-disco {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  background:
+    conic-gradient(from 32deg, transparent 0 6%, rgba(255, 255, 255, 0.16) 11%, rgba(255, 255, 255, 0.04) 16%, transparent 21% 56%, rgba(255, 255, 255, 0.12) 61%, rgba(255, 255, 255, 0.03) 66%, transparent 71%),
+    repeating-radial-gradient(circle, #121012 0 0.5px, #050405 0.8px 1.6px),
+    radial-gradient(circle, #0b0a0b 0 62%, #1d1b1d 97%, #070607 100%);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.06), 0 5px 12px rgba(15, 1, 3, 0.6);
+  cursor: pointer;
+}
+
+/* 33 vueltas por minuto serían 1,8 s por vuelta: un poco más lento se lee
+   mejor en una pantalla chica. */
+.fm-disco--gira { animation: fm-girar 2.6s linear infinite; }
+@keyframes fm-girar { to { transform: rotate(360deg); } }
+
+/* Etiqueta de papel impresa: color con un anillo fino y el agujero del
+   centro, que es lo que la hace leer como disco de verdad. */
+.fm-disco__etiqueta {
+  display: grid;
+  place-items: center;
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #0a0506 0 4.5%, #6d5a55 5% 6%, transparent 6.5%),
+    radial-gradient(circle, transparent 0 78%, rgba(122, 15, 24, 0.55) 79% 80.5%, transparent 81%),
+    radial-gradient(circle at 35% 30%, #efd0c9, #d9aca3 70%, #c99a91);
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.25);
+  font-family: var(--script);
+  /* En una línea: si "L & J" se parte, estira la etiqueta y queda ovalada. */
+  font-size: 3.9cqw;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #7a0f18;
+}
+
+/* ── Cuenta regresiva ── */
+.fm-cuenta {
+  margin-top: clamp(2.6rem, 9vw, 3.6rem);
+  opacity: 0;
+}
+
+.fm-cuenta[data-abierta="true"] {
+  animation: inv-entra 1.2s var(--salida) 1.7s both;
+}
+
+.fm-cuenta__numeros {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.9rem, 5vw, 1.5rem);
+  margin-top: 1rem;
+}
+
+.fm-cuenta__unidad { display: flex; flex-direction: column; align-items: center; min-width: 2.4ch; }
+
+.fm-cuenta__n {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.9rem, 9vw, 2.5rem);
+  line-height: 1;
+  color: var(--crema);
+  font-variant-numeric: tabular-nums;
+}
+
+.fm-cuenta__etiqueta {
+  margin-top: 0.55rem;
+  font-family: var(--serif);
+  font-size: 0.56rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--crema-tenue);
+}
+
+.fm-deslizar {
+  margin-top: clamp(2.2rem, 8vw, 3rem);
+  font-family: var(--script);
+  font-size: clamp(1.4rem, 6.5vw, 1.8rem);
+  color: var(--crema);
+}
+
+/* ── El botón de la música ──
+   Abajo a la derecha, sobre la zona segura del iPhone, y dentro de la
+   columna también en desktop. */
+.fm-sonido {
+  position: fixed;
+  z-index: 40;
+  right: max(1rem, calc((100vw - var(--columna)) / 2 + 1rem));
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 164, 92, 0.6);
+  background: rgba(40, 4, 9, 0.78);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 16px rgba(10, 0, 2, 0.5);
+  cursor: pointer;
+  animation: fm-aparece 0.6s ease-out both;
+}
+
+.fm-sonido svg { width: 20px; height: 16px; }
+
+.fm-sonido__barra {
+  fill: #e6c98a;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0.25);
+  transition: transform 0.4s;
+}
+
+.fm-sonido--suena .fm-sonido__barra { animation: fm-ecualiza 0.9s ease-in-out infinite alternate; }
+
+@keyframes fm-ecualiza {
+  0%   { transform: scaleY(0.25); }
+  50%  { transform: scaleY(1); }
+  100% { transform: scaleY(0.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fm-pieza, .fm-cuenta, .fm-cabina--collage, .fm-grabado { opacity: 1; animation: none !important; transform: rotate(var(--giro, 0deg)); }
+  .fm-disco--gira { animation: none; }
+}

@@ -1,0 +1,356 @@
+/* Estilo "Garabato": dibujado a mano, una sola tinta roja sobre papel crudo.
+   Criterios: .claude/skills/invitacion-garabato/SKILL.md */
+
+.inv {
+  --gb-papel: #f4f0ea;
+  /* Rojo cereza apenas tirando a tomate, como la tinta de la referencia.
+     Sobre este papel da contraste AA también en texto chico. */
+  --gb-tinta: #c41a24;
+  --gb-tinta-tenue: rgba(196, 26, 36, 0.62);
+  --gb-mano: var(--font-mano), "Patrick Hand", "Comic Neue", cursive;
+  --gb-firma: var(--font-firma), "Brush Script MT", cursive;
+}
+
+/* ── El papel y el marco de pinceladas ─────────────────────────────
+   Una sola tinta en toda la pieza, sin excepción: ni un gris, ni un negro.
+   Las pinceladas corren por los dos costados de toda la página; arriba y
+   abajo, sólo en la portada y en el cierre, como el marco de la tarjeta. */
+.inv-columna.gb {
+  position: relative;
+  background: var(--gb-papel);
+  color: var(--gb-tinta);
+}
+
+.gb::before,
+.gb::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 22px;
+  pointer-events: none;
+  background: url("/invitaciones/garabato/borde-v.svg") repeat-y top / 22px auto;
+}
+
+.gb::before { left: 8px; }
+.gb::after { right: 8px; transform: scaleX(-1); }
+
+.gb-borde {
+  display: block;
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  height: 22px;
+  background: url("/invitaciones/garabato/borde-h.svg") repeat-x left / auto 22px;
+}
+
+.gb-borde--arriba { top: 10px; }
+.gb-borde--abajo { bottom: 10px; transform: scaleY(-1); }
+
+/* ── Tipografía: las tres voces de la referencia ──
+   Mayúsculas de marcador muy espaciadas (nombres y títulos), una birome fina
+   para lo que se dice al pasar, y versalitas serif para los datos. */
+.gb-nombre,
+.gb-titulo,
+.gb-hora,
+.gb-programa__hora,
+.gb-faltan__n,
+.gb-boton,
+.gb-cartel__nombre {
+  font-family: var(--gb-mano);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.gb-pareja { display: flex; flex-direction: column; align-items: center; margin: 0; }
+
+.gb-nombre {
+  font-size: clamp(2.5rem, 13vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: 0.3em;
+  /* El tracking deja aire a la derecha de la última letra: se compensa
+     para que el nombre quede centrado de verdad. */
+  margin-right: -0.3em;
+}
+
+.gb-y {
+  font-family: var(--gb-firma);
+  font-size: clamp(1.9rem, 9vw, 2.5rem);
+  line-height: 1;
+  /* La birome baja mucho: sin este aire, la "y" pisa al segundo nombre. */
+  margin: 0.05em 0 0.6em;
+}
+
+.gb-datos {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  line-height: 1.55;
+  text-transform: uppercase;
+}
+
+.gb-titulo {
+  margin: 0;
+  font-size: clamp(2rem, 10vw, 2.7rem);
+  line-height: 1.05;
+  letter-spacing: 0.24em;
+  margin-right: -0.24em;
+}
+
+.gb-texto {
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.55;
+}
+
+.gb-angosto { max-width: 27ch; margin-inline: auto; }
+
+.gb-firma { font-family: var(--gb-firma); }
+.gb-firma-grande { font-family: var(--gb-firma); font-size: clamp(1.9rem, 9vw, 2.4rem); line-height: 1.25; }
+
+/* ── Escenas ──
+   Esta pieza es un afiche: el eje central es de la referencia y se respeta.
+   Lo que rompe la simetría son las notas al margen, que caen torcidas a un
+   costado del dibujo, como escritas después con otra lapicera. */
+.gb-escena {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(3.5rem, 15vw, 5rem) 2.6rem 0;
+  text-align: center;
+}
+
+.gb-portada {
+  min-height: 100svh;
+  justify-content: center;
+  padding-top: calc(3.2rem + env(safe-area-inset-top));
+  padding-bottom: 2.5rem;
+}
+
+.gb-volanta { margin-top: 0.6rem; }
+.gb-fecha { margin-top: 0.4rem; font-size: 1.05rem; }
+.gb-lugar { font-size: 0.82rem; }
+
+/* ── Los dibujos ── */
+.gb-dibujo {
+  position: relative;
+  width: min(100%, 19rem);
+  margin: 0.4rem auto;
+}
+
+.gb-dibujo--portada { width: min(100%, 20rem, 42svh); margin: 0; }
+.gb-dibujo--mini { width: 7.5rem; margin-bottom: 0.2rem; }
+
+.gb-svg, .gb-mini { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* Lapicera: cada trazo se dibuja de punta a punta, uno detrás de otro, y
+   los rellenos entran cuando su contorno ya está. */
+.gb-t {
+  fill: none;
+  stroke: var(--gb-tinta);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.gb-f { fill: var(--gb-tinta); opacity: 0; }
+
+[data-visible="true"] .gb-t {
+  animation: gb-trazar 0.85s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+[data-visible="true"] .gb-f {
+  animation: gb-rellenar 0.45s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 50ms + 250ms);
+}
+
+@keyframes gb-trazar { to { stroke-dashoffset: 0; } }
+@keyframes gb-rellenar { to { opacity: 1; } }
+
+/* ── Notas al margen ── */
+.gb-nota {
+  position: absolute;
+  z-index: 3;
+  /* Adentro del dibujo, en la esquina de arriba que siempre está vacía: si
+     se sale, choca con las pinceladas del borde. */
+  top: -0.4rem;
+  width: 7rem;
+  margin: 0;
+  font-family: var(--gb-firma);
+  font-size: 1.02rem;
+  line-height: 1.15;
+  color: var(--gb-tinta);
+}
+
+.gb-nota--izq { left: -0.2rem; text-align: left; transform: rotate(-6deg); }
+.gb-nota--der { right: -0.2rem; text-align: right; transform: rotate(5deg); }
+
+.gb-flecha { display: block; width: 2.8rem; height: auto; margin-top: 0.1rem; overflow: visible; }
+.gb-nota--der .gb-flecha { margin-left: auto; }
+
+/* ── Cuenta regresiva ── */
+.gb-faltan { gap: 0.2rem; }
+.gb-rulito { display: block; width: 8rem; height: auto; overflow: visible; }
+
+.gb-faltan__texto {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0.4rem 0;
+  font-size: clamp(1.8rem, 8vw, 2.2rem);
+}
+
+.gb-faltan__n { font-size: clamp(3.2rem, 17vw, 4.4rem); line-height: 1; letter-spacing: 0.06em; }
+
+/* ── Datos de lugar ── */
+.gb-hora { font-size: 1.8rem; letter-spacing: 0.18em; margin-top: 0.4rem; }
+
+/* Botón con borde de marcador: radios desparejos en las cuatro esquinas,
+   el truco clásico para que un rectángulo parezca dibujado a mano. */
+.gb-boton {
+  display: inline-block;
+  margin-top: 0.9rem;
+  min-height: 46px;
+  padding: 0.65rem 1.5rem 0.55rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.18em;
+  color: var(--gb-tinta);
+  text-decoration: none;
+  background: transparent;
+  border: 2px solid var(--gb-tinta);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  cursor: pointer;
+  transition: background-color 0.25s, color 0.25s;
+}
+
+.gb-boton:active { background: var(--gb-tinta); color: var(--gb-papel); }
+.gb-boton:disabled { opacity: 0.55; }
+
+/* ── Programa ── */
+.gb-programa { margin: 0.6rem 0 1rem; padding: 0; list-style: none; }
+.gb-programa li { display: flex; align-items: baseline; justify-content: center; gap: 0.9rem; padding: 0.15rem 0; }
+.gb-programa__hora { font-size: 1.35rem; letter-spacing: 0.1em; min-width: 3.4em; text-align: right; }
+.gb-programa__que { font-family: var(--gb-firma); font-size: 1.45rem; min-width: 6em; text-align: left; }
+
+/* ── Regalos ── */
+.gb-regalo { margin-top: 0.8rem; }
+.gb-dato { display: flex; flex-direction: column; align-items: center; margin: 0.6rem 0; }
+.gb-dato__valor { font-family: var(--serif); font-size: clamp(0.92rem, 4.2vw, 1.1rem); letter-spacing: 0.04em; overflow-wrap: anywhere; }
+.gb-regalo__titular { margin-top: 0.4rem; font-size: 0.78rem; }
+
+.gb-copiar,
+.gb-enlace {
+  min-height: 34px;
+  padding: 0 0.4rem;
+  font-family: var(--gb-firma);
+  font-size: 1.25rem;
+  color: var(--gb-tinta);
+  background: none;
+  border: 0;
+  text-decoration: underline wavy;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  cursor: pointer;
+}
+
+/* ── El cartel ── */
+.gb-dibujo--cartel { width: min(100%, 20rem); margin-top: 1.6rem; }
+.gb-cartel { position: relative; }
+
+/* El área de adentro del cartel en el dibujo: x 64-236, y 92-196 de 300. */
+.gb-cartel__texto {
+  position: absolute;
+  left: 23%;
+  right: 23%;
+  top: 33%;
+  bottom: 36%;
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+}
+
+.gb-cartel__nombre {
+  font-size: clamp(1rem, 15cqw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: 0.1em;
+  overflow-wrap: anywhere;
+  transform: rotate(-3deg);
+}
+
+.gb-cartel__nombre--vacio { opacity: 0.45; }
+
+.gb-festejo-capa { position: absolute; inset: -6% -8%; pointer-events: none; }
+.gb-festejo { width: 100%; height: 100%; overflow: visible; }
+
+/* ── Formulario ── */
+.gb-formulario { width: 100%; max-width: 19rem; margin: 1rem auto 0; text-align: left; }
+
+.gb-campo { display: block; margin: 1.3rem 0 0; padding: 0; border: 0; }
+.gb-campo > .gb-datos,
+.gb-campo legend { display: block; margin-bottom: 0.25rem; font-size: 0.76rem; }
+
+/* Renglón ondulado, como subrayado con birome. 1.3rem: con menos, iOS hace
+   zoom al tocar el campo. */
+.gb-campo input {
+  width: 100%;
+  padding: 0.35rem 0 0.55rem;
+  font-family: var(--gb-mano);
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+  color: var(--gb-tinta);
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8'%3E%3Cpath d='M0 4 C 7 0, 13 8, 20 4 S 33 0, 40 4' fill='none' stroke='%23c41a24' stroke-width='1.4'/%3E%3C/svg%3E") repeat-x bottom / 40px 8px;
+  border: 0;
+}
+
+.gb-campo input:focus { outline: none; }
+.gb-campo input::placeholder { color: var(--gb-tinta-tenue); }
+
+.gb-opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--gb-tinta);
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Círculo hecho a mano; al marcarlo se rellena con un manchón de tinta. */
+.gb-circulo {
+  flex: 0 0 1.15rem;
+  height: 1.15rem;
+  border: 2px solid var(--gb-tinta);
+  border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.gb-opcion[aria-pressed="true"] .gb-circulo { background: var(--gb-tinta); transform: rotate(-12deg) scale(1.08); }
+
+.gb-aviso { margin-top: 1rem; font-family: var(--gb-firma); font-size: 1.3rem; text-align: center; }
+.gb-formulario .gb-boton { display: block; margin: 1.5rem auto 0; }
+.gb-respuesta { max-width: 26ch; margin: 0.8rem auto 0; }
+
+/* ── Cierre ── */
+.gb-cierre { padding-bottom: 5.5rem; gap: 0.3rem; }
+.gb-cierre .gb-titulo { font-size: clamp(1.6rem, 8vw, 2.2rem); letter-spacing: 0.16em; margin-right: -0.16em; white-space: nowrap; }
+.gb-pareja--chica .gb-nombre { font-size: clamp(1.6rem, 8vw, 2.1rem); }
+.gb-pareja--chica .gb-y { font-size: 1.6rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gb-t { stroke-dashoffset: 0; animation: none !important; }
+  .gb-f { opacity: 1; animation: none !important; }
+}

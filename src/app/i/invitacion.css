@@ -1,0 +1,334 @@
+/* Sistema de diseño de las invitaciones. Todo vive bajo .inv para no chocar
+   con .tid, que es la landing de venta y tiene otra identidad.
+
+   Las reglas de por qué cada valor es este y no otro están en la skill
+   .claude/skills/diseno-invitaciones/SKILL.md */
+
+.inv {
+  /* Papel: nunca #ffffff. Un blanco puro delata la pantalla. */
+  --papel: #fdf6f3;
+  --papel-hondo: #f6e7e2;
+
+  --rosa: #e8c4bd;
+  --burdeos: #7d2f3f;
+  --cobre: #b8794f;
+  --salvia: #93a189;
+
+  /* Tinta: marrón cálido, nunca #000. Es lo que separa un impreso de una web. */
+  --tinta: #5c4a47;
+  --tinta-tenue: #8a7573;
+
+  --script: var(--font-pinyon), "Apple Chancery", cursive;
+  --serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+
+  /* Curva larga y suave: lo rápido se siente barato. */
+  --salida: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* La invitación es una pieza vertical. En desktop se centra en una columna
+     del ancho de un celular, con el papel alrededor: así se lee como una
+     tarjeta y no como una web estirada. */
+  --columna: 30rem;
+
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+.inv *,
+.inv *::before,
+.inv *::after { box-sizing: border-box; }
+
+/* Red de seguridad: si algo llegara a asomar por fuera de la columna, detrás
+   hay papel y no el blanco del navegador. Va con :has para no pisarle el fondo
+   al resto del sitio, que comparte la hoja de estilos. */
+body:has(.inv) { background: #fcf3ef; }
+
+.inv p, .inv h1, .inv h2, .inv h3, .inv ul, .inv ol { margin: 0; }
+.inv ul, .inv ol { padding: 0; list-style: none; }
+
+.inv ::selection { background: var(--rosa); color: var(--tinta); }
+.inv :focus-visible { outline: 2px solid var(--cobre); outline-offset: 4px; }
+
+/* La columna donde vive todo.
+   El fondo vive ACÁ y no en cada sección: la invitación es una sola hoja de
+   papel continua. Si cada sección pinta su propio fondo, en cada juntura
+   aparece una línea, por más suave que sea la diferencia de color.
+
+   El recorte va acá, en la columna, y no en cada sección. Esa diferencia es
+   la que importa: una flor puede desbordar su sección y pasar a la siguiente
+   —que es lo que hace que la hoja se lea continua— pero nada se escapa del
+   borde de la invitación. Recortando por sección, las flores quedaban cortadas
+   al ras; sin recortar nada, la flor de la última sección sobresalía 24px por
+   debajo del papel y ahí asomaba el blanco del navegador.
+
+   `clip` y no `hidden`: hidden crearía un contenedor scrolleable propio. */
+.inv-columna {
+  position: relative;
+  width: 100%;
+  max-width: var(--columna);
+  margin-inline: auto;
+  overflow: clip;
+  /* Apenas más cálido que --papel: es el tono que queda a la vista donde las
+     capas de sección se desvanecen. Si acá va el papel pelado, en los bordes
+     aparece una franja pálida. */
+  background: #fcf3ef;
+}
+
+/* ── Capas de fondo ─────────────────────────────────────────────
+   TODAS se desvanecen antes de llegar al borde de su sección. Esa máscara es
+   lo que hace desaparecer las junturas: en el punto donde termina una sección
+   y empieza la otra no hay ningún color propio, sólo el papel de la columna.
+
+   Si alguna capa de fondo llega opaca al borde, vuelve la línea. */
+.inv-capa {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+}
+
+/* La última sección no se desvanece abajo: no hay sección siguiente que entre
+   para compensar el desvanecido, y quedaría una franja pálida al pie de toda
+   la invitación. Lo mismo al revés para la primera. */
+.inv-capa--fin {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 100%);
+}
+
+/* El lavado de color. Manchas suaves, nunca un degradé de lado a lado: el
+   degradé de dos colores es de los que más delatan que algo lo hizo una IA. */
+.inv-lavado {
+  background:
+    radial-gradient(58% 34% at 6% 14%, rgba(232, 196, 189, 0.42), transparent 72%),
+    radial-gradient(50% 30% at 97% 30%, rgba(232, 196, 189, 0.34), transparent 72%),
+    radial-gradient(46% 26% at 3% 62%, rgba(147, 161, 137, 0.16), transparent 74%),
+    radial-gradient(64% 36% at 88% 86%, rgba(232, 196, 189, 0.3), transparent 74%);
+}
+
+/* La variante alterna: el mismo lavado un punto más cargado. El ritmo claro /
+   apenas más hondo / claro se logra con la intensidad del tinte, no con un
+   color de fondo distinto, que volvería a marcar el borde. */
+.inv-lavado--hondo {
+  background:
+    radial-gradient(70% 44% at 94% 12%, rgba(232, 196, 189, 0.55), transparent 74%),
+    radial-gradient(62% 38% at 4% 38%, rgba(232, 196, 189, 0.45), transparent 74%),
+    radial-gradient(58% 34% at 96% 78%, rgba(147, 161, 137, 0.18), transparent 74%),
+    radial-gradient(100% 100% at 50% 50%, rgba(238, 214, 206, 0.5), transparent 78%);
+}
+
+/* Los dibujos a línea (el salón, la vestimenta) van con multiply para que la
+   tinta se meta en el papel. Sin eso quedan pegados encima, como una calco. */
+.inv-linea {
+  mix-blend-mode: multiply;
+}
+
+/* Las cenefas florales. Se generan sobre blanco puro y se montan con multiply:
+   el blanco es el neutro de la multiplicación, así que el fondo desaparece solo
+   sobre cualquier color y los bordes difusos de la acuarela quedan intactos.
+   Recortarlas con alpha comería esos bordes y se verían pegoteadas. */
+.inv-flor {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+  width: clamp(9rem, 46%, 15rem);
+  height: auto;
+}
+
+/* Grano de papel. Va inline como SVG para no depender de un servidor externo
+   ni sumar un pedido de red. Sin esto todo se ve plano y digital. */
+.inv-grano::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* ── Tipografía ─────────────────────────────────────────────── */
+
+/* Versalita: el tracking generoso es la señal más barata y más efectiva de
+   papelería fina. Nunca bajar de 0.3em. */
+.inv-versalita {
+  font-family: var(--serif);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+}
+
+/* Los nombres. Lo único grande de toda la invitación.
+   Tracking negativo: las caligráficas se ligan y si no el trazo se corta. */
+.inv-nombre {
+  font-family: var(--script);
+  /* El vh del min() es lo que evita que los nombres se coman la pantalla
+     cuando alguien gira el celular. */
+  font-size: clamp(2.6rem, min(14vw, 10vh), 4.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+}
+
+/* El ampersand va en el serif y en cobre, nunca en la script ni del mismo
+   tamaño: es lo que le da aire al bloque de nombres. */
+.inv-amper {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.5rem, 6vw, 1.9rem);
+  color: var(--cobre);
+  line-height: 1;
+}
+
+/* La frase de la pareja. Itálica para lo emotivo, redonda para lo logístico.
+   Medida corta: una invitación no es un artículo. */
+.inv-frase {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.25rem, 5.4vw, 1.55rem);
+  line-height: 1.68;
+  color: var(--tinta);
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+/* Título de sección. Script, y es lo único grande de la sección. */
+.inv-titulo {
+  font-family: var(--script);
+  font-size: clamp(2.1rem, 8.5vw, 2.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+}
+
+/* La hora del cronograma. Redonda, no itálica: es dato, no emoción. */
+.inv-hora {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.45rem, 6.2vw, 1.75rem);
+  line-height: 1;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Los números de la cuenta regresiva. Sin caja, sin sombra: sólo el número.
+   tabular-nums evita que el ancho salte cada segundo. */
+.inv-numero {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.9rem, 8.5vw, 2.5rem);
+  line-height: 1;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Los campos del RSVP son renglones para completar a mano, no cajas de web.
+   1.125rem es el mínimo: abajo de eso iOS hace zoom al enfocar y descoloca
+   toda la página. */
+.inv-campo {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(184, 121, 79, 0.32);
+  padding: 0.6rem 0 0.7rem;
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  color: var(--tinta);
+  text-align: center;
+  transition: border-color 0.5s var(--salida);
+}
+
+.inv-campo::placeholder { color: var(--tinta-tenue); opacity: 0.5; }
+.inv-campo:focus { outline: none; border-bottom-color: var(--cobre); }
+
+/* Filete de cobre. Reemplaza a los <hr> y a las sombras. */
+.inv-filete {
+  width: clamp(3rem, 16vw, 4.5rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cobre), transparent);
+  opacity: 0.75;
+}
+
+/* ── Movimiento ─────────────────────────────────────────────────
+   Una entrada por sección, no una por elemento: el fade-up en cada párrafo
+   es de plantilla. Larga y suave, y sin rebote — esto es papel, no goma. */
+
+@keyframes inv-entra {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.inv-entra {
+  animation: inv-entra 1.4s var(--salida) both;
+}
+
+/* La entrada de una sección: una sola coreografía, con las piezas entrando
+   escalonadas. El retardo se pasa por --d desde el JSX. */
+.inv-sube {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.inv-sube[data-visible="true"] {
+  animation: inv-entra 1.2s var(--salida) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* El dígito que cambia. Corto y sin rebote: es papel, no goma. */
+@keyframes inv-digito {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.inv-digito {
+  display: inline-block;
+  animation: inv-digito 0.45s var(--salida) both;
+}
+
+@keyframes inv-respira {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+/* El filete que baja debajo de "deslizá". */
+@keyframes inv-baja {
+  0%        { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  40%       { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  60%       { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  100%      { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inv *,
+  .inv *::before,
+  .inv *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

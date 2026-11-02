@@ -1,0 +1,511 @@
+/* "La función": la página del estilo fotomatón, después del collage.
+   Programa de teatro sobre terciopelo. Nada centrado por default.
+   Criterios: .claude/skills/invitacion-fotomaton/SKILL.md */
+
+.inv {
+  --fn-crema: #f2e6d2;
+  --fn-tinta: #2b1b18;
+  --fn-rojo: #9a1824;
+  --fn-oro: #c9a45c;
+  --bodoni: var(--font-bodoni), "Bodoni 72", "Didot", Georgia, serif;
+  --mono: var(--font-mono), ui-monospace, "Courier New", monospace;
+}
+
+/* ── El fondo: UN solo terciopelo para toda la página ──────────────
+   Collage y función comparten este fondo, que se oscurece al bajar. Si cada
+   parte pintara el suyo, en la juntura aparecería una línea. La luz de arriba
+   mide una pantalla, así cae sobre el collage y no se estira con la página. */
+.fm-fondo {
+  background:
+    radial-gradient(90% 55% at 50% 18%, rgba(255, 110, 110, 0.16), transparent 62%) top / 100% 100svh no-repeat,
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, #7d101a 0, #5c0d16 100svh, #3a060c calc(100svh + 1100px), #210307 100%);
+  color: var(--crema);
+}
+
+/* ── Tipografía ── */
+.fn-titulo,
+.fn-gigante,
+.fn-final__te,
+.fn-saludo__texto {
+  font-family: var(--bodoni);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em;
+  color: var(--crema);
+}
+
+/* El título se sale del borde derecho a propósito: una revista no encierra
+   sus titulares en un margen. El recorte lo hace la columna. */
+.fn-titulo {
+  font-size: clamp(3.3rem, 17.5vw, 5.4rem);
+  line-height: 0.88;
+  margin-right: -14%;
+}
+
+.fn-texto {
+  font-family: var(--bodoni);
+  font-variation-settings: "opsz" 11;
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--crema-tenue);
+}
+
+.fn-mono {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.fn-rojo { color: var(--fn-rojo); }
+
+/* ── Escenas ──
+   Margen desparejo: más aire a la izquierda que a la derecha, porque los
+   títulos y los papeles se escapan por la derecha. */
+.fn-escena {
+  position: relative;
+  padding: clamp(5rem, 20vw, 7rem) 1.1rem 0 1.5rem;
+}
+
+.fn-encabezado { margin-bottom: clamp(2rem, 8vw, 2.8rem); }
+
+/* ── El papel ──
+   Crema con la textura de papel encima. La sombra acá sí va: es un objeto
+   apoyado sobre tela, larga, cálida y oscura, nunca gris de interfaz. */
+.fn-papel {
+  position: relative;
+  background: var(--fn-crema) url("/invitaciones/papel.jpg") center / cover;
+  background-blend-mode: multiply;
+  color: var(--fn-tinta);
+}
+
+.fn-papel:not(.fn-ticket) {
+  box-shadow: 0 1px 1px rgba(10, 0, 2, 0.3), 0 18px 30px -12px rgba(10, 0, 2, 0.75);
+}
+
+/* Los papeles con recorte (muescas, dientes) llevan la sombra en un
+   envoltorio con drop-shadow: una máscara se come la box-shadow. */
+.fn-sombra { filter: drop-shadow(0 1px 1px rgba(10, 0, 2, 0.3)) drop-shadow(0 14px 16px rgba(10, 0, 2, 0.55)); }
+
+/* ── Entrada en escena: cada papel cae y se asienta en su giro ── */
+.fn-entra {
+  opacity: 0;
+  transform: translateY(26px) rotate(calc(var(--giro, 0deg) - 3deg));
+}
+
+.fn-entra--lado { transform: translateX(2.2rem); }
+
+[data-visible="true"] .fn-entra {
+  animation: fn-asienta 1.05s var(--salida) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes fn-asienta {
+  to { opacity: 1; transform: translate(0, 0) rotate(var(--giro, 0deg)); }
+}
+
+/* ── 01 · Programa de sala ── */
+.fn-programa {
+  width: 86%;
+  margin-left: auto;
+  margin-right: -1rem;
+  padding: 1.6rem 1.4rem 1.3rem;
+}
+
+.fn-programa__cabeza {
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(43, 27, 24, 0.3);
+  color: var(--fn-rojo);
+}
+
+.fn-programa__fila {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.75rem 0;
+}
+
+.fn-programa__hora {
+  font-family: var(--bodoni);
+  font-variation-settings: "opsz" 48;
+  font-size: 1.55rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* La línea de puntos del programa, que lleva el ojo de la hora al evento. */
+.fn-programa__guia {
+  flex: 1;
+  border-bottom: 1px dotted rgba(43, 27, 24, 0.45);
+  transform: translateY(-0.2rem);
+}
+
+.fn-programa__pie { margin-top: 0.9rem; text-align: right; color: rgba(43, 27, 24, 0.6); }
+
+/* ── 02 · Entradas con talón ── */
+.fn-boletos { display: flex; flex-direction: column; }
+
+.fn-boleto--izq { width: 92%; margin-left: -0.6rem; }
+.fn-boleto--der { width: 92%; margin-left: auto; margin-right: -0.8rem; margin-top: -0.4rem; }
+
+.fn-boleto {
+  --talon: 4.6rem;
+  display: grid;
+  grid-template-columns: 1fr var(--talon);
+  background: var(--fn-crema) url("/invitaciones/papel.jpg") center / cover;
+  background-blend-mode: multiply;
+  color: var(--fn-tinta);
+  /* Las dos muescas donde se arranca el talón. */
+  -webkit-mask:
+    radial-gradient(circle 0.6rem at calc(100% - var(--talon)) 0, #0000 97%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 0.6rem at calc(100% - var(--talon)) 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle 0.6rem at calc(100% - var(--talon)) 0, #0000 97%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 0.6rem at calc(100% - var(--talon)) 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+}
+
+.fn-boleto__cuerpo { padding: 1.3rem 1.1rem 1.2rem 1.3rem; }
+
+.fn-boleto__lugar {
+  margin-top: 0.55rem;
+  font-family: var(--bodoni);
+  font-style: italic;
+  font-variation-settings: "opsz" 60;
+  font-size: 1.7rem;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.fn-boleto__dir {
+  margin-top: 0.5rem;
+  font-family: var(--bodoni);
+  font-variation-settings: "opsz" 11;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: rgba(43, 27, 24, 0.72);
+}
+
+.fn-boleto__hora { margin-top: 0.8rem; }
+
+.fn-boleto__talon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 0;
+  border-left: 2px dashed rgba(43, 27, 24, 0.32);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: var(--fn-rojo);
+  text-decoration: none;
+}
+
+.fn-boleto__serie { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; color: rgba(43, 27, 24, 0.5); }
+
+/* ── 03 · Vestimenta ── */
+.fn-gigante {
+  margin: 0 -1.4rem 0 1.2rem;
+  font-size: clamp(2.8rem, 15vw, 4.4rem);
+  color: var(--fn-oro);
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.fn-vestimenta__detalle { max-width: 25ch; margin: 2rem 0 0 auto; }
+
+/* ── 04 · Ticket de regalos ── */
+.fn-regalos__mensaje { max-width: 27ch; }
+
+.fn-ticket-marco { width: 86%; margin: 2rem 0 0 0.2rem; }
+
+.fn-ticket {
+  padding: 1.5rem 1.2rem 2rem;
+  font-family: var(--mono);
+  /* Borde de abajo en dientes, como lo corta la impresora de un ticket. */
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 14px 100%;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 14px 100%;
+}
+
+.fn-ticket__cabeza { text-align: center; font-weight: 500; }
+.fn-ticket__sub {
+  margin: 0.3rem 0 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px dashed rgba(43, 27, 24, 0.4);
+  text-align: center;
+  color: rgba(43, 27, 24, 0.6);
+}
+
+.fn-ticket__linea {
+  display: grid;
+  grid-template-columns: 3.9rem 1fr;
+  align-items: baseline;
+  row-gap: 0.25rem;
+  padding: 0.55rem 0;
+}
+
+.fn-ticket__etiqueta { color: rgba(43, 27, 24, 0.55); font-size: 0.6rem; }
+/* Un CBU son 22 dígitos: tiene que entrar en una línea en 320px. */
+.fn-ticket__valor { font-family: var(--mono); font-size: clamp(0.66rem, 3.2vw, 0.8rem); letter-spacing: 0; overflow-wrap: anywhere; }
+
+.fn-ticket__copiar {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 32px;
+  padding: 0;
+  font-size: 0.58rem;
+  color: var(--fn-rojo);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.fn-ticket__gracias {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed rgba(43, 27, 24, 0.4);
+  text-align: center;
+}
+
+/* ── 05 · La entrada ── */
+.fn-entrada-marco { width: 96%; margin-left: -0.2rem; }
+
+.fn-entrada {
+  --franja: 3rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--franja) 1fr;
+  min-height: 12rem;
+  background: var(--fn-crema) url("/invitaciones/papel.jpg") center / cover;
+  background-blend-mode: multiply;
+  color: var(--fn-tinta);
+  -webkit-mask:
+    radial-gradient(circle 0.6rem at var(--franja) 0, #0000 97%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 0.6rem at var(--franja) 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle 0.6rem at var(--franja) 0, #0000 97%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 0.6rem at var(--franja) 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+}
+
+.fn-entrada__franja {
+  display: grid;
+  place-items: center;
+  background: var(--fn-rojo);
+  color: var(--fn-crema);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.3em;
+  border-left: 2px dashed rgba(242, 230, 210, 0.45);
+}
+
+.fn-entrada__cuerpo { padding: 1.4rem 1.2rem 1.4rem 1.3rem; }
+
+/* Sellada, la entrada se estira abajo para que el sello caiga en papel
+   limpio: sellar encima del texto se ve real, pero no se lee. */
+.fn-entrada--sellada .fn-entrada__cuerpo { padding-bottom: 4.6rem; }
+
+.fn-entrada__titulo {
+  margin-top: 0.6rem;
+  font-family: var(--bodoni);
+  font-style: italic;
+  font-variation-settings: "opsz" 60;
+  font-size: 1.75rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.fn-entrada__texto {
+  margin-top: 0.7rem;
+  font-family: var(--bodoni);
+  font-variation-settings: "opsz" 11;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: rgba(43, 27, 24, 0.75);
+}
+
+.fn-boton {
+  display: inline-block;
+  margin-top: 1.2rem;
+  min-height: 44px;
+  padding: 0.85rem 1.2rem;
+  color: var(--fn-rojo);
+  background: none;
+  border: 1.5px solid var(--fn-rojo);
+  cursor: pointer;
+  transition: background-color 0.4s, color 0.4s;
+}
+
+.fn-boton:active { background: var(--fn-rojo); color: var(--fn-crema); }
+.fn-boton:disabled { opacity: 0.55; }
+
+/* El sello de goma: tinta roja con la textura despareja de la goma, que
+   cae de golpe y queda torcido. */
+.fn-sello {
+  position: absolute;
+  right: 8%;
+  bottom: 1.1rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--fn-rojo);
+  border: 3px solid var(--fn-rojo);
+  border-radius: 4px;
+  mix-blend-mode: multiply;
+  opacity: 0.88;
+  transform: rotate(-13deg);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='70'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='70'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation: fn-sellar 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.fn-sello--no { transform: rotate(-9deg); }
+
+@keyframes fn-sellar {
+  from { opacity: 0; transform: rotate(-13deg) scale(1.7); }
+  to   { opacity: 0.88; transform: rotate(-13deg) scale(1); }
+}
+
+.fn-respuesta { max-width: 28ch; margin: 1.6rem 0 0 auto; }
+.fn-respuesta .fn-entra { opacity: 1; }
+.fn-enlace {
+  margin-top: 1rem;
+  min-height: 44px;
+  padding: 0;
+  color: var(--fn-oro);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+/* El formulario, en una hoja aparte, apenas girada. */
+.fn-formulario {
+  width: 94%;
+  margin: 1.8rem 0 0 auto;
+  padding: 1.5rem 1.3rem 1.6rem;
+  transform: rotate(0.7deg);
+}
+
+.fn-formulario__nombre { font-family: var(--bodoni); font-style: italic; font-size: 1.1rem; text-transform: none; letter-spacing: 0; }
+
+.fn-campo { display: block; margin-top: 1.5rem; border: 0; padding: 0; }
+.fn-campo:first-child { margin-top: 0; }
+.fn-campo .fn-mono { display: block; margin-bottom: 0.35rem; color: rgba(43, 27, 24, 0.6); font-size: 0.6rem; }
+
+/* Renglones, no cajas. 1.125rem como mínimo: si no, iOS hace zoom. */
+.fn-campo input {
+  width: 100%;
+  padding: 0.45rem 0 0.55rem;
+  font-family: var(--bodoni);
+  font-variation-settings: "opsz" 20;
+  font-size: 1.15rem;
+  color: var(--fn-tinta);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(43, 27, 24, 0.35);
+}
+
+.fn-campo input:focus { outline: none; border-bottom-color: var(--fn-rojo); }
+.fn-campo input::placeholder { color: rgba(43, 27, 24, 0.35); }
+
+.fn-opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.2rem 0;
+  font-family: var(--bodoni);
+  font-variation-settings: "opsz" 14;
+  font-size: 1.05rem;
+  color: var(--fn-tinta);
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* El casillero se marca con una cruz roja, como a mano sobre una boleta. */
+.fn-marca {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.05rem;
+  height: 1.05rem;
+  border: 1.5px solid rgba(43, 27, 24, 0.55);
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--fn-rojo);
+}
+
+.fn-formulario__aviso { margin-top: 1.2rem; }
+
+/* ── Final: la polaroid ── */
+.fn-final { padding-bottom: clamp(5rem, 22vw, 8rem); }
+
+.fn-polaroid {
+  position: relative;
+  width: 66%;
+  margin: 0 0 0 0.4rem;
+  padding: 0.7rem 0.7rem 0;
+  background: #f7f3ea;
+  box-shadow: 0 1px 1px rgba(10, 0, 2, 0.3), 0 20px 30px -12px rgba(10, 0, 2, 0.8);
+}
+
+.fn-polaroid img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+
+.fn-polaroid figcaption {
+  padding: 0.9rem 0.2rem 1.1rem;
+  font-family: var(--bodoni);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--fn-tinta);
+}
+
+/* Cinta de papel: semitransparente, con las puntas cortadas a mano. */
+.fn-cinta {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  z-index: 1;
+  width: 44%;
+  height: 1.55rem;
+  background: rgba(236, 224, 196, 0.8);
+  transform: translateX(-50%) rotate(3deg);
+  clip-path: polygon(3% 0, 97% 4%, 100% 22%, 96% 45%, 100% 70%, 97% 100%, 2% 96%, 0 75%, 4% 50%, 0 26%);
+  box-shadow: 0 1px 2px rgba(10, 0, 2, 0.2);
+}
+
+/* "Te esperamos" pisa la esquina de la polaroid: el texto y la foto son una
+   sola composición, no dos bloques apilados. */
+.fn-final__te {
+  position: relative;
+  z-index: 2;
+  margin: -2.6rem -0.4rem 0 0;
+  font-size: clamp(3.2rem, 16vw, 4.8rem);
+  line-height: 0.9;
+  text-align: right;
+  text-shadow: 0 2px 18px rgba(20, 2, 4, 0.55);
+}
+
+.fn-final__pie { margin-top: 1.2rem; text-align: right; color: var(--fn-oro); }
+
+/* ── Saludo personal ── */
+.fn-saludo__texto {
+  margin: 0 -1rem 0 0;
+  font-size: clamp(2.5rem, 12vw, 3.8rem);
+  line-height: 0.95;
+}
+
+.fn-saludo .fn-texto { max-width: 26ch; margin: 1.2rem 0 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fn-entra { opacity: 1; animation: none !important; transform: rotate(var(--giro, 0deg)); }
+  .fn-sello { animation: none; }
+}

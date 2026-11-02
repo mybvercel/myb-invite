@@ -1,0 +1,248 @@
+/* Estilo "Horizonte" (Bar Mitzvá): papel blanco, panorama a tinta y acuarelas
+   azules. Maqueta tomer-horizonte. Criterios: .claude/skills/invitacion-horizonte/SKILL.md */
+
+.inv {
+  --hz-azul: #192b49;
+  --hz-medio: #527b9e;
+  --hz-claro: #e6eef4;
+  --hz-papel: #fdfdfc;
+  --hz-linea: rgba(25, 43, 73, 0.25);
+  --hz-sans: var(--font-dmsans), Arial, sans-serif;
+  --hz-display: var(--font-dmserif), Georgia, serif;
+  --hz-firma: var(--font-delafield), "Brush Script MT", cursive;
+}
+
+.inv:has(.hz) { background: #dce1e5; }
+
+.inv-columna.hz {
+  position: relative;
+  max-width: 30rem;
+  overflow: clip;
+  font-family: var(--hz-sans);
+  color: var(--hz-azul);
+  background: var(--hz-papel);
+  box-shadow: 0 0 65px rgba(25, 43, 73, 0.1);
+}
+:where(.hz) :is(h1, h2, h3, p) { margin: 0; }
+:where(.hz) :is(h1, h2, h3) { font-family: var(--hz-display); font-weight: 400; }
+:where(.hz) p { font-size: 16px; line-height: 1.6; }
+.hz em { font-weight: 400; }
+.hz h1:focus { outline: none; }
+.hz :focus-visible, .hz-apertura :focus-visible { outline: 3px solid #729ab8; outline-offset: 4px; }
+
+/* ── Escenas ──
+   Alto mínimo 9:16 con vw (no cqw: dentro del propio contenedor resolvería
+   contra el viewport). El padding va en % o px. */
+.hz-escena {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(min(100vw, 30rem) * 16 / 9);
+  padding: 45px 32px;
+  background: var(--hz-papel);
+}
+.hz-escena::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("/invitaciones/horizonte/papel.webp") center / 600px;
+  opacity: 0.38;
+  mix-blend-mode: multiply;
+}
+
+.hz .hz-arte { display: block; max-width: none; object-fit: contain; pointer-events: none; }
+.hz-estrella { display: block; width: 28px; height: 28px; margin: 0 auto; }
+.hz-caligrafia, .hz-firma { font-family: var(--hz-firma); font-weight: 400; line-height: 1.1; }
+.hz-caligrafia { font-size: 40px; }
+.hz-firma { font-size: 74px; }
+
+/* ── Entrada: una vez, al ver cada escena ── */
+.hz-portada-texto, .hz-mensaje-texto, .hz-contenido, .hz-fiesta-texto, .hz-detalles-texto, .hz-rsvp-contenido, .hz-cierre-texto {
+  opacity: 0;
+  translate: 0 15px;
+  transition: opacity 0.9s ease-out, translate 0.9s ease-out;
+}
+.hz-escena[data-visible="true"] :is(.hz-portada-texto, .hz-mensaje-texto, .hz-contenido, .hz-fiesta-texto, .hz-detalles-texto, .hz-rsvp-contenido, .hz-cierre-texto) {
+  opacity: 1;
+  translate: 0 0;
+}
+/* El panorama se descubre de izquierda a derecha. */
+.hz-ciudad, .hz-ceremonia-dibujo { clip-path: inset(0 100% 0 0); transition: clip-path 1.7s ease-out; }
+.hz-escena[data-visible="true"] :is(.hz-ciudad, .hz-ceremonia-dibujo) { clip-path: inset(0); }
+
+/* ── Portada ── */
+.hz-e-portada { height: calc(min(100vw, 30rem) * 16 / 9); min-height: 640px; padding: 52px 24px 0; }
+.hz-portada-texto { position: relative; z-index: 3; text-align: center; }
+.hz-portada-texto .hz-estrella { margin-bottom: 25px; }
+.hz-invitacion { font-size: 14px !important; letter-spacing: 0.5px; }
+.hz-e-portada .hz-caligrafia { margin-top: 13px; font-size: 58px; }
+.hz-e-portada h1 { margin: 9px -7px 0 0; font-size: clamp(58px, 18vw, 86px); line-height: 1.12; letter-spacing: 7px; text-transform: uppercase; }
+.hz-fecha-portada { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 25px; }
+.hz-fecha-portada > span { font-family: var(--hz-display); font-size: 42px; line-height: 1; }
+.hz-fecha-portada > div { padding-left: 15px; font-size: 13px; line-height: 1.8; letter-spacing: 2px; text-align: left; border-left: 1px solid var(--hz-linea); }
+.hz-ciudad-nombre { margin-top: 12px !important; font-size: 13px !important; letter-spacing: 1px; }
+.hz-faltan { margin-top: 4px !important; font-size: 14px !important; letter-spacing: 1px; color: var(--hz-medio); }
+
+.hz-horizonte { position: absolute; inset: auto 0 0; z-index: 1; height: 270px; pointer-events: none; }
+.hz-ola { position: absolute; bottom: -25px; left: -22%; width: 155%; height: 200px; object-fit: fill; transform: translateY(var(--viaje, 0px)); }
+.hz-profunda { bottom: -92px; left: -10%; width: 135%; height: 220px; }
+.hz-ciudad { position: absolute; bottom: 58px; left: -20%; width: 140%; height: 210px; opacity: 0.95; transform: translateY(calc(var(--viaje, 0px) * -0.5)); }
+.hz-e-portada::after { content: ""; position: absolute; inset: auto 0 0; z-index: 2; height: 120px; pointer-events: none; background: linear-gradient(transparent, rgba(25, 43, 73, 0.62)); }
+.hz .hz-descubrir { position: absolute; bottom: 20px; left: 32px; right: 32px; z-index: 4; display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-size: 14px; letter-spacing: 1px; color: #fff; text-decoration: none; }
+.hz-descubrir span { font-size: 24px; }
+
+/* ── Mensaje ── */
+.hz-e-mensaje { min-height: 690px; padding: 65px 32px 200px; background: linear-gradient(var(--hz-papel), #f3f7fa); }
+.hz-mensaje-texto { position: relative; z-index: 2; }
+.hz-borde-mensaje { position: absolute; top: 110px; right: -170px; width: 290px; height: 110px; opacity: 0.5; transform: rotate(-90deg); }
+.hz-familia { max-width: 270px; margin-bottom: 35px !important; font-size: 15px !important; }
+.hz-e-mensaje h2 { font-size: 44px; line-height: 1.13; letter-spacing: -1px; }
+.hz-carta { max-width: 280px; margin-top: 30px !important; }
+.hz-e-mensaje .hz-firma { margin-top: 25px; }
+.hz-ciudad-mensaje { position: absolute; bottom: 0; left: -5%; width: 110%; height: 180px; opacity: 0.5; }
+
+/* ── Ceremonia ── */
+.hz-e-ceremonia { min-height: 780px; padding: 0 32px 40px; background: linear-gradient(#f3f7fa, var(--hz-papel)); }
+.hz-ceremonia-dibujo { height: 205px; margin: 0 -32px 26px; overflow: hidden; border-bottom: 1px solid var(--hz-linea); }
+.hz-ceremonia-dibujo img { width: 145%; height: 100%; max-width: none; object-fit: cover; object-position: bottom; opacity: 0.9; transform: translateX(-15%); }
+.hz-contenido { text-align: center; }
+.hz-e-ceremonia .hz-caligrafia { margin-bottom: 6px; font-size: 38px; }
+.hz-e-ceremonia h2 { font-size: 39px; line-height: 1.13; letter-spacing: -1px; }
+.hz-hora-fecha { margin: 26px 0 25px; padding: 15px 0; border-block: 1px solid var(--hz-linea); }
+.hz-hora { font-family: var(--hz-display); font-size: 41px !important; line-height: 1.2 !important; }
+.hz-hora-fecha > p:last-child { margin-top: 6px; font-size: 14px; }
+.hz .hz-contenido h3 { font-size: 25px; line-height: 1.2; }
+.hz-direccion { margin: 13px 0 18px !important; font-size: 15px !important; }
+.hz-descripcion { font-size: 16px !important; }
+.hz-parasha { margin-top: 20px !important; font-size: 14px !important; color: var(--hz-medio); }
+.hz-parasha strong { font-family: var(--hz-display); font-size: 17px; font-weight: 400; color: var(--hz-azul); }
+.hz-parasha [lang="he"] { font-size: 16px; color: var(--hz-azul); }
+
+.hz-boton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 25px;
+  padding: 12px 17px;
+  font: inherit;
+  font-size: 15px;
+  color: inherit;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.hz-boton span { font-size: 21px; }
+.hz-boton:hover:not(:disabled) { color: #fff; background: var(--hz-azul); }
+.hz-boton:active:not(:disabled) { transform: scale(0.985); }
+.hz-boton:disabled { opacity: 0.6; }
+
+/* ── Fiesta ── */
+.hz-e-fiesta { min-height: 740px; padding: 125px 32px 55px; color: #fff; background: var(--hz-azul); }
+.hz-e-fiesta::before { opacity: 0.09; mix-blend-mode: screen; }
+.hz-lavado { position: absolute; top: -115px; left: -20%; width: 145%; height: 290px; opacity: 0.9; transform: rotate(180deg); }
+.hz-profundo { position: absolute; top: -110px; left: -20%; width: 145%; height: 290px; opacity: 0.55; }
+.hz-fiesta-texto { position: relative; z-index: 2; }
+.hz-e-fiesta .hz-caligrafia { margin-bottom: 14px; font-size: 40px; color: #c4d7e6; }
+.hz-e-fiesta h2 { font-size: 44px; line-height: 1.05; letter-spacing: -1px; }
+.hz-e-fiesta .hz-descripcion { max-width: 300px; margin: 24px 0 28px !important; color: #e4eaf2; }
+.hz-e-fiesta .hz-hora { margin: 0 0 18px !important; }
+.hz-e-fiesta h3 { font-size: 26px; line-height: 1.2; }
+.hz-e-fiesta .hz-direccion { color: #e4eaf2; }
+.hz-e-fiesta .hz-boton:hover { color: var(--hz-azul); background: #fff; }
+.hz-ultimo { margin-top: 30px !important; padding-top: 23px; font-size: 15px !important; border-top: 1px solid rgba(255, 255, 255, 0.25); color: #e4eaf2; }
+
+/* ── Detalles ── */
+.hz-e-detalles { min-height: 750px; padding: 58px 32px 40px; }
+.hz-borde-detalles { position: absolute; top: 260px; left: -195px; width: 360px; height: 160px; opacity: 0.45; transform: rotate(90deg); }
+.hz-detalles-texto { position: relative; z-index: 1; }
+.hz-e-detalles .hz-caligrafia { margin-bottom: 14px; }
+.hz-e-detalles h2 { font-size: 35px; line-height: 1.13; letter-spacing: -1px; }
+.hz-detalle { margin-top: 28px; padding-top: 23px; border-top: 1px solid var(--hz-linea); }
+.hz-detalle h3 { margin-bottom: 12px; font-size: 24px; line-height: 1.2; }
+.hz-detalle p { font-size: 16px; }
+.hz-detalle .hz-destacado { margin-bottom: 10px; font-family: var(--hz-display); font-size: 20px; font-style: italic; color: var(--hz-medio); }
+.hz-regalo p { font-size: 16px; line-height: 1.6; }
+
+/* ── Asistencia ── */
+.hz-e-asistencia { padding: 45px 32px 50px; background: linear-gradient(var(--hz-papel), #eef4f8); }
+.hz-rsvp-contenido .hz-estrella { margin-bottom: 20px; width: 26px; height: 26px; }
+.hz-rsvp-contenido > .hz-caligrafia, .hz-rsvp-contenido > h2, .hz-limite { text-align: center; }
+.hz-rsvp-contenido > .hz-caligrafia { font-size: 40px; }
+.hz-rsvp-contenido > h2 { margin-top: 10px; font-size: 34px; line-height: 1.13; }
+.hz-limite { margin-top: 20px !important; font-size: 15px !important; }
+.hz-formulario, .hz-respuesta { margin-top: 28px; }
+.hz-respuesta { text-align: center; }
+.hz-respuesta h3 { font-size: 26px; }
+.hz-respuesta p { margin-top: 10px; }
+.hz-campo { display: block; min-width: 0; margin: 0 0 20px; padding: 0; border: 0; }
+.hz-campo > span, .hz-campo legend { display: block; margin-bottom: 5px; padding: 0; font-size: 14px; line-height: 1.6; }
+.hz-campo input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 10px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--hz-azul);
+  background: rgba(255, 255, 255, 0.44);
+  border: 0;
+  border-bottom: 1px solid var(--hz-azul);
+  border-radius: 0;
+}
+.hz-campo input:focus { outline: 3px solid #729ab8; outline-offset: 2px; }
+.hz-opcion { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; padding: 0; font: inherit; font-size: 15px; color: var(--hz-azul); text-align: left; background: none; border: 0; cursor: pointer; }
+.hz-casilla { position: relative; flex: none; width: 18px; height: 18px; border: 1.5px solid var(--hz-azul); border-radius: 50%; }
+.hz-opcion[aria-pressed="true"] .hz-casilla::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--hz-azul); }
+.hz-boton--lleno { margin-top: 6px; color: #fff; background: var(--hz-azul); }
+.hz-boton--lleno:hover:not(:disabled) { color: #fff; background: #253e60; }
+.hz-aviso { margin-bottom: 12px !important; font-size: 14px !important; color: #a3322b; }
+.hz-enlace { min-height: 44px; margin-top: 8px; font: inherit; font-size: 14px; color: var(--hz-azul); text-decoration: underline; text-underline-offset: 5px; background: none; border: 0; cursor: pointer; }
+
+/* ── Cierre ── */
+.hz-e-cierre { height: 760px; padding-top: 60px; background: linear-gradient(#eef4f8, var(--hz-papel)); }
+.hz-cierre-texto { position: relative; z-index: 2; text-align: center; }
+.hz-e-cierre h2 { margin-top: 12px; font-size: 46px; line-height: 1.13; letter-spacing: -1px; }
+.hz-e-cierre .hz-firma { margin-top: 25px; font-size: 82px; }
+.hz-cierre-texto > p:not([class]) { margin-top: 10px; font-size: 14px; }
+.hz-volver { display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; font-size: 14px; color: var(--hz-azul); text-underline-offset: 6px; }
+.hz-e-cierre .hz-horizonte { height: 230px; }
+.hz-e-cierre .hz-ciudad { bottom: 50px; opacity: 0.65; }
+
+/* ── El sobre ── */
+.hz-apertura { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 22px; background: #e1e6ea; font-family: var(--hz-sans); transition: opacity 0.45s 0.3s; }
+.hz-sobre { position: relative; width: min(100%, 420px); height: min(540px, calc(100svh - 44px)); overflow: hidden; color: #fff; background: #192b49; box-shadow: 0 20px 60px rgba(25, 43, 73, 0.19); perspective: 1000px; }
+.hz-solapa { position: absolute; inset: 0 0 auto; height: 190px; background: #253e60; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top; transition: transform 0.65s, opacity 0.5s; }
+.hz-sobre::after { content: ""; position: absolute; inset: auto 0 0; height: 210px; pointer-events: none; background: linear-gradient(30deg, #203754, #1c304c); clip-path: polygon(0 0, 50% 60%, 100% 0, 100% 100%, 0 100%); }
+.hz-sobre-contenido { position: relative; z-index: 2; padding: 170px 25px 30px; text-align: center; }
+.hz-sobre .hz-estrella { width: 25px; height: 25px; margin-bottom: 15px; }
+.hz-sobre-contenido > p { margin: 0; font-size: 14px; line-height: 1.7; color: #d7e3ed; }
+.hz-sobre-contenido > .hz-sobre-nombre { font-family: var(--hz-display); font-size: 58px; line-height: 1.4; letter-spacing: 2px; color: #fff; }
+.hz-abrir { min-height: 48px; margin-top: 30px; padding: 15px 20px; font: inherit; font-size: 15px; color: #fff; background: transparent; border: 1px solid #d7e3ed; cursor: pointer; }
+.hz-abrir span { margin-left: 20px; }
+.hz-abierto { opacity: 0; pointer-events: none; }
+.hz-abierto .hz-solapa { opacity: 0; transform: rotateX(160deg); }
+.hz-abierto .hz-sobre-contenido { translate: 0 -15px; transition: translate 0.6s; }
+.hz-abierto .hz-sobre { box-shadow: none; }
+
+@media (max-width: 340px) {
+  .hz-escena { padding-inline: 25px; }
+  .hz-e-portada { padding-inline: 20px; }
+  .hz-e-portada h1 { font-size: 58px; letter-spacing: 5px; }
+  .hz-e-mensaje h2 { font-size: 40px; }
+  .hz-e-ceremonia h2 { font-size: 35px; }
+  .hz-e-detalles h2 { font-size: 32px; }
+  .hz-rsvp-contenido > h2 { font-size: 30px; }
+  .hz-sobre-contenido { padding-top: 145px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hz-portada-texto, .hz-mensaje-texto, .hz-contenido, .hz-fiesta-texto, .hz-detalles-texto, .hz-rsvp-contenido, .hz-cierre-texto { opacity: 1; translate: 0 0; transition: none; }
+  .hz-ciudad, .hz-ceremonia-dibujo { clip-path: none; transition: none; }
+  .hz-ola, .hz-ciudad { transform: none; }
+  .hz-apertura, .hz-solapa, .hz-sobre-contenido, .hz-boton { transition: none; }
+}
