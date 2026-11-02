@@ -35,10 +35,13 @@ export const metadata: Metadata = {
     locale: "es_AR",
     url: SITE_URL,
     siteName: "Tu Invitación Digital",
+    // La vista previa de WhatsApp: un sobre con el sello de MyB.
+    images: [{ url: "/og-myb.jpg", width: 1200, height: 630, alt: "MyB Invitation, invitaciones digitales" }],
     title: "Tu Invitación Digital — invitaciones web para bodas, cumpleaños y eventos",
     description:
       "La invitación que tus invitados abren en el celular: cuenta regresiva, mapa, confirmación automática y álbum de fotos compartido.",
   },
+  twitter: { card: "summary_large_image", images: ["/og-myb.jpg"] },
   robots: { index: true, follow: true },
 };
 
