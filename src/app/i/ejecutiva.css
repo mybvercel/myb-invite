@@ -1,0 +1,133 @@
+/* Estilos ejecutivos "Círculo privado" (borgoña) y "Entre platos" (oliva).
+   Maquetas ejecutiva-carta-privada y ejecutiva-entre-platos (flujo GPT):
+   misma estructura, dos pieles (.ej--privado / .ej--platos).
+   Criterios: .claude/skills/invitacion-ejecutiva/SKILL.md */
+
+.inv { --ej-sans: var(--font-dmsans), Arial, sans-serif; --ej-serif: var(--font-dmserif), Georgia, serif; }
+.inv:has(.ej--privado) { background: #201b1b; }
+.inv:has(.ej--platos) { background: #273021; }
+
+.inv-columna.ej { overflow-x: clip; font-family: var(--ej-sans); font-size: 15px; color: var(--ink); background: var(--paper); }
+.ej--privado { --ink: #42262a; --paper: #f4edde; --accent: #61333a; --papel-img: url("/invitaciones/privado/papel.webp"); --velo: #f4edde; }
+.ej--platos { --ink: #303c24; --paper: #fff1c5; --accent: #3e4a2d; --papel-img: url("/invitaciones/platos/papel.webp"); --velo: #fff5d9; }
+.ej h1, .ej h2, .ej h3, .ej p { margin: 0; }
+.ej h1, .ej h2, .ej h3 { font-family: var(--ej-serif); font-weight: 400; }
+.ej em { font-family: var(--ej-serif); font-style: italic; font-weight: 400; }
+.ej p { line-height: 1.55; }
+.ej a { color: inherit; text-decoration: none; }
+.ej img { display: block; max-width: 100%; pointer-events: none; user-select: none; }
+.ej button, .ej input { font: inherit; }
+.ej button { color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ej a:focus-visible, .ej button:focus-visible, .ej input:focus-visible, .ej-sello:focus-visible { outline: 3px solid #a26b25; outline-offset: 4px; }
+.ej h1:focus { outline: 0; }
+.ej-chico { font-size: 11px; letter-spacing: 0.13em; }
+
+.ej-boton { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 15px 16px; font-size: 15px; color: var(--paper) !important; background: var(--accent); border: 0; }
+.ej-boton span { font-size: 20px; }
+.ej-boton:hover:not(:disabled) { filter: brightness(1.12); }
+.ej-boton:disabled { opacity: 0.6; }
+.ej-boton--claro { margin: 23px 0; color: var(--ink) !important; background: var(--paper); }
+
+/* ── Entrada (sólo privado) ── */
+.ej-entrada { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #201b1b; font-family: var(--ej-sans); }
+.ej-entrada__caja { position: relative; width: min(100%, 30rem); height: 100%; overflow: hidden; }
+.ej-entrada__caja > img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: fill; }
+.ej-hoja { z-index: 1; transition: transform 1.15s cubic-bezier(0.4, 0, 0.15, 1); }
+.ej-sobre { z-index: 2; transition: opacity 0.3s; }
+.ej-entrada__titulo { position: absolute; top: 12%; left: 15%; right: 15%; z-index: 3; font-size: 12px; letter-spacing: 0.16em; line-height: 1.8; text-align: center; color: #eee1cb; }
+.ej-entrada__titulo strong { display: block; margin-top: 8px; font: 400 38px var(--ej-serif); letter-spacing: 0; }
+.ej-sello { position: absolute; z-index: 4; left: 23%; top: 38%; width: 34%; height: 23%; background: transparent; border: 0; border-radius: 45%; }
+.ej-entrada__pista { position: absolute; bottom: 9%; left: 0; right: 0; z-index: 3; font-size: 12px; letter-spacing: 0.12em; text-align: center; color: #eee1cb; }
+.ej-entrada--abre .ej-sobre, .ej-entrada--abre .ej-entrada__titulo, .ej-entrada--abre .ej-entrada__pista { opacity: 0; }
+.ej-entrada--abre .ej-hoja--izq { transform: translateX(-105%) rotate(-5deg); }
+.ej-entrada--abre .ej-hoja--der { transform: translateX(105%) rotate(5deg); }
+.ej-entrada--abre .ej-sello { display: none; }
+
+/* ── Portada ── */
+.ej-portada { position: relative; aspect-ratio: 390 / 760; min-height: 700px; }
+.ej-portada__fondo { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.ej-portada__contenido { position: absolute; left: 16%; right: 16%; top: 16%; bottom: 18%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.ej-anfitrion { margin-bottom: 24px; font-size: 11px; letter-spacing: 0.15em; }
+.ej h1 { font-size: clamp(50px, 14.6vw, 58px); line-height: 0.98; letter-spacing: -0.035em; }
+.ej-subtitulo { margin: 20px 0 25px; font-size: 11px; letter-spacing: 0.14em; }
+.ej-cita { max-width: 250px; font: 22px / 1.3 var(--ej-serif); }
+.ej-fecha { display: flex; flex-direction: column; gap: 5px; margin: 30px 0 23px; }
+.ej-fecha strong { font: 400 36px var(--ej-serif); letter-spacing: 0.04em; }
+.ej-fecha span { font-size: 13px; }
+.ej-enlace { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; border-bottom: 1px solid var(--accent); }
+.ej-bajar { position: absolute; bottom: 3%; left: 0; right: 0; display: flex; align-items: center; justify-content: center; min-height: 44px; font-size: 12px; letter-spacing: 0.05em; color: #f0dfca; }
+
+.ej--platos .ej-portada__contenido { left: 17%; right: 24%; top: 22%; bottom: 26%; justify-content: space-between; }
+.ej--platos h1 { font-size: clamp(50px, 14.9vw, 60px); line-height: 0.88; }
+.ej--platos .ej-anfitrion { margin: 0; font-size: 10px; letter-spacing: 0.09em; }
+.ej--platos .ej-subtitulo { margin: 0; font-size: 10px; }
+.ej--platos .ej-cita { font: 17px / 1.35 var(--ej-sans); }
+.ej--platos .ej-fecha { gap: 1px; margin: 0; }
+.ej--platos .ej-fecha strong { font-size: 32px; }
+.ej--platos .ej-bajar { left: 23%; right: 23%; bottom: 3.5%; color: var(--ink); background: rgba(255, 241, 197, 0.91); }
+
+/* ── Agenda ── */
+.ej-agenda { background: linear-gradient(color-mix(in srgb, var(--velo) 91%, transparent), color-mix(in srgb, var(--velo) 91%, transparent)), var(--papel-img) center / cover; }
+.ej-intro { padding: 35px 28px 30px; }
+.ej-intro h2 { font-size: clamp(37px, 9.6vw, 44px); line-height: 1.05; letter-spacing: -0.035em; }
+.ej-intro > p { max-width: 300px; margin-top: 18px; font-size: 15px; }
+.ej-escena { width: 100%; height: 255px; max-width: none; object-fit: cover; }
+.ej-tiempos { margin: 0; padding: 12px 28px 32px; list-style: none; }
+.ej-tiempos li { display: grid; grid-template-columns: 70px 1fr; column-gap: 20px; padding: 20px 0; border-bottom: 1px solid rgba(89, 54, 59, 0.19); }
+.ej-tiempos time { font: 25px var(--ej-serif); }
+.ej-tiempos strong { display: block; font-size: 16px; font-weight: 500; }
+.ej-tiempos p { margin-top: 4px; font-size: 14px; }
+.ej-fin { padding: 0 28px 26px; font-size: 13px; }
+.ej--platos .ej-intro { padding-top: 39px; text-align: center; }
+.ej--platos .ej-intro > p { margin: 16px auto 0; }
+.ej--platos .ej-tiempos li { display: block; text-align: center; border-bottom-color: rgba(62, 74, 45, 0.2); padding: 23px 0; }
+.ej--platos .ej-tiempos time { display: block; margin-bottom: 8px; font: 12px var(--ej-sans); letter-spacing: 0.13em; }
+.ej--platos .ej-tiempos strong { font: 29px var(--ej-serif); }
+.ej--platos .ej-fin { text-align: center; }
+
+/* ── Lugar ── */
+.ej-lugar { padding: 37px 28px; color: var(--paper); background: var(--accent); }
+.ej-lugar h2 { margin: 20px 0; font-size: clamp(49px, 12.6vw, 58px); line-height: 1.05; letter-spacing: -0.035em; }
+.ej-direccion { font-size: 15px; }
+.ej-vestimenta { display: flex; flex-direction: column; gap: 8px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.25); }
+.ej-vestimenta strong { font: 400 24px var(--ej-serif); }
+.ej-vestimenta p { font-size: 14px; }
+.ej--platos .ej-lugar { padding-top: 45px; }
+.ej--platos .ej-lugar h2 { font-size: clamp(58px, 15vw, 68px); }
+
+/* ── Confirmación ── */
+.ej-rsvp { padding: 38px 28px 0; background: linear-gradient(color-mix(in srgb, var(--velo) 93%, transparent), color-mix(in srgb, var(--velo) 93%, transparent)), var(--papel-img) center / cover; }
+.ej-rsvp h2 { margin: 17px 0; font-size: clamp(43px, 11vw, 52px); line-height: 1.06; letter-spacing: -0.03em; }
+.ej-rsvp-intro { max-width: 300px; margin-bottom: 24px !important; font-size: 15px; }
+.ej-campo { display: block; margin: 0 0 22px; padding: 0; border: 0; }
+.ej-campo > span, .ej-campo legend { display: block; margin-bottom: 8px; padding: 0; font-size: 14px; }
+.ej-campo input { display: block; width: 100%; min-height: 48px; margin-top: 7px; padding: 12px 8px; font-size: 16px; color: var(--ink); background: rgba(255, 255, 255, 0.31); border: 0; border-bottom: 1px solid #927f72; border-radius: 0; }
+.ej-opcion { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 0; font-size: 15px; text-align: left; background: none; border: 0; }
+.ej-radio { position: relative; flex: none; width: 20px; height: 20px; border: 1px solid var(--accent); border-radius: 50%; }
+.ej-radio--cuadrado { border-radius: 0; }
+.ej-opcion[aria-pressed="true"] .ej-radio::after { content: ""; position: absolute; inset: 3px; border-radius: inherit; background: var(--accent); }
+.ej-aviso { margin-bottom: 12px !important; padding-left: 12px; font-size: 14px; border-left: 2px solid var(--accent); }
+.ej-respuesta h3 { font: 400 32px / 1.1 var(--ej-serif); color: var(--accent); }
+.ej-respuesta p { margin-top: 10px !important; font-size: 15px; }
+.ej-texto-boton { min-height: 44px; margin-top: 8px; padding: 0; font-size: 14px; background: none; border: 0; border-bottom: 1px solid currentColor; }
+.ej-footer { margin-top: 30px; padding: 30px 0 22px; text-align: center; border-top: 1px solid rgba(89, 54, 59, 0.15); }
+.ej-footer em { display: block; font-size: 26px; }
+.ej-footer > span { display: block; margin: 10px 0 14px; font-size: 12px; }
+.ej-footer button { display: block; min-height: 44px; margin: 0 auto 12px; padding: 0 10px; font-size: 13px; background: none; border: 0; text-decoration: underline; text-underline-offset: 4px; }
+.ej-footer small { font-size: 11px; }
+
+@media (max-width: 350px) {
+  .ej h1 { font-size: 49px; }
+  .ej--platos h1 { font-size: 50px; }
+  .ej--platos .ej-cita { font-size: 15px; }
+  .ej-cita { font-size: 19px; }
+}
+@media (prefers-reduced-motion: reduce) { .ej-hoja, .ej-sobre { transition: none; } }
+
+/* Ajustes de lectura: la cursiva no pisa el subtítulo y el enlace de bajada
+   (sobre fondo oscuro) gana a `.ej a { color: inherit }`. */
+.ej h1 { padding-bottom: 8px; }
+.ej-subtitulo { margin: 18px 0 30px; }
+.ej--platos .ej-subtitulo { margin: 0; }
+.ej .ej-bajar { color: #f0dfca; }
+.ej--platos .ej-bajar { color: var(--ink); }

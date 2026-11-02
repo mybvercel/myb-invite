@@ -358,6 +358,33 @@ export type InvitacionCincuenta = InvitacionBase & {
   };
 };
 
+/**
+ * Invitaciones ejecutivas "Círculo privado" (sobre que se abre) y "Entre
+ * platos" (portada directa sobre mesa). Misma estructura, dos pieles.
+ */
+export type InvitacionEjecutiva = InvitacionBase & {
+  estilo: "privado" | "platos";
+  ejecutiva: {
+    compartir: string;
+    anfitrion: string;
+    /** Dos líneas del título; `enfasis` es la que va en cursiva. */
+    titulo: [string, string];
+    enfasis: 0 | 1;
+    subtitulo: string;
+    cita: [string, string];
+    /** Separador de la fecha corta: "26 · 11 · 26" o "03.12.26". */
+    sepFecha: string;
+    introTitulo: [string, string];
+    introTexto: string;
+    agenda: { hora: string; etiqueta?: string; titulo: string; detalle: string }[];
+    cierreAgenda: string;
+    rsvpTitulo: [string, string];
+    cierre: string;
+    /** Sólo "privado": rótulo sobre el sobre. */
+    sobre?: string;
+  };
+};
+
 export type Invitacion =
   | InvitacionRosa
   | InvitacionFotomaton
@@ -371,7 +398,8 @@ export type Invitacion =
   | InvitacionSobremesa
   | InvitacionOrbita
   | InvitacionJardin
-  | InvitacionCincuenta;
+  | InvitacionCincuenta
+  | InvitacionEjecutiva;
 
 /** La imagen de la previsualización en WhatsApp, sea cual sea el estilo. */
 export const imagenCompartir = (inv: Invitacion) =>
@@ -399,4 +427,6 @@ export const imagenCompartir = (inv: Invitacion) =>
                         ? inv.jardin.compartir
                         : inv.estilo === "cincuenta"
                           ? inv.cincuenta.compartir
-                          : inv.carta.imagen;
+                          : "ejecutiva" in inv
+                            ? inv.ejecutiva.compartir
+                            : inv.carta.imagen;
