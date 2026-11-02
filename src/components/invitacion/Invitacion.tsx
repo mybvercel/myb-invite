@@ -8,6 +8,7 @@ import InvitacionScrapbook from "./scrapbook/InvitacionScrapbook";
 import InvitacionCeramica from "./ceramica/InvitacionCeramica";
 import InvitacionHorizonte from "./horizonte/InvitacionHorizonte";
 import InvitacionSobremesa from "./sobremesa/InvitacionSobremesa";
+import InvitacionOrbita from "./orbita/InvitacionOrbita";
 import InvitacionGarabato from "./garabato/InvitacionGarabato";
 import Hero from "./Hero";
 import type { Personal } from "./personal";
@@ -34,6 +35,9 @@ export default function Invitacion({ invitacion, personal }: { invitacion: Datos
   }
   if (invitacion.estilo === "horizonte") {
     return <InvitacionHorizonte invitacion={invitacion} personal={personal} />;
+  }
+  if (invitacion.estilo === "orbita") {
+    return <InvitacionOrbita invitacion={invitacion} personal={personal} />;
   }
   if (invitacion.estilo === "sobremesa") {
     return <InvitacionSobremesa invitacion={invitacion} personal={personal} />;

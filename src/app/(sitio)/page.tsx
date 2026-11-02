@@ -283,9 +283,15 @@ export default function Invitaciones() {
                       key={p.nombre}
                       className={`tid-plan${p.destacado ? " tid-plan--destacado" : ""}`}
                     >
-                      {p.destacado && <span className="tid-plan__cinta">La más elegida</span>}
+                      {p.antes && <span className="tid-plan__cinta">Oferta</span>}
                       <h3 className="tid-plan__nombre">{p.nombre}</h3>
                       <p className="tid-plan__precio">
+                        {p.antes && (
+                          <span className="tid-plan__antes">
+                            <span className="tid-sr">Antes </span>
+                            {formatearPrecio(p.antes[moneda], moneda)}
+                          </span>
+                        )}
                         <span className="tid-plan__monto">
                           {formatearPrecio(p.precio[moneda], moneda)}
                         </span>

@@ -7,6 +7,7 @@ import { valentina } from "./demo/valentina";
 import { benjamin } from "./demo/benjamin";
 import { tomer } from "./demo/tomer";
 import { sobremesa } from "./demo/sobremesa";
+import { orbita } from "./demo/orbita";
 import { garabato } from "./demo/garabato";
 import { rosa } from "./demo/rosa";
 
@@ -17,7 +18,7 @@ import { rosa } from "./demo/rosa";
  *
  * Al sumar una invitación: importarla arriba y agregarla a la lista.
  */
-const INVITACIONES: Invitacion[] = [rosa, luisYJulieta, garabato, cinta, mesa, ariel, valentina, benjamin, tomer, sobremesa];
+const INVITACIONES: Invitacion[] = [rosa, luisYJulieta, garabato, cinta, mesa, ariel, valentina, benjamin, tomer, sobremesa, orbita];
 
 export const buscarInvitacion = (slug: string) =>
   INVITACIONES.find((i) => i.slug === slug);

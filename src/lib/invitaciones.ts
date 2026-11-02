@@ -119,6 +119,14 @@ export const DISENOS: Diseno[] = [
     acento: "#652c38",
     enlace: "/i/sobremesa-nexo",
   },
+  {
+    id: 9,
+    tipo: "profesional",
+    nombre: "Órbita",
+    imagen: "/invitaciones/orbita/miniatura.webp",
+    acento: "#596144",
+    enlace: "/i/orbita-nexo",
+  },
 ];
 
 export const enlaceDemo = (d: Diseno) =>
@@ -164,32 +172,36 @@ export const INCLUYE: Record<TipoEvento, string[]> = {
 export type Plan = {
   nombre: string;
   precio: Record<Moneda, number>;
+  /** Precio de lista tachado, si el plan está en oferta. */
+  antes?: Record<Moneda, number>;
   items: string[];
   destacado: boolean;
 };
 
 /**
- * REVISAR ANTES DE VENDER: el único precio confirmado es Completa en ARS
- * ($68.999). El resto son valores de referencia para armar la escalera.
+ * Un solo plan, en oferta: $99.000 tachado y $75.000 hoy (ARS). Los USD son
+ * de referencia (79 y 60): revisarlos antes de vender en dólares.
  */
 export const PLANES: Plan[] = [
   {
-    nombre: "Esencial",
-    precio: { ARS: 44999, USD: 35 },
-    items: ["Diseño personalizado", "Cuenta regresiva y mapa", "Datos del regalo", "Confirmación por WhatsApp", "Lista de invitados con Excel"],
-    destacado: false,
-  },
-  {
-    nombre: "Completa",
-    precio: { ARS: 68999, USD: 55 },
-    items: ["Todo lo de Esencial", "Confirmación dentro de la invitación", "Lista de invitados en vivo", "Restricciones de comida", "Galería y música"],
+    nombre: "Invitación completa",
+    precio: { ARS: 75000, USD: 60 },
+    antes: { ARS: 99000, USD: 79 },
+    items: [
+      "Diseño personalizado",
+      "Cuenta regresiva y mapa",
+      "Datos del regalo",
+      "Confirmación dentro de la invitación",
+      "Lista de invitados en vivo",
+      "Restricciones de comida",
+      "Galería y música",
+      "Plano del salón con tus medidas",
+      "Mesas y familias, ubicadas solas",
+      "Panel con tus colores",
+      "Un link por invitado",
+      "Trivia para los invitados",
+    ],
     destacado: true,
-  },
-  {
-    nombre: "Completa +",
-    precio: { ARS: 94999, USD: 75 },
-    items: ["Todo lo de Completa", "Plano del salón con tus medidas", "Mesas y familias, ubicadas solas", "Panel con tus colores", "Un link por invitado", "Álbum con QR para las mesas", "Trivia para los invitados"],
-    destacado: false,
   },
 ];
 

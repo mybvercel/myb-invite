@@ -294,6 +294,25 @@ export type InvitacionSobremesa = InvitacionBase & {
   };
 };
 
+/**
+ * Órbita: encuentro ejecutivo con una rueda de fotografías que gira sobre
+ * papel claro. Diseño por capas (flujo GPT).
+ */
+export type InvitacionOrbita = InvitacionBase & {
+  estilo: "orbita";
+  orbita: {
+    compartir: string;
+    anfitrion: string;
+    /** Ej: "Encuentro ejecutivo". */
+    tipo: string;
+    ciudad: string;
+    marca: string;
+    mensaje: string;
+    agenda: { hora: string; titulo: string; detalle: string }[];
+    cupo: string;
+  };
+};
+
 export type Invitacion =
   | InvitacionRosa
   | InvitacionFotomaton
@@ -304,7 +323,8 @@ export type Invitacion =
   | InvitacionScrapbook
   | InvitacionCeramica
   | InvitacionHorizonte
-  | InvitacionSobremesa;
+  | InvitacionSobremesa
+  | InvitacionOrbita;
 
 /** La imagen de la previsualización en WhatsApp, sea cual sea el estilo. */
 export const imagenCompartir = (inv: Invitacion) =>
@@ -326,4 +346,6 @@ export const imagenCompartir = (inv: Invitacion) =>
                   ? inv.horizonte.compartir
                   : inv.estilo === "sobremesa"
                     ? inv.sobremesa.compartir
-                    : inv.carta.imagen;
+                    : inv.estilo === "orbita"
+                      ? inv.orbita.compartir
+                      : inv.carta.imagen;

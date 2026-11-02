@@ -319,3 +319,9 @@
   .tid-tarjeta:hover, .tid-globo:hover { transform: none; }
   .tid-modelo:hover .tid-modelo__img { transform: none; }
 }
+
+/* Plan único en oferta: precio de lista tachado y tarjeta centrada. */
+.tid-planes:has(> .tid-plan:only-child) { grid-template-columns: minmax(0, 28rem); justify-content: center; }
+.tid-plan__precio { flex-wrap: wrap; }
+.tid-plan__antes { flex-basis: 100%; font-size: 1.05rem; color: var(--tid-tenue, #6b6b66); text-decoration: line-through; text-decoration-thickness: 1px; font-variant-numeric: tabular-nums; }
+.tid-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
