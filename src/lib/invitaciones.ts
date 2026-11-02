@@ -149,7 +149,7 @@ export const DISENOS: Diseno[] = [
     nombre: "Círculo privado",
     imagen: "/invitaciones/privado/miniatura.webp",
     acento: "#61333a",
-    enlace: "I://circulo-privado",
+    enlace: "/i/circulo-privado",
   },
   {
     id: 13,
@@ -157,7 +157,7 @@ export const DISENOS: Diseno[] = [
     nombre: "Entre platos",
     imagen: "/invitaciones/platos/miniatura.webp",
     acento: "#3e4a2d",
-    enlace: "I://entre-platos",
+    enlace: "/i/entre-platos",
   },
 ];
 
