@@ -96,6 +96,22 @@ export const DISENOS: Diseno[] = [
     enlace: "/i/ariel-bar-mitzva",
   },
   {
+    id: 10,
+    tipo: "cumples",
+    nombre: "Una carta",
+    imagen: "/invitaciones/carta/miniatura.webp",
+    acento: "#542a35",
+    enlace: "/i/alejandro-50",
+  },
+  {
+    id: 11,
+    tipo: "cumples",
+    nombre: "Jardín",
+    imagen: "/invitaciones/jardin/miniatura.webp",
+    acento: "#503550",
+    enlace: "/i/emilia-15",
+  },
+  {
     id: 6,
     tipo: "cumples",
     nombre: "Cerámica",

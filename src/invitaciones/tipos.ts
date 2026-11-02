@@ -313,6 +313,51 @@ export type InvitacionOrbita = InvitacionBase & {
   };
 };
 
+/** Datos comunes de las invitaciones de apertura (Jardín y Cincuenta). */
+type Agenda = { hora: string; titulo: string; detalle: string }[];
+
+/**
+ * Jardín al anochecer: quince años en lila y ciruela, con dos hojas de papel
+ * que se abren al tocar el sello. Diseño por capas (flujo GPT).
+ */
+export type InvitacionJardin = InvitacionBase & {
+  estilo: "jardin";
+  jardin: {
+    compartir: string;
+    inicial: string;
+    frase: [string, string];
+    agenda: Agenda;
+    /** Ej: "Nos despedimos a las 04:00." */
+    cierre: string;
+    /** Tres colores de inspiración para la vestimenta. */
+    paleta: string[];
+    regalo: string;
+    despedida: [string, string];
+  };
+};
+
+/**
+ * Una carta, cincuenta historias: carta borgoña y marfil dentro de un sobre
+ * con sello. Diseño por capas (flujo GPT).
+ */
+export type InvitacionCincuenta = InvitacionBase & {
+  estilo: "cincuenta";
+  cincuenta: {
+    compartir: string;
+    inicial: string;
+    anios: string;
+    frase: [string, string];
+    brindis: string;
+    detalleBrindis: [string, string];
+    intro: string;
+    agenda: Agenda;
+    sigla: string;
+    regalo: [string, string];
+    despedida: string;
+    cupo: number;
+  };
+};
+
 export type Invitacion =
   | InvitacionRosa
   | InvitacionFotomaton
@@ -324,7 +369,9 @@ export type Invitacion =
   | InvitacionCeramica
   | InvitacionHorizonte
   | InvitacionSobremesa
-  | InvitacionOrbita;
+  | InvitacionOrbita
+  | InvitacionJardin
+  | InvitacionCincuenta;
 
 /** La imagen de la previsualización en WhatsApp, sea cual sea el estilo. */
 export const imagenCompartir = (inv: Invitacion) =>
@@ -348,4 +395,8 @@ export const imagenCompartir = (inv: Invitacion) =>
                     ? inv.sobremesa.compartir
                     : inv.estilo === "orbita"
                       ? inv.orbita.compartir
-                      : inv.carta.imagen;
+                      : inv.estilo === "jardin"
+                        ? inv.jardin.compartir
+                        : inv.estilo === "cincuenta"
+                          ? inv.cincuenta.compartir
+                          : inv.carta.imagen;
