@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./invitaciones.css";
+import MetaPixel from "@/components/MetaPixel";
 import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <div className={`tid ${montserrat.variable}`}>{children}</div>
+        <MetaPixel />
       </body>
     </html>
   );
