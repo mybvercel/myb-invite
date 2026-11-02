@@ -203,7 +203,7 @@ export default function Invitaciones() {
                   <ul className="tid-modelos">
                     {modelos.map((d) => (
                       <li key={`${d.tipo}-${d.id}`}>
-                        <Link href={enlaceDemo(d)} className="tid-modelo">
+                        <Link href={`${enlaceDemo(d)}${enlaceDemo(d).includes("?") ? "&" : "?"}v=1`} target="_blank" rel="opener" className="tid-modelo">
                           <span className="tid-modelo__marco">
                             <Image
                               src={d.imagen}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import BotonVolver from "@/components/invitacion/BotonVolver";
 import Invitacion from "@/components/invitacion/Invitacion";
 import { imagenCompartir } from "@/invitaciones/tipos";
 import { buscarInvitacion, slugsDeInvitaciones } from "@/invitaciones";
@@ -35,5 +36,10 @@ export default async function PaginaInvitacion({ params }: Props) {
   const invitacion = buscarInvitacion(slug);
   if (!invitacion) notFound();
 
-  return <Invitacion invitacion={invitacion} />;
+  return (
+    <>
+      <BotonVolver catalogo="/" />
+      <Invitacion invitacion={invitacion} />
+    </>
+  );
 }
