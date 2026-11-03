@@ -13,6 +13,7 @@ import InvitacionJardin from "./jardin/InvitacionJardin";
 import InvitacionCincuenta from "./cincuenta/InvitacionCincuenta";
 import InvitacionEjecutiva from "./ejecutiva/InvitacionEjecutiva";
 import InvitacionGarabato from "./garabato/InvitacionGarabato";
+import InvitacionNoir from "./noir/InvitacionNoir";
 import Hero from "./Hero";
 import type { Personal } from "./personal";
 import SeccionCierre from "./SeccionCierre";
@@ -30,6 +31,9 @@ import SeccionVestimenta from "./SeccionVestimenta";
  * debajo de la portada y un formulario que ya sabe quién es.
  */
 export default function Invitacion({ invitacion, personal }: { invitacion: Datos; personal?: Personal }) {
+  if (invitacion.estilo === "noir") {
+    return <InvitacionNoir invitacion={invitacion} personal={personal} />;
+  }
   if (invitacion.estilo === "fotomaton") {
     return <InvitacionFotomaton invitacion={invitacion} personal={personal} />;
   }

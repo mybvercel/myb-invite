@@ -159,6 +159,14 @@ export const DISENOS: Diseno[] = [
     acento: "#3e4a2d",
     enlace: "/i/entre-platos",
   },
+  {
+    id: 14,
+    tipo: "profesional",
+    nombre: "Noir",
+    imagen: "/invitaciones/noir/miniatura.webp",
+    acento: "#9d282c",
+    enlace: "/i/noir",
+  },
 ];
 
 export const enlaceDemo = (d: Diseno) =>

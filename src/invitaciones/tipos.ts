@@ -385,6 +385,29 @@ export type InvitacionEjecutiva = InvitacionBase & {
   };
 };
 
+/**
+ * Estilo NOIR (encuentro ejecutivo): sobre negro con sello rojo que se abre en
+ * dos hojas, portada con una copa que se llena de vino al bajar, y agenda,
+ * lugar y confirmación sobre papel. Criterios: .claude/skills/invitacion-noir
+ */
+export type InvitacionNoir = InvitacionBase & {
+  estilo: "noir";
+  noir: {
+    compartir: string;
+    anfitrion: string;
+    /** Rótulo de arriba del sobre y la marca grande. */
+    sobre: { arriba: string; marca: string; frase: string; pista: string };
+    titulo: [string, string];
+    tarjeta: [string, string, string];
+    introTitulo: [string, string, string];
+    introTexto: string;
+    escenaPie: string;
+    agenda: { hora: string; titulo: string; detalle: string }[];
+    rsvpTitulo: [string, string];
+    cierre: string;
+  };
+};
+
 export type Invitacion =
   | InvitacionRosa
   | InvitacionFotomaton
@@ -399,11 +422,14 @@ export type Invitacion =
   | InvitacionOrbita
   | InvitacionJardin
   | InvitacionCincuenta
-  | InvitacionEjecutiva;
+  | InvitacionEjecutiva
+  | InvitacionNoir;
 
 /** La imagen de la previsualización en WhatsApp, sea cual sea el estilo. */
 export const imagenCompartir = (inv: Invitacion) =>
-  inv.estilo === "fotomaton"
+  inv.estilo === "noir"
+    ? inv.noir.compartir
+    : inv.estilo === "fotomaton"
     ? inv.fotomaton.compartir
     : inv.estilo === "garabato"
       ? inv.garabato.compartir

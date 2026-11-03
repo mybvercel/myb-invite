@@ -14,6 +14,7 @@ import "./orbita.css";
 import "./jardin.css";
 import "./cincuenta.css";
 import "./ejecutiva.css";
+import "./noir.css";
 
 /* Dos familias y ninguna más.
    Pinyon es una spenceriana de verdad: Dancing Script y Great Vibes son las
@@ -88,7 +89,7 @@ const frank = Frank_Ruhl_Libre({ variable: "--font-frank", subsets: ["hebrew"], 
 
 /* Las del estilo scrapbook (quince): firma manuscrita, serif de revista y sans para datos. */
 const delafield = Mrs_Saint_Delafield({ variable: "--font-delafield", subsets: ["latin"], weight: "400", display: "swap", preload: false });
-const dmSerif = DM_Serif_Display({ variable: "--font-dmserif", subsets: ["latin"], weight: "400", display: "swap", preload: false });
+const dmSerif = DM_Serif_Display({ variable: "--font-dmserif", subsets: ["latin"], weight: "400", style: ["normal", "italic"], display: "swap", preload: false });
 const dmSans = DM_Sans({ variable: "--font-dmsans", subsets: ["latin"], display: "swap", preload: false });
 
 export default function InvitacionLayout({ children }: { children: React.ReactNode }) {
