@@ -6,6 +6,7 @@ import type { InvitacionNoir as Datos } from "@/invitaciones/tipos";
 import { COMIDAS } from "@/lib/rsvp-comun";
 import type { Personal } from "../personal";
 import { usarRsvp } from "../usarRsvp";
+import Flecha from "../Flecha";
 
 /**
  * Estilo NOIR (encuentro ejecutivo). Un sobre negro con sello rojo cuyas dos
@@ -223,7 +224,7 @@ export default function InvitacionNoir({ invitacion, personal }: { invitacion: D
                 <a href="#asistencia" className="hero-cta">
                   Confirmar
                   <br />
-                  asistencia <span>↗</span>
+                  asistencia <span><Flecha dir="ne" /></span>
                 </a>
               </div>
               <div className="glass-zone" id="glass-zone">
@@ -245,7 +246,7 @@ export default function InvitacionNoir({ invitacion, personal }: { invitacion: D
               </div>
             </div>
             <div className="hero-bottom">
-              <a href="#encuentro">Deslizá para brindar ↓</a>
+              <a href="#encuentro">Deslizá para brindar <Flecha dir="s" /></a>
               <button type="button" id="motion" aria-pressed={pausado} onClick={() => setPausado((p) => !p)}>
                 {pausado ? "Activar movimiento" : "Pausar movimiento"}
               </button>
@@ -302,7 +303,7 @@ export default function InvitacionNoir({ invitacion, personal }: { invitacion: D
                 )}
               </p>
               <a className="button light" href={lugar.mapa} target="_blank" rel="noopener noreferrer">
-                Cómo llegar <span>↗</span>
+                Cómo llegar <span><Flecha dir="ne" /></span>
               </a>
             </div>
             {invitacion.dressCode && (
@@ -385,7 +386,7 @@ export default function InvitacionNoir({ invitacion, personal }: { invitacion: D
                 </p>
               )}
               <button className="button" type="submit" disabled={r.enviando}>
-                {r.enviando ? "Reservando tu lugar…" : "Enviar mi respuesta"} <span>↗</span>
+                {r.enviando ? "Reservando tu lugar…" : "Enviar mi respuesta"} <span><Flecha dir="ne" /></span>
               </button>
             </form>
           )}

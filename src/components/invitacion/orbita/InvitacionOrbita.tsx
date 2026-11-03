@@ -7,6 +7,7 @@ import { COMIDAS } from "@/lib/rsvp-comun";
 import type { Personal } from "../personal";
 import { usarEnVista } from "../usarEnVista";
 import { usarRsvp } from "../usarRsvp";
+import Flecha from "../Flecha";
 
 /**
  * Estilo "Órbita": encuentro ejecutivo sobre papel claro. Una rueda de
@@ -139,10 +140,10 @@ export default function InvitacionOrbita({ invitacion, personal }: { invitacion:
             </p>
           </div>
           <a className="or-boton" href="#asistencia">
-            Confirmar asistencia <span aria-hidden="true">↗</span>
+            Confirmar asistencia <span aria-hidden="true"><Flecha dir="ne" /></span>
           </a>
           <div className="or-pie-links">
-            <a href="#agenda">Descubrí el encuentro ↓</a>
+            <a href="#agenda">Descubrí el encuentro <Flecha dir="s" /></a>
             <button type="button" onClick={() => setPausada((p) => !p)} aria-pressed={pausada}>
               {pausada ? "Activar galería" : "Pausar galería"}
             </button>
@@ -158,9 +159,7 @@ export default function InvitacionOrbita({ invitacion, personal }: { invitacion:
             <br />
             <em>Nuevas perspectivas.</em>
           </p>
-          <span className="or-circulo" aria-hidden="true">
-            ↘
-          </span>
+          <span className="or-circulo" aria-hidden="true"><Flecha dir="se" /></span>
         </div>
         <p className="or-intro">{o.mensaje}</p>
         <div className="or-foto-agenda">
@@ -179,7 +178,7 @@ export default function InvitacionOrbita({ invitacion, personal }: { invitacion:
           ))}
         </ol>
         <button type="button" className="or-texto-boton" onClick={ics}>
-          Agregar a mi calendario ↗
+          Agregar a mi calendario <Flecha dir="ne" />
         </button>
       </Escena>
 
@@ -198,7 +197,7 @@ export default function InvitacionOrbita({ invitacion, personal }: { invitacion:
           <div className="or-lugar-datos">
             <p>{lugar.direccion.replace(/, ([^,]+)$/, " · $1")}</p>
             <a className="or-boton or-boton--claro" href={lugar.mapa} target="_blank" rel="noopener noreferrer">
-              Ver ubicación <span aria-hidden="true">↗</span>
+              Ver ubicación <span aria-hidden="true"><Flecha dir="ne" /></span>
             </a>
             {invitacion.dressCode && (
               <div className="or-vestimenta">
@@ -264,7 +263,7 @@ export default function InvitacionOrbita({ invitacion, personal }: { invitacion:
             {r.falta && (!r.nombre.trim() || r.asiste === null) && <p className="or-aviso">Falta tu nombre y si vas a venir.</p>}
             {r.errorEnvio && <p role="alert" className="or-aviso">{r.errorEnvio}</p>}
             <button type="button" className="or-boton" onClick={r.enviar} disabled={r.enviando}>
-              {r.enviando ? "Reservando tu lugar…" : "Confirmar mi asistencia"} <span aria-hidden="true">↗</span>
+              {r.enviando ? "Reservando tu lugar…" : "Confirmar mi asistencia"} <span aria-hidden="true"><Flecha dir="ne" /></span>
             </button>
           </div>
         )}

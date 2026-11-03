@@ -7,6 +7,7 @@ import { COMIDAS } from "@/lib/rsvp-comun";
 import type { Personal } from "../personal";
 import { usarEnVista } from "../usarEnVista";
 import { usarRsvp } from "../usarRsvp";
+import Flecha from "../Flecha";
 
 /**
  * Estilo "Sobremesa": cena ejecutiva en blanco cálido, tinta y borgoña. La
@@ -104,7 +105,7 @@ export default function InvitacionSobremesa({ invitacion, personal }: { invitaci
           </p>
         </div>
         <a href="#encuentro" className="so-bajar">
-          Descubrí la noche <span aria-hidden="true">↓</span>
+          Descubrí la noche <span aria-hidden="true"><Flecha dir="s" /></span>
         </a>
       </Escena>
 
@@ -168,7 +169,7 @@ export default function InvitacionSobremesa({ invitacion, personal }: { invitaci
           <div className="so-lugar-datos">
             <p>{lugar.direccion.replace(/, ([^,]+)$/, " · $1")}</p>
             <a className="so-boton" href={lugar.mapa} target="_blank" rel="noopener noreferrer">
-              Ver ubicación <span aria-hidden="true">↗</span>
+              Ver ubicación <span aria-hidden="true"><Flecha dir="ne" /></span>
             </a>
             {invitacion.dressCode && (
               <div className="so-vestimenta">
@@ -236,7 +237,7 @@ export default function InvitacionSobremesa({ invitacion, personal }: { invitaci
             {r.falta && (!r.nombre.trim() || r.asiste === null) && <p className="so-aviso">Falta tu nombre y si vas a venir.</p>}
             {r.errorEnvio && <p role="alert" className="so-aviso">{r.errorEnvio}</p>}
             <button type="button" className="so-boton so-boton--lleno" onClick={r.enviar} disabled={r.enviando}>
-              {r.enviando ? "Reservando tu lugar…" : "Confirmar asistencia"} <span aria-hidden="true">↗</span>
+              {r.enviando ? "Reservando tu lugar…" : "Confirmar asistencia"} <span aria-hidden="true"><Flecha dir="ne" /></span>
             </button>
           </div>
         )}
@@ -265,7 +266,7 @@ export default function InvitacionSobremesa({ invitacion, personal }: { invitaci
           </p>
           <p className="so-marca so-marca--cierre">{s.anfitrion}</p>
           <a href="#asistencia" className="so-enlace">
-            Confirmar asistencia ↗
+            Confirmar asistencia <Flecha dir="ne" />
           </a>
         </div>
       </Escena>

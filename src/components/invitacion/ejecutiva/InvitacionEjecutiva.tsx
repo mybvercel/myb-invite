@@ -6,6 +6,7 @@ import type { InvitacionEjecutiva as Datos } from "@/invitaciones/tipos";
 import { COMIDAS } from "@/lib/rsvp-comun";
 import type { Personal } from "../personal";
 import { usarRsvp } from "../usarRsvp";
+import Flecha from "../Flecha";
 
 /**
  * Estilos ejecutivos "Círculo privado" y "Entre platos": una misma estructura
@@ -108,11 +109,11 @@ export default function InvitacionEjecutiva({ invitacion, personal }: { invitaci
               </span>
             </div>
             <a className="ej-enlace" href="#asistencia">
-              Confirmar asistencia ↗
+              Confirmar asistencia <Flecha dir="ne" />
             </a>
           </div>
           <a className="ej-bajar" href="#agenda">
-            Descubrí el encuentro ↓
+            Descubrí el encuentro <Flecha dir="s" />
           </a>
         </section>
 
@@ -152,7 +153,7 @@ export default function InvitacionEjecutiva({ invitacion, personal }: { invitaci
             </h2>
             <p className="ej-direccion">{lugar.direccion.replace(/, ([^,]+)$/, " · $1")}</p>
             <a className="ej-boton ej-boton--claro" href={lugar.mapa} target="_blank" rel="noopener noreferrer">
-              Cómo llegar <span aria-hidden="true">↗</span>
+              Cómo llegar <span aria-hidden="true"><Flecha dir="ne" /></span>
             </a>
             {invitacion.dressCode && (
               <div className="ej-vestimenta">
@@ -217,7 +218,7 @@ export default function InvitacionEjecutiva({ invitacion, personal }: { invitaci
               {r.falta && (!r.nombre.trim() || r.asiste === null) && <p className="ej-aviso">Falta tu nombre y si vas a venir.</p>}
               {r.errorEnvio && <p role="alert" className="ej-aviso">{r.errorEnvio}</p>}
               <button type="button" className="ej-boton" onClick={r.enviar} disabled={r.enviando}>
-                {r.enviando ? "Reservando tu lugar…" : "Enviar mi respuesta"} <span aria-hidden="true">↗</span>
+                {r.enviando ? "Reservando tu lugar…" : "Enviar mi respuesta"} <span aria-hidden="true"><Flecha dir="ne" /></span>
               </button>
             </div>
           )}
