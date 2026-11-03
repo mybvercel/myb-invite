@@ -302,7 +302,16 @@
 .tid-globo:hover { background: #189247; transform: translateY(-2px); }
 .tid-globo:active { transform: translateY(0) scale(0.97); }
 .tid-globo__texto { display: none; }
-@media (min-width: 30rem) { .tid-globo__texto { display: inline; } }
+.tid-globo__barra { display: inline; }
+@media (min-width: 40rem) { .tid-globo__texto { display: inline; } .tid-globo__barra { display: none; } }
+/* En el celular es una barra ancha abajo: el botón siempre a un toque. */
+@media (max-width: 39.99rem) {
+  .tid-globo {
+    inset-inline: 0.75rem; bottom: max(0.75rem, env(safe-area-inset-bottom)); right: 0.75rem;
+    justify-content: center; min-height: 3.4rem; font-size: 1rem; font-weight: 700;
+  }
+  .tid-pie { padding-bottom: 6rem; }
+}
 
 /* ── Pie ───────────────────────────────────────────────────── */
 
@@ -325,3 +334,18 @@
 .tid-plan__precio { flex-wrap: wrap; }
 .tid-plan__antes { flex-basis: 100%; font-size: 1.05rem; color: var(--tid-tenue, #6b6b66); text-decoration: line-through; text-decoration-thickness: 1px; font-variant-numeric: tabular-nums; }
 .tid-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ── Más llamados a la acción ──────────────────────────────── */
+
+.tid-boton--grande { min-height: 3.4rem; padding-inline: 2.2rem; font-size: 1rem; }
+.tid-hero__acciones { display: flex; flex-direction: column; align-items: center; gap: 0.7rem; margin-top: clamp(1.5rem, 4vw, 2.25rem); }
+.tid-hero__nota { font-size: 0.85rem; color: var(--gris); }
+.tid-modelo__pedir { width: 100%; padding: 0.7rem 1rem; font-size: 0.85rem; margin-top: 0.15rem; }
+.tid-cta-fila { display: flex; justify-content: center; margin-top: clamp(1.5rem, 4vw, 2.25rem); }
+.tid-cierre .tid-marco { display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }
+@media (max-width: 39.99rem) {
+  .tid-hero__acciones .tid-boton, .tid-cierre .tid-boton, .tid-cta-fila .tid-boton, .tid-vacio .tid-boton { width: 100%; }
+}
+.tid-modelos > li { display: flex; flex-direction: column; gap: 0.65rem; }
+.tid .tid-boton--lleno, .tid .tid-globo { color: #fff; }
+.tid .tid-plan--destacado .tid-boton--lleno { color: var(--verde-hondo); }

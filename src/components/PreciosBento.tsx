@@ -63,7 +63,7 @@ type Props = {
 };
 
 export default function PreciosBento({ plan, evento, modelos }: Props) {
-  const mensaje = whatsappPara(`Hola! Quiero consultar el precio de la invitación digital para ${evento}.`);
+  const mensaje = whatsappPara(`Hola! Quiero mi invitación digital para ${evento}. ¿Me pasan el valor?`);
 
   return (
     <div className="tid-bento">
@@ -73,8 +73,8 @@ export default function PreciosBento({ plan, evento, modelos }: Props) {
 
         {/* El precio no se publica: se consulta, así se responde con el
             diseño y las fechas del evento a la vista. */}
-        <p className="tid-bento__consulta">Consultá el precio</p>
-        <p className="tid-bento__consulta-sub">Te lo pasamos por WhatsApp, en minutos.</p>
+        <p className="tid-bento__consulta">Tu invitación, lista para mandar.</p>
+        <p className="tid-bento__consulta-sub">El valor te lo pasamos por WhatsApp, en minutos.</p>
 
         <p className="tid-bento__unico">Un solo pago. Sin mensualidad. Un año publicada.</p>
 
@@ -95,7 +95,7 @@ export default function PreciosBento({ plan, evento, modelos }: Props) {
         </ol>
 
         <a href={mensaje} target="_blank" rel="noopener noreferrer" className="tid-bento__cta">
-          Consultar el precio
+          Quiero mi invitación
           <ArrowRight size={18} aria-hidden="true" />
         </a>
         <p className="tid-bento__micro">Te respondemos por WhatsApp y te mostramos cómo quedaría. Sin compromiso.</p>

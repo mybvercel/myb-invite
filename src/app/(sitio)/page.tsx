@@ -156,6 +156,18 @@ export default function Invitaciones() {
                 />
               ))}
             </div>
+            <div className="tid-hero__acciones">
+              <a
+                href={whatsappPara("Hola! Quiero mi invitación digital. ¿Me ayudan a elegir?")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tid-boton tid-boton--lleno"
+              >
+                <MessageCircle size={18} aria-hidden="true" />
+                Quiero mi invitación
+              </a>
+              <p className="tid-hero__nota">¿No sabés cuál elegir? Te ayudamos por WhatsApp.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -193,6 +205,16 @@ export default function Invitaciones() {
                           </span>
                           <span className="tid-modelo__nombre">{d.nombre}</span>
                         </Link>
+                        <a
+                          href={whatsappPara(
+                            `Hola! Quiero la invitación "${d.nombre}" para ${categoria.titulo.toLowerCase()}.`
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="tid-boton tid-boton--lleno tid-modelo__pedir"
+                        >
+                          Quiero este
+                        </a>
                       </li>
                     ))}
                   </ul>
@@ -214,7 +236,7 @@ export default function Invitaciones() {
                     rel="noopener noreferrer"
                     className="tid-boton tid-boton--lleno"
                   >
-                    Consultar diseño
+                    Quiero un diseño a medida
                   </a>
                 </div>
               </div>
@@ -234,6 +256,18 @@ export default function Invitaciones() {
                     </li>
                   ))}
                 </ul>
+                <div className="tid-cta-fila">
+                  <a
+                    href={whatsappPara(
+                      `Hola! Quiero mi invitación digital para ${categoria.titulo.toLowerCase()}.`
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tid-boton tid-boton--lleno"
+                  >
+                    Quiero mi invitación
+                  </a>
+                </div>
               </div>
             </section>
 
@@ -286,6 +320,23 @@ export default function Invitaciones() {
             <Preguntas />
           </div>
         </section>
+
+        {/* Cierre: quien llegó hasta acá ya tiene el botón a mano */}
+        <section className="tid-seccion tid-cierre">
+          <div className="tid-marco tid-marco--angosto">
+            <h2 className="tid-titulo tid-h2">Tu lista se arma sola. Empezá hoy.</h2>
+            <p className="tid-plomo">Escribinos y en minutos te mostramos cómo quedaría tu invitación.</p>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tid-boton tid-boton--lleno tid-boton--grande"
+            >
+              <MessageCircle size={18} aria-hidden="true" />
+              Quiero mi invitación
+            </a>
+          </div>
+        </section>
       </div>
 
       {/* ── Contacto ── */}
@@ -298,6 +349,7 @@ export default function Invitaciones() {
       >
         <MessageCircle size={20} strokeWidth={2} aria-hidden="true" />
         <span className="tid-globo__texto">Escribinos</span>
+        <span className="tid-globo__barra">Quiero mi invitación</span>
       </a>
     </>
   );
