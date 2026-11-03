@@ -1,0 +1,132 @@
+/* ── Precios: vitrina ─────────────────────────────────────────
+   Un cuadrado grande con el plan y dos tarjetas al lado: lo que ven los
+   invitados (arriba) y lo que ve quien organiza (abajo). Vive bajo .tid. */
+
+.tid .tid-bento { display: grid; gap: clamp(0.85rem, 2vw, 1.25rem); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 58rem) {
+  .tid .tid-bento { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); grid-template-rows: auto auto; align-items: stretch; }
+  .tid .tid-bento__plan { grid-row: 1 / span 2; }
+}
+
+.tid .tid-bento > article {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  padding: clamp(1.4rem, 3vw, 2.1rem);
+  border: 1px solid var(--linea);
+  background: var(--blanco);
+  box-shadow: var(--sombra);
+}
+
+/* El plan */
+.tid .tid-bento > .tid-bento__plan {
+  background:
+    radial-gradient(60rem 28rem at 100% -10%, rgba(255, 255, 255, 0.16), transparent 60%),
+    linear-gradient(165deg, var(--verde) 0%, var(--verde-hondo) 100%);
+  border-color: var(--verde-hondo);
+  color: #fff;
+  box-shadow: var(--sombra-alta);
+}
+.tid .tid-bento__oferta {
+  align-self: flex-start;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--verde-hondo);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.tid .tid-bento__nombre { margin-top: 1.1rem; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+.tid .tid-bento__precio { margin-top: 1.1rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.9rem; }
+.tid .tid-bento__antes { flex-basis: 100%; font-size: 1.1rem; color: rgba(255, 255, 255, 0.66); text-decoration: line-through; text-decoration-thickness: 1px; font-variant-numeric: tabular-nums; }
+.tid .tid-bento__monto { display: flex; align-items: baseline; gap: 0.5rem; margin: 0; }
+.tid .tid-bento__monto span { font-size: clamp(3rem, 7vw, 4.4rem); font-weight: 300; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.tid .tid-bento__monto small { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.72); }
+.tid .tid-bento__ahorro { padding: 0.25rem 0.65rem; border-radius: 8px; background: rgba(255, 255, 255, 0.16); font-size: 0.82rem; font-weight: 600; }
+.tid .tid-bento__unico { margin-top: 0.8rem; font-size: 0.86rem; color: rgba(255, 255, 255, 0.78); }
+
+.tid .tid-bento__lista { margin: 1.6rem 0 1.8rem; padding-top: 1.4rem; border-top: 1px solid rgba(255, 255, 255, 0.2); display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.98rem; }
+.tid .tid-bento__lista li { display: flex; align-items: flex-start; gap: 0.7rem; line-height: 1.4; }
+.tid .tid-bento__lista svg { flex: none; margin-top: 0.1rem; padding: 2px; border-radius: 50%; background: #fff; color: var(--verde-hondo); width: 1.1rem; height: 1.1rem; }
+
+.tid .tid-bento__cta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.6rem;
+  padding: 0 1.5rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--verde-hondo);
+  font-size: 1.05rem;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  transition: transform 220ms var(--salida), box-shadow 220ms var(--salida);
+}
+.tid .tid-bento__cta svg { transition: transform 220ms var(--salida); }
+.tid .tid-bento__cta:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28); }
+.tid .tid-bento__cta:hover svg { transform: translateX(4px); }
+.tid .tid-bento__cta:active { transform: scale(0.98); }
+.tid .tid-bento__micro { margin-top: 0.9rem; text-align: center; font-size: 0.8rem; color: rgba(255, 255, 255, 0.78); }
+.tid .tid-bento__moneda { margin: 1rem auto 0; font-size: 0.74rem; color: rgba(255, 255, 255, 0.62); text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; cursor: pointer; }
+.tid .tid-bento__moneda:hover { color: #fff; }
+
+/* Las dos tarjetas de al lado */
+.tid .tid-bento__titulo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; }
+.tid .tid-bento__bajada { margin-top: 0.4rem; font-size: 0.9rem; color: var(--gris); max-width: 38ch; }
+.tid .tid-bento > .tid-bento__ven { background: var(--hueso); }
+
+.tid .tid-bento__fotos { margin-top: 1.2rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+.tid .tid-bento__foto { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 12px; border: 1px solid var(--linea); box-shadow: var(--sombra); }
+.tid .tid-bento__foto img { object-fit: cover; transition: transform 600ms var(--salida); }
+.tid .tid-bento__foto:hover img { transform: scale(1.06); }
+.tid .tid-bento__fotos li:nth-child(2) { transform: translateY(-6px); }
+
+.tid .tid-bento__chips { margin-top: 1.1rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tid .tid-bento__chips li { padding: 0.32rem 0.7rem; border-radius: 999px; border: 1px solid var(--verde-linea); background: var(--blanco); font-size: 0.78rem; font-weight: 500; color: var(--verde-hondo); }
+.tid .tid-bento__chips--vos { margin-top: auto; padding-top: 1.1rem; }
+.tid .tid-bento__chips--vos li { background: var(--verde-vel); }
+
+/* Maqueta del panel */
+.tid .tid-mock { position: relative; margin-top: 1.2rem; padding: 1rem; border-radius: 14px; border: 1px solid var(--linea); background: var(--hueso); }
+.tid .tid-mock__cifras { display: flex; gap: 1.4rem; margin: 0; }
+.tid .tid-mock__cifras p { margin: 0; display: flex; flex-direction: column; }
+.tid .tid-mock__cifras b { font-size: 1.55rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tid .tid-mock__cifras p:first-child b { color: var(--verde); }
+.tid .tid-mock__cifras span { font-size: 0.7rem; color: var(--gris-tenue); }
+.tid .tid-mock__barra { margin-top: 0.8rem; height: 6px; border-radius: 3px; background: var(--linea); overflow: hidden; }
+.tid .tid-mock__barra span { display: block; width: 81%; height: 100%; background: var(--verde); border-radius: 3px; }
+.tid .tid-mock__filas { margin: 0.8rem 0 0; display: flex; flex-direction: column; }
+.tid .tid-mock__filas li { display: grid; grid-template-columns: 0.5rem minmax(0, 1.4fr) minmax(0, 1fr) auto; align-items: center; gap: 0.6rem; padding: 0.5rem 0; border-top: 1px solid var(--linea); font-size: 0.78rem; }
+.tid .tid-mock__filas b { font-weight: 600; }
+.tid .tid-mock__filas span { color: var(--gris-tenue); }
+.tid .tid-mock__filas em { font-style: normal; font-size: 0.7rem; padding: 0.1rem 0.45rem; border-radius: 6px; background: var(--verde-vel); color: var(--verde-hondo); }
+.tid .tid-mock__punto { width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+.tid .tid-mock__punto--si { background: var(--verde); }
+.tid .tid-mock__punto--no { border: 1.5px solid var(--gris-tenue); }
+.tid .tid-mock__ej { position: absolute; top: 0.7rem; right: 0.8rem; font-size: 0.64rem; color: var(--gris-tenue); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tid .tid-bento__cta, .tid .tid-bento__cta svg, .tid .tid-bento__foto img { transition: none; }
+}
+
+/* Cómo sigue: bajar la fricción antes del botón */
+.tid .tid-bento__pasos { margin: 0 0 1.6rem; padding: 0; list-style: none; display: grid; gap: 0.7rem; counter-reset: paso; }
+.tid .tid-bento__pasos li { counter-increment: paso; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.92); }
+.tid .tid-bento__pasos li::before {
+  content: counter(paso);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.tid .tid-bento__sub { margin: 0 0 0.9rem; font-size: 0.95rem; font-weight: 700; }

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./invitaciones.css";
+import "./bento.css";
 import MetaPixel from "@/components/MetaPixel";
 import { SITE_URL } from "@/lib/site";
 

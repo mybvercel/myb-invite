@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Briefcase, Cake, Check, Heart, MessageCircle } from "lucide-react";
+import PreciosBento from "@/components/PreciosBento";
 import { GlowCard } from "@/components/ui/spotlight-card";
 import {
   CATEGORIAS,
@@ -15,7 +16,6 @@ import {
   WHATSAPP,
   detectarMoneda,
   enlaceDemo,
-  formatearPrecio,
   whatsappPara,
   type Categoria,
   type Moneda,
@@ -264,62 +264,19 @@ export default function Invitaciones() {
             <section className="tid-seccion">
               <div className="tid-marco">
                 <div className="tid-encabezado tid-encabezado--centro">
-                  <h2 className="tid-titulo tid-h2">Un pago y listo.</h2>
-                  <p className="tid-moneda">
-                    Precios en {moneda}
-                    <button
-                      type="button"
-                      className="tid-moneda__boton"
-                      onClick={() => setMoneda(moneda === "ARS" ? "USD" : "ARS")}
-                    >
-                      Ver en {moneda === "ARS" ? "USD" : "ARS"}
-                    </button>
+                  <h2 className="tid-titulo tid-h2">Un pago, todo incluido.</h2>
+                  <p className="tid-plomo">
+                    La invitación que reciben tus invitados y el panel con el que organizás todo.
                   </p>
                 </div>
 
-                <ul className="tid-planes">
-                  {PLANES.map((p) => (
-                    <li
-                      key={p.nombre}
-                      className={`tid-plan${p.destacado ? " tid-plan--destacado" : ""}`}
-                    >
-                      {p.antes && <span className="tid-plan__cinta">Oferta</span>}
-                      <h3 className="tid-plan__nombre">{p.nombre}</h3>
-                      <p className="tid-plan__precio">
-                        {p.antes && (
-                          <span className="tid-plan__antes">
-                            <span className="tid-sr">Antes </span>
-                            {formatearPrecio(p.antes[moneda], moneda)}
-                          </span>
-                        )}
-                        <span className="tid-plan__monto">
-                          {formatearPrecio(p.precio[moneda], moneda)}
-                        </span>
-                        <span className="tid-plan__moneda">{moneda}</span>
-                      </p>
-                      <p className="tid-plan__unico">Pago único, sin mensualidad</p>
-
-                      <ul className="tid-plan__items">
-                        {p.items.map((i) => (
-                          <li key={i}>{i}</li>
-                        ))}
-                      </ul>
-
-                      <a
-                        href={whatsappPara(
-                          `Hola! Quiero la invitación digital para ${categoria.titulo.toLowerCase()}, plan ${p.nombre}.`
-                        )}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`tid-boton ${
-                          p.destacado ? "tid-boton--lleno" : "tid-boton--linea"
-                        } tid-plan__cta`}
-                      >
-                        Quiero esta
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                <PreciosBento
+                  plan={PLANES[0]}
+                  moneda={moneda}
+                  onMoneda={() => setMoneda(moneda === "ARS" ? "USD" : "ARS")}
+                  evento={categoria.titulo.toLowerCase()}
+                  modelos={modelos.length > 0 ? modelos : DISENOS.slice(0, 3)}
+                />
               </div>
             </section>
 
