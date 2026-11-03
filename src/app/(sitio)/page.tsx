@@ -14,7 +14,6 @@ import {
   PREGUNTAS,
   RESENAS,
   WHATSAPP,
-  detectarMoneda,
   enlaceDemo,
   whatsappPara,
   type Categoria,
@@ -33,19 +32,11 @@ const ICONO: Record<TipoEvento, typeof Heart> = {
    ───────────────────────────────────────────────────────────── */
 
 /**
- * Arranca en pesos, que es lo que ve la mayoría, y el navegador corrige a
- * dólares después del montaje si la zona horaria no es argentina. Así la
- * página sigue siendo estática y nadie tiene que elegir su país.
+ * Siempre arranca en pesos, sin importar desde dónde se mire. Quien quiere ver
+ * dólares lo cambia con el botón de la tarjeta del plan.
  */
 function useMoneda() {
-  const [moneda, setMoneda] = useState<Moneda>("ARS");
-
-  useEffect(() => {
-    const cuadro = requestAnimationFrame(() => setMoneda(detectarMoneda()));
-    return () => cancelAnimationFrame(cuadro);
-  }, []);
-
-  return [moneda, setMoneda] as const;
+  return useState<Moneda>("ARS");
 }
 
 /* ─────────────────────────────────────────────────────────────
