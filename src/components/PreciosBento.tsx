@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
-import { enlaceDemo, formatearPrecio, whatsappPara, type Diseno, type Moneda, type Plan } from "@/lib/invitaciones";
+import { enlaceDemo, whatsappPara, type Diseno, type Plan } from "@/lib/invitaciones";
 
 /**
- * Los precios, armados como una vitrina: a la izquierda el plan con el precio
- * y lo que más pesa en la decisión, y a la derecha dos tarjetas que muestran
+ * El plan, armado como una vitrina: a la izquierda el plan con lo
+ * que más pesa en la decisión, y a la derecha dos tarjetas que muestran
  * las dos mitades del producto — lo que ven los invitados y lo que ve quien
  * organiza.
  *
@@ -58,36 +58,23 @@ const FILAS = [
 
 type Props = {
   plan: Plan;
-  moneda: Moneda;
-  onMoneda: () => void;
   evento: string;
   modelos: Diseno[];
 };
 
-export default function PreciosBento({ plan, moneda, onMoneda, evento, modelos }: Props) {
-  const ahorro = plan.antes ? plan.antes[moneda] - plan.precio[moneda] : 0;
-  const mensaje = whatsappPara(`Hola! Quiero la invitación digital para ${evento}, plan ${plan.nombre}.`);
+export default function PreciosBento({ plan, evento, modelos }: Props) {
+  const mensaje = whatsappPara(`Hola! Quiero consultar el precio de la invitación digital para ${evento}.`);
 
   return (
     <div className="tid-bento">
       {/* ── El plan: el cuadrado grande ── */}
       <article className="tid-bento__plan">
-        {plan.antes && <span className="tid-bento__oferta">Oferta de lanzamiento</span>}
         <h3 className="tid-bento__nombre">{plan.nombre}</h3>
 
-        <div className="tid-bento__precio">
-          {plan.antes && (
-            <span className="tid-bento__antes">
-              <span className="tid-sr">Antes </span>
-              {formatearPrecio(plan.antes[moneda], moneda)}
-            </span>
-          )}
-          <p className="tid-bento__monto">
-            <span>{formatearPrecio(plan.precio[moneda], moneda)}</span>
-            <small>{moneda}</small>
-          </p>
-          {ahorro > 0 && <span className="tid-bento__ahorro">Ahorrás {formatearPrecio(ahorro, moneda)}</span>}
-        </div>
+        {/* El precio no se publica: se consulta, así se responde con el
+            diseño y las fechas del evento a la vista. */}
+        <p className="tid-bento__consulta">Consultá el precio</p>
+        <p className="tid-bento__consulta-sub">Te lo pasamos por WhatsApp, en minutos.</p>
 
         <p className="tid-bento__unico">Un solo pago. Sin mensualidad. Un año publicada.</p>
 
@@ -108,14 +95,10 @@ export default function PreciosBento({ plan, moneda, onMoneda, evento, modelos }
         </ol>
 
         <a href={mensaje} target="_blank" rel="noopener noreferrer" className="tid-bento__cta">
-          Quiero mi invitación
+          Consultar el precio
           <ArrowRight size={18} aria-hidden="true" />
         </a>
         <p className="tid-bento__micro">Te respondemos por WhatsApp y te mostramos cómo quedaría. Sin compromiso.</p>
-
-        <button type="button" className="tid-bento__moneda" onClick={onMoneda}>
-          Precios en {moneda} · ver en {moneda === "ARS" ? "USD" : "ARS"}
-        </button>
       </article>
 
       {/* ── Lo que ven los invitados ── */}

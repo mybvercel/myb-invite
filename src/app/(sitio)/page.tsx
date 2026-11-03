@@ -17,7 +17,6 @@ import {
   enlaceDemo,
   whatsappPara,
   type Categoria,
-  type Moneda,
   type TipoEvento,
 } from "@/lib/invitaciones";
 
@@ -26,18 +25,6 @@ const ICONO: Record<TipoEvento, typeof Heart> = {
   cumples: Cake,
   profesional: Briefcase,
 };
-
-/* ─────────────────────────────────────────────────────────────
-   Moneda
-   ───────────────────────────────────────────────────────────── */
-
-/**
- * Siempre arranca en pesos, sin importar desde dónde se mire. Quien quiere ver
- * dólares lo cambia con el botón de la tarjeta del plan.
- */
-function useMoneda() {
-  return useState<Moneda>("ARS");
-}
 
 /* ─────────────────────────────────────────────────────────────
    Elección de evento
@@ -128,7 +115,6 @@ function Preguntas() {
 
 export default function Invitaciones() {
   const [elegido, setElegido] = useState<TipoEvento | null>(null);
-  const [moneda, setMoneda] = useMoneda();
   const resultadoRef = useRef<HTMLDivElement>(null);
 
   const categoria = CATEGORIAS.find((c) => c.id === elegido);
@@ -263,8 +249,6 @@ export default function Invitaciones() {
 
                 <PreciosBento
                   plan={PLANES[0]}
-                  moneda={moneda}
-                  onMoneda={() => setMoneda(moneda === "ARS" ? "USD" : "ARS")}
                   evento={categoria.titulo.toLowerCase()}
                   modelos={modelos.length > 0 ? modelos : DISENOS.slice(0, 3)}
                 />
