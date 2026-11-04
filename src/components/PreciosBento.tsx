@@ -21,7 +21,7 @@ import { enlaceDemo, whatsappPara, type Diseno, type Plan } from "@/lib/invitaci
 const DESTACADOS = [
   "Diseño personalizado con tus fotos y tu estilo",
   "Confirmación de asistencia automática",
-  "Panel con lista en vivo y Excel",
+  "Panel con la lista de invitados en vivo",
   "Plano del salón y mesas ubicadas solas",
   "Entrega en 3 días hábiles",
 ];
@@ -33,7 +33,7 @@ const PASOS = [
 ];
 
 const VEN = [
-  "Sobre que se abre",
+  "Animación de apertura",
   "Cuenta regresiva",
   "Mapa del lugar",
   "Dress code",
@@ -45,7 +45,7 @@ const VEN = [
 
 const VOS = [
   "Quién confirmó, en vivo",
-  "Lista en Excel",
+  "Lista de invitados",
   "Un link por familia",
   "Plano y mesas, con voz o texto",
 ];
