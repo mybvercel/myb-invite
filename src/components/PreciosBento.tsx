@@ -18,18 +18,12 @@ import { enlaceDemo, whatsappPara, type Diseno, type Plan } from "@/lib/invitaci
  * al precio, que es donde se decide.
  */
 
-const DESTACADOS = [
-  "Diseño personalizado con tus fotos y tu estilo",
-  "Confirmación de asistencia automática",
+/** Lo que no cambia según el evento: va primero y al final de la lista. */
+const AL_PRINCIPIO = "Diseño personalizado con tus fotos y tu estilo";
+const AL_FINAL = [
   "Panel con la lista de invitados en vivo",
   "Plano del salón y mesas ubicadas solas",
   "Entrega en 3 días hábiles",
-];
-
-const PASOS = [
-  "Nos escribís por WhatsApp",
-  "Armamos tu diseño con tus fotos y datos",
-  "En 3 días hábiles te pasamos el link para compartir",
 ];
 
 const VEN = [
@@ -54,10 +48,12 @@ const FILAS = [
 type Props = {
   plan: Plan;
   evento: string;
+  /** Lo que incluye el plan para este tipo de evento. */
+  incluye: string[];
   modelos: Diseno[];
 };
 
-export default function PreciosBento({ plan, evento, modelos }: Props) {
+export default function PreciosBento({ plan, evento, incluye, modelos }: Props) {
   const mensaje = whatsappPara(`Hola! Quiero mi invitación digital para ${evento}. ¿Me pasan el valor?`);
 
   return (
@@ -74,20 +70,13 @@ export default function PreciosBento({ plan, evento, modelos }: Props) {
         <p className="tid-bento__unico">Un solo pago. Sin mensualidad. Un año publicada.</p>
 
         <ul className="tid-bento__lista">
-          {DESTACADOS.map((d) => (
+          {[AL_PRINCIPIO, ...incluye, ...AL_FINAL].map((d) => (
             <li key={d}>
               <Check size={16} aria-hidden="true" />
               {d}
             </li>
           ))}
         </ul>
-
-        <p className="tid-bento__sub">Así de simple</p>
-        <ol className="tid-bento__pasos">
-          {PASOS.map((p) => (
-            <li key={p}>{p}</li>
-          ))}
-        </ol>
 
         <a href={mensaje} target="_blank" rel="noopener noreferrer" className="tid-bento__cta">
           Quiero mi invitación

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Briefcase, Cake, Check, Heart, MessageCircle } from "lucide-react";
+import { ArrowRight, Briefcase, Cake, Heart, MessageCircle } from "lucide-react";
 import PreciosBento from "@/components/PreciosBento";
 import { GlowCard } from "@/components/ui/spotlight-card";
 import {
@@ -242,35 +242,6 @@ export default function Invitaciones() {
               </div>
             </section>
 
-            {/* Qué incluye */}
-            <section className="tid-seccion tid-seccion--tenue">
-              <div className="tid-marco">
-                <div className="tid-encabezado">
-                  <h2 className="tid-titulo tid-h2">Todo esto, en un link.</h2>
-                </div>
-                <ul className="tid-incluye">
-                  {INCLUYE[categoria.id].map((x) => (
-                    <li key={x}>
-                      <Check size={16} className="tid-incluye__tilde" aria-hidden="true" />
-                      {x}
-                    </li>
-                  ))}
-                </ul>
-                <div className="tid-cta-fila">
-                  <a
-                    href={whatsappPara(
-                      `Hola! Quiero mi invitación digital para ${categoria.titulo.toLowerCase()}.`
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="tid-boton tid-boton--lleno"
-                  >
-                    Quiero mi invitación
-                  </a>
-                </div>
-              </div>
-            </section>
-
             {/* Precios */}
             <section className="tid-seccion">
               <div className="tid-marco">
@@ -284,6 +255,7 @@ export default function Invitaciones() {
                 <PreciosBento
                   plan={PLANES[0]}
                   evento={categoria.titulo.toLowerCase()}
+                  incluye={INCLUYE[categoria.id]}
                   modelos={modelos.length > 0 ? modelos : DISENOS.slice(0, 3)}
                 />
               </div>

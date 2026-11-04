@@ -199,7 +199,6 @@ export const INCLUYE: Record<TipoEvento, string[]> = {
     "Cuenta regresiva hasta el inicio",
     "Sede y accesos con mapa",
     "Registro de asistentes automático",
-    "Exportación de la lista a Excel",
     "Agenda del evento por bloques",
     "Logos y colores de tu marca",
     "Restricciones alimentarias del catering",
