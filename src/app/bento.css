@@ -132,3 +132,11 @@
   font-weight: 700;
 }
 .tid .tid-bento__sub { margin: 0 0 0.9rem; font-size: 0.95rem; font-weight: 700; }
+
+/* El plan se estira a la altura de las dos tarjetas de al lado: el aire
+   sobrante se reparte entre los beneficios en vez de quedar un hueco
+   antes del botón. */
+@media (min-width: 58rem) {
+  .tid .tid-bento__lista { flex: 1; justify-content: space-evenly; gap: 0.75rem; }
+  .tid .tid-bento__pasos { margin-bottom: 2rem; }
+}
