@@ -36,23 +36,18 @@ const VEN = [
   "Animación de apertura",
   "Cuenta regresiva",
   "Mapa del lugar",
-  "Dress code",
-  "Datos del regalo",
   "Música de fondo",
-  "Trivia",
   "Confirmar en 1 minuto",
 ];
 
 const VOS = [
   "Quién confirmó, en vivo",
   "Lista de invitados",
-  "Un link por familia",
-  "Plano y mesas, con voz o texto",
+  "Plano y mesas",
 ];
 
 const FILAS = [
   { quien: "Familia Gómez", dato: "4 personas", mesa: "Mesa 3", estado: "si" },
-  { quien: "Tía Marta", dato: "2 personas", mesa: "Mesa 3", estado: "si" },
   { quien: "Juan Pérez", dato: "sin respuesta", mesa: "—", estado: "no" },
 ];
 
