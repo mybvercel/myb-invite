@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8ddc9">
+  <title>Mis humanos se casan · Inés y Matías</title>
+  <link rel="stylesheet" href="acuarela.css">
+</head>
+<body>
+<main>
+  <header><span>Inés &amp; Matías</span><span>24 abril 2027</span></header>
+  <section class="cover" aria-labelledby="heading">
+    <h1 id="heading">Tenemos un secreto.</h1>
+    <svg id="stage" viewBox="0 0 390 472" role="img" aria-label="Dos perros de acuarela, con vestido y traje, caminan con las cintas de una carta de boda en la boca.">
+      <defs>
+        <image id="coverPhoto" href="assets/papel.webp" x="87" y="230" width="216" height="222" preserveAspectRatio="none"/>
+        <clipPath id="leftHalf"><rect x="84" y="227" width="111" height="230"/></clipPath>
+        <clipPath id="rightHalf"><rect x="195" y="227" width="112" height="230"/></clipPath>        <path id="wrapLine" d="M93 338Q150 337 195 338T297 338"/>
+      </defs>
+      <g id="paperScene">
+        <image href="assets/interior.webp" x="93" y="236" width="204" height="213" preserveAspectRatio="none"/>        <g text-anchor="middle">
+          <text x="195" y="271" class="letter-label">NOS CASAMOS</text>
+          <text x="195" y="319" class="names">Inés</text><text x="195" y="343" font-size="19">&amp;</text>
+          <text x="195" y="379" class="names">Matías</text><text x="195" y="418" font-size="14">24 · 04 · 2027</text>
+        </g>
+        <g id="leftGate"><use href="#coverPhoto" clip-path="url(#leftHalf)"/></g>
+        <g id="rightGate"><use href="#coverPhoto" clip-path="url(#rightHalf)"/></g>        <g id="wrap"><use href="#wrapLine" class="ribbon"/><use href="#wrapLine" class="silk"/></g>
+      </g>
+      <g class="threads"><path id="thread1"/><path id="thread2"/></g>
+      <g class="glints"><use href="#thread1"/><use href="#thread2"/></g>
+      <path id="bow" class="ribbon"/><use href="#bow" class="silk"/>
+      <g id="actors" aria-hidden="true"></g>
+    </svg>
+    <div class="actions"><button id="open">Desatar el moño</button><button id="jump" class="link">Ver la invitación</button></div>
+  </section>
+  <section id="details" hidden>
+    <section class="day" aria-labelledby="venue">
+      <div class="garden" aria-hidden="true"><div class="stems"></div></div>
+      <div class="venue">
+        <p>Sábado 24 de abril</p><h2 id="venue">Quinta<br>Las Moreras</h2>
+        <p class="address">Camino de los Álamos 240, Pilar</p>
+        <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Quinta%20Las%20Moreras%2C%20Camino%20de%20los%20%C3%81lamos%20240%2C%20Pilar%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener noreferrer" aria-label="Ver ubicación en Google Maps">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.3"/></svg>
+          Ver ubicación
+        </a>
+      </div>
+      <dl class="moments">
+        <div><dt>17:30</dt><dd>El sí, bajo la pérgola</dd></div>
+        <div><dt>18:15</dt><dd>Copas en el jardín</dd></div>
+        <div><dt>20:00</dt><dd>Cena y baile</dd></div>
+      </dl>
+    </section>
+    <section class="rsvp" aria-labelledby="question">
+      <div class="petals" aria-hidden="true"></div>
+      <h2 id="question">¿Venís a brindar?</h2><p>Confirmá antes del 10 de abril.</p>
+      <form id="guestForm">
+        <label for="guest">Tu nombre</label><input id="guest" name="guest" required maxlength="80" autocomplete="name" pattern=".*\S.*" title="Escribí tu nombre">
+        <fieldset><legend>¿Vas a venir?</legend>
+          <label><input required type="radio" name="attendance" value="yes"> Sí, voy</label>
+          <label><input type="radio" name="attendance" value="no"> No puedo ir</label>
+        </fieldset>
+        <button>Confirmar respuesta</button>
+      </form>
+      <div id="reply" tabindex="-1" hidden>
+        <figure id="portrait" hidden><img src="assets/testigos.webp" alt="Los dos testigos sostienen un cartel entre sus hocicos."><figcaption id="placard"></figcaption></figure>
+        <p id="response" role="status"></p><button id="editReply" class="link">Cambiar mi respuesta</button>
+      </div>
+      <small>Modelo de muestra con datos ficticios.<br>Tu respuesta solo se muestra en este dispositivo.</small>
+    </section>    <footer><button id="again" class="link">Volver a ver a los testigos</button></footer>
+  </section>
+</main>
+<script src="acuarela.js"></script>
+</body></html>
