@@ -88,14 +88,6 @@ export const DISENOS: Diseno[] = [
     enlace: "/i/joaquin-y-clara",
   },
   {
-    id: 15,
-    tipo: "bodas",
-    nombre: "Mis humanos",
-    imagen: "/invitaciones/mis-humanos/miniatura.webp",
-    acento: "#c9785a",
-    enlace: "/invitaciones/mis-humanos/index.html",
-  },
-  {
     id: 4,
     tipo: "cumples",
     nombre: "Disco Scrapbook",
