@@ -56,6 +56,14 @@ export const DISENOS: Diseno[] = [
   },
 
   {
+    id: 15,
+    tipo: "bodas",
+    nombre: "Mis humanos se casan",
+    imagen: "/invitaciones/demo/mis-humanos-se-casan/miniatura.webp",
+    acento: "#764451",
+    enlace: "/i/mis-humanos-se-casan",
+  },
+  {
     id: 1,
     tipo: "bodas",
     nombre: "Fotomatón",
