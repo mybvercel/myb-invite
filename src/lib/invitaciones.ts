@@ -190,6 +190,18 @@ export const enlaceDemo = (d: Diseno) =>
 
 /* ── Qué incluye ───────────────────────────────────────────── */
 
+/** Lo que se ve antes de elegir un evento: lo que sirve para cualquiera. */
+export const INCLUYE_GENERAL: string[] = [
+  "Cuenta regresiva hasta la hora del evento",
+  "Ubicación con su mapa",
+  "Confirmación de asistencia automática",
+  "Restricciones de comida por invitado",
+  "Álbum de fotos con QR para las mesas",
+  "Dress code y datos para el regalo",
+  "Tu canción sonando de fondo",
+  "Un link por invitado, con su nombre",
+];
+
 export const INCLUYE: Record<TipoEvento, string[]> = {
   bodas: [
     "Cuenta regresiva hasta la hora de la fiesta",

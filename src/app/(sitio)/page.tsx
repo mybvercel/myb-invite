@@ -10,6 +10,7 @@ import {
   CATEGORIAS,
   DISENOS,
   INCLUYE,
+  INCLUYE_GENERAL,
   PLANES,
   PREGUNTAS,
   RESENAS,
@@ -242,25 +243,6 @@ export default function Invitaciones() {
               </div>
             </section>
 
-            {/* Precios */}
-            <section className="tid-seccion">
-              <div className="tid-marco">
-                <div className="tid-encabezado tid-encabezado--centro">
-                  <h2 className="tid-titulo tid-h2">Un pago, todo incluido.</h2>
-                  <p className="tid-plomo">
-                    La invitación que reciben tus invitados y el panel con el que organizás todo.
-                  </p>
-                </div>
-
-                <PreciosBento
-                  plan={PLANES[0]}
-                  evento={categoria.titulo.toLowerCase()}
-                  incluye={INCLUYE[categoria.id]}
-                  modelos={modelos.length > 0 ? modelos : DISENOS.slice(0, 3)}
-                />
-              </div>
-            </section>
-
             {/* Reseñas: sólo si hay reseñas reales cargadas */}
             {RESENAS.length > 0 && (
               <section className="tid-seccion">
@@ -282,6 +264,25 @@ export default function Invitaciones() {
             )}
           </div>
         )}
+
+        {/* Precios: siempre a la vista, sin tener que elegir un evento */}
+            <section className="tid-seccion">
+              <div className="tid-marco">
+                <div className="tid-encabezado tid-encabezado--centro">
+                  <h2 className="tid-titulo tid-h2">Un pago, todo incluido.</h2>
+                  <p className="tid-plomo">
+                    La invitación que reciben tus invitados y el panel con el que organizás todo.
+                  </p>
+                </div>
+
+                <PreciosBento
+                  plan={PLANES[0]}
+                  evento={categoria ? categoria.titulo.toLowerCase() : "mi evento"}
+                  incluye={categoria ? INCLUYE[categoria.id] : INCLUYE_GENERAL}
+                  modelos={modelos.length > 0 ? modelos : DISENOS.slice(0, 3)}
+                />
+              </div>
+            </section>
 
         {/* Preguntas: valen para cualquier evento, así que están siempre */}
         <section className="tid-seccion tid-seccion--tenue">
