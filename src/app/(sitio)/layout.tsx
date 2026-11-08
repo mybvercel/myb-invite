@@ -24,7 +24,7 @@ export default function SitioLayout({ children }: { children: React.ReactNode })
                 className="tid-logo__marca"
                 priority
               />
-              Tu Invitación Digital
+              MyB Invite
             </Link>
 
             <a
@@ -43,7 +43,7 @@ export default function SitioLayout({ children }: { children: React.ReactNode })
         <footer className="tid-pie">
           <div className="tid-marco tid-pie__interior">
             <p className="tid-nota">
-              © {new Date().getFullYear()} Tu Invitación Digital · Córdoba, Argentina
+              © {new Date().getFullYear()} MyB Invite · Tu Invitación Digital · Córdoba, Argentina
             </p>
             <p className="tid-nota">
               Un producto de{" "}

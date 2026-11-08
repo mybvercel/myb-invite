@@ -4,7 +4,8 @@ import "./globals.css";
 import "./invitaciones.css";
 import "./bento.css";
 import MetaPixel from "@/components/MetaPixel";
-import { SITE_URL } from "@/lib/site";
+import { MARCA, SITE_URL } from "@/lib/site";
+import { GOOGLE_ESCRIBIR } from "@/lib/invitaciones";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
@@ -19,12 +20,14 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Tu Invitación Digital — invitaciones web para bodas, cumpleaños y eventos",
-    template: "%s · Tu Invitación Digital",
+    default: "MyB Invite | Invitaciones digitales para casamientos, cumpleaños y eventos",
+    template: "%s · MyB Invite",
   },
   description:
-    "Invitaciones digitales interactivas para casamientos, cumpleaños y eventos profesionales. Cuenta regresiva, ubicación con mapa, confirmación de asistencia automática y álbum de fotos. Pago único, entrega en 3 días.",
+    "MyB Invite: invitaciones digitales interactivas para casamientos, cumpleaños y eventos profesionales. Cuenta regresiva, ubicación con mapa, confirmación de asistencia automática y álbum de fotos. Pago único, entrega en 3 días.",
   keywords: [
+    "MyB Invite",
+    "mybinvite",
     "invitaciones digitales",
     "invitaciones web casamiento",
     "tarjetas digitales cumpleaños",
@@ -36,10 +39,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_AR",
     url: SITE_URL,
-    siteName: "Tu Invitación Digital",
+    siteName: "MyB Invite",
     // La vista previa de WhatsApp: un sobre con el sello de MyB.
     images: [{ url: "/og-myb.jpg", width: 1200, height: 630, alt: "MyB Invitation, invitaciones digitales" }],
-    title: "Tu Invitación Digital — invitaciones web para bodas, cumpleaños y eventos",
+    title: "MyB Invite | Invitaciones digitales para casamientos, cumpleaños y eventos",
     description:
       "La invitación que tus invitados abren en el celular: cuenta regresiva, mapa, confirmación automática y álbum de fotos compartido.",
   },
@@ -53,6 +56,36 @@ export const metadata: Metadata = {
  * grupo (sitio), para que las demos de /demo y las invitaciones de /i se vean
  * como la real: a pantalla completa y sin nada alrededor.
  */
+/**
+ * Le dice a Google cómo se llama el sitio y la empresa. Sin esto "MyB Invite"
+ * se confunde con "My Invite", que es otra marca.
+ */
+const DATOS_ESTRUCTURADOS = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#sitio`,
+      url: SITE_URL,
+      name: MARCA,
+      alternateName: ["MyB Invite", "MyBInvite", "mybinvite.com", "Tu Invitación Digital"],
+      inLanguage: "es-AR",
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#empresa`,
+      name: MARCA,
+      alternateName: ["MyB Invite", "Tu Invitación Digital", "MyB Digitals"],
+      url: SITE_URL,
+      logo: `${SITE_URL}/LogoMyB.png`,
+      description: "Invitaciones digitales para casamientos, cumpleaños y eventos, con confirmación de asistencia y panel de invitados.",
+      areaServed: "AR",
+      address: { "@type": "PostalAddress", addressLocality: "Córdoba", addressCountry: "AR" },
+      sameAs: [GOOGLE_ESCRIBIR.replace("/review", "")],
+    },
+  ],
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
@@ -64,6 +97,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <div className={`tid ${montserrat.variable}`}>{children}</div>
         <MetaPixel />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(DATOS_ESTRUCTURADOS) }}
+        />
       </body>
     </html>
   );
