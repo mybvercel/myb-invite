@@ -11,7 +11,7 @@ const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const jiti = createJiti(import.meta.url, { alias: { "@": path.join(raiz, "src") } });
 
 const { docVacio } = await jiti.import("../src/panel/tipos.ts");
-const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist } = await jiti.import("../src/panel/logica.ts");
+const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist, totalesPresupuesto, proximosPagos, rubrosSinCubrir, formatearMonto } = await jiti.import("../src/panel/logica.ts");
 const { aplicarPlantilla, PLANTILLAS } = await jiti.import("../src/panel/plantillas.ts");
 
 let fallas = 0;
@@ -78,6 +78,57 @@ igual("atrasadas: las no hechas y vencidas", tareasAtrasadas([t("1m"), { ...t("1
 // 5. Progreso.
 igual("progreso", progresoChecklist([{ hecha: true }, { hecha: false }, { hecha: true }, { hecha: false }]), { hechas: 2, total: 4, pct: 50 });
 igual("progreso vacío", progresoChecklist([]), { hechas: 0, total: 0, pct: 0 });
+
+// 6. Presupuesto: pesos y dólares por separado.
+const base = docVacio();
+base.equipo = [{ id: "e1", rubro: "fotografia", nombre: "Estudio Luz", contacto: "", telefono: "", email: "", estado: "contratado", esPersona: false, notas: "" }];
+base.cotizaciones = [
+  { id: "c1", rubro: "fotografia", responsableId: "e1", descripcion: "", monto: 1200, moneda: "USD", elegida: true, notas: "" },
+  { id: "c2", rubro: "fotografia", responsableId: null, descripcion: "", monto: 1500, moneda: "USD", elegida: false, notas: "" },
+  { id: "c3", rubro: "catering", responsableId: null, descripcion: "", monto: 6500000, moneda: "ARS", elegida: true, notas: "" },
+];
+base.pagos = [
+  { id: "p1", rubro: "fotografia", responsableId: "e1", concepto: "Seña", monto: 360, moneda: "USD", vence: "2026-10-01", pagado: true, pagadoEl: "2026-10-01" },
+  { id: "p2", rubro: "fotografia", responsableId: "e1", concepto: "Saldo", monto: 840, moneda: "USD", vence: "2026-11-20", pagado: false, pagadoEl: "" },
+  { id: "p3", rubro: "catering", responsableId: null, concepto: "Seña", monto: 1950000, moneda: "ARS", vence: "", pagado: true, pagadoEl: "2026-10-05" },
+];
+base.presupuesto = { tope: { ARS: 12000000, USD: 0 }, dolar: 0 };
+const tot = totalesPresupuesto(base);
+igual("USD comprometido sólo cuenta la elegida", tot.USD.comprometido, 1200);
+igual("USD falta pagar", tot.USD.falta, 840);
+igual("ARS no se mezcla con USD", [tot.ARS.comprometido, tot.ARS.pagado, tot.ARS.falta], [6500000, 1950000, 4550000]);
+igual("tope por moneda", [tot.ARS.tope, tot.USD.tope], [12000000, 0]);
+igual("próximos pagos: sólo los no pagados", proximosPagos(base.pagos).map((p) => p.id), ["p2"]);
+igual("formato en pesos", formatearMonto(6500000, "ARS").replace(/\s/g, " "), "$ 6.500.000");
+
+const sucio2 = {
+  ...base,
+  cotizaciones: [
+    { id: "x1", rubro: "fotografia", monto: 100, moneda: "EUR", elegida: true, responsableId: "no-existe" },
+    { id: "x2", rubro: "fotografia", monto: -50, moneda: "USD", elegida: true },
+    { id: "x3", rubro: "salon", monto: "mucho", moneda: "ARS" },
+  ],
+  pagos: [{ id: "y1", rubro: "otro", monto: 5, moneda: "USD", vence: "pronto", pagado: false, pagadoEl: "2026-01-01" }],
+  presupuesto: { tope: { ARS: -1, USD: "x" }, dolar: 1e12 },
+};
+const s2 = sanearDoc(sucio2, docVacio());
+igual("moneda inválida pasa a ARS", s2.cotizaciones[0].moneda, "ARS");
+igual("responsable inexistente pasa a null", s2.cotizaciones[0].responsableId, null);
+igual("una sola elegida por rubro", s2.cotizaciones.filter((c) => c.elegida).length, 1);
+igual("monto negativo pasa a 0", s2.cotizaciones[1].monto, 0);
+igual("monto inválido pasa a 0", s2.cotizaciones[2].monto, 0);
+igual("fecha de pago inválida se limpia", s2.pagos[0].vence, "");
+igual("pagadoEl se limpia si no está pagado", s2.pagos[0].pagadoEl, "");
+igual("tope y dólar acotados", [s2.presupuesto.tope.ARS, s2.presupuesto.tope.USD, s2.presupuesto.dolar], [0, 0, 1e7]);
+igual("viejo sin presupuesto", normalizar(viejo, "#2e6f4e").presupuesto, { tope: { ARS: 0, USD: 0 }, dolar: 0 });
+
+// 7. Rubros sin cubrir.
+const sc = docVacio();
+sc.tareas = [{ id: "t", titulo: "a", rubro: "luces" }, { id: "u", titulo: "b", rubro: "fotografia" }, { id: "v", titulo: "c", rubro: "otro" }];
+sc.equipo = [{ id: "e", rubro: "fotografia", nombre: "x", estado: "contratado" }];
+igual("rubros pedidos sin nadie", rubrosSinCubrir(sc), ["luces"]);
+sc.equipo[0].estado = "descartado";
+igual("un descartado no cubre", rubrosSinCubrir(sc), ["fotografia", "luces"]);
 
 console.log(fallas ? `\n${fallas} fallas` : "\nTodo bien");
 process.exit(fallas ? 1 : 0);

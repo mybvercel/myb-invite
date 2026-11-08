@@ -237,6 +237,48 @@ export type Tarea = {
   origen: "plantilla" | "manual";
 };
 
+/* ── Presupuesto ─────────────────────────────────────────────
+   Pesos y dólares conviven: cada cotización y cada pago lleva su moneda y se
+   suman por separado. El dólar de referencia es opcional y sólo sirve para
+   mostrar un total en pesos. */
+
+export type Moneda = "ARS" | "USD";
+
+export const MONEDAS: Moneda[] = ["ARS", "USD"];
+
+/** Una cotización que pasó un proveedor. Una sola por rubro es la elegida. */
+export type Cotizacion = {
+  id: string;
+  rubro: Rubro;
+  responsableId: string | null;
+  descripcion: string;
+  monto: number;
+  moneda: Moneda;
+  elegida: boolean;
+  notas: string;
+};
+
+export type Pago = {
+  id: string;
+  rubro: Rubro;
+  responsableId: string | null;
+  concepto: string;
+  monto: number;
+  moneda: Moneda;
+  /** "AAAA-MM-DD" o "". */
+  vence: string;
+  pagado: boolean;
+  /** "AAAA-MM-DD" o "". */
+  pagadoEl: string;
+};
+
+export type Presupuesto = {
+  /** Lo máximo que quieren gastar, por moneda. 0 = sin tope. */
+  tope: Record<Moneda, number>;
+  /** Cuántos pesos vale un dólar para sumar todo en pesos. 0 = no se suma. */
+  dolar: number;
+};
+
 /* ── Ajustes ─────────────────────────────────────────────────
    Todo lo automático es opcional: hay parejas que quieren decidir silla por
    silla, y el panel no puede decidir por ellas sin permiso. */
@@ -282,6 +324,9 @@ export type DocPanel = {
   tareas: Tarea[];
   /** Qué plantilla de checklist se cargó. Vacío: todavía no eligieron. */
   plantilla: Plantilla | "";
+  cotizaciones: Cotizacion[];
+  pagos: Pago[];
+  presupuesto: Presupuesto;
 };
 
 export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
@@ -295,4 +340,7 @@ export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
   equipo: [],
   tareas: [],
   plantilla: "",
+  cotizaciones: [],
+  pagos: [],
+  presupuesto: { tope: { ARS: 0, USD: 0 }, dolar: 0 },
 });

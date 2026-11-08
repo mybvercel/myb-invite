@@ -3,14 +3,18 @@ import {
   AJUSTES_INICIALES,
   docVacio,
   ETAPAS,
+  MONEDAS,
   RUBROS,
   type Ajustes,
   type Clase,
+  type Cotizacion,
   type DocPanel,
   type Elemento,
   type Enlace,
   type Etapa,
   type Invitado,
+  type Moneda,
+  type Pago,
   type Plantilla,
   type Responsable,
   type Rubro,
@@ -761,6 +765,49 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     ];
   });
 
+  const moneda = (v: unknown): Moneda => (v === "USD" ? "USD" : "ARS");
+  const eligio = new Set<Rubro>();
+  const cotizaciones: Cotizacion[] = (Array.isArray(d.cotizaciones) ? d.cotizaciones : []).slice(0, 400).map((x): Cotizacion => {
+    const c = x as Record<string, unknown>;
+    const r = rubro(c.rubro, "otro");
+    // Una sola elegida por rubro: si llegan varias, queda la primera.
+    const elegida = c.elegida === true && !eligio.has(r);
+    if (elegida) eligio.add(r);
+    return {
+      id: unico(c.id),
+      rubro: r,
+      responsableId: typeof c.responsableId === "string" && idsEquipo.has(c.responsableId) ? c.responsableId : null,
+      descripcion: txt(c.descripcion, 140),
+      monto: num(c.monto, 0, 1e11, 0),
+      moneda: moneda(c.moneda),
+      elegida,
+      notas: txt(c.notas, 400),
+    };
+  });
+
+  const pagos: Pago[] = (Array.isArray(d.pagos) ? d.pagos : []).slice(0, 400).map((x): Pago => {
+    const p = x as Record<string, unknown>;
+    const pagado = p.pagado === true;
+    return {
+      id: unico(p.id),
+      rubro: rubro(p.rubro, "otro"),
+      responsableId: typeof p.responsableId === "string" && idsEquipo.has(p.responsableId) ? p.responsableId : null,
+      concepto: txt(p.concepto, 80),
+      monto: num(p.monto, 0, 1e11, 0),
+      moneda: moneda(p.moneda),
+      vence: fechaISO(p.vence),
+      pagado,
+      pagadoEl: pagado ? fechaISO(p.pagadoEl) : "",
+    };
+  });
+
+  const pr = (d.presupuesto ?? {}) as Record<string, unknown>;
+  const tp = (pr.tope ?? {}) as Record<string, unknown>;
+  const presupuesto = {
+    tope: { ARS: num(tp.ARS, 0, 1e12, 0), USD: num(tp.USD, 0, 1e12, 0) },
+    dolar: num(pr.dolar, 0, 1e7, 0),
+  };
+
   const PLANTILLAS_ID: Plantilla[] = ["casamiento", "quince", "cumple", "empresa"];
 
   const a = (d.ajustes ?? {}) as Record<string, unknown>;
@@ -795,6 +842,9 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     equipo,
     tareas,
     plantilla: PLANTILLAS_ID.includes(d.plantilla as Plantilla) ? (d.plantilla as Plantilla) : "",
+    cotizaciones,
+    pagos,
+    presupuesto,
   };
 }
 
@@ -838,4 +888,53 @@ export function tareasAtrasadas(tareas: Tarea[], evento: Date | null) {
 export function progresoChecklist(tareas: Tarea[]) {
   const hechas = tareas.filter((t) => t.hecha).length;
   return { hechas, total: tareas.length, pct: tareas.length ? Math.round((hechas / tareas.length) * 100) : 0 };
+}
+
+/* ── Presupuesto ─────────────────────────────────────────────── */
+
+export type TotalesMoneda = {
+  /** Suma de las cotizaciones elegidas. */
+  comprometido: number;
+  pagado: number;
+  /** Lo que falta pagar de lo comprometido, nunca negativo. */
+  falta: number;
+  tope: number;
+  /** Hay algo cargado en esta moneda. */
+  hay: boolean;
+};
+
+export function totalesPresupuesto(doc: DocPanel): Record<Moneda, TotalesMoneda> {
+  const sale = {} as Record<Moneda, TotalesMoneda>;
+  for (const m of MONEDAS) {
+    const comprometido = doc.cotizaciones.filter((c) => c.elegida && c.moneda === m).reduce((t, c) => t + c.monto, 0);
+    const pagado = doc.pagos.filter((p) => p.pagado && p.moneda === m).reduce((t, p) => t + p.monto, 0);
+    sale[m] = {
+      comprometido,
+      pagado,
+      falta: Math.max(0, comprometido - pagado),
+      tope: doc.presupuesto.tope[m],
+      hay: comprometido > 0 || pagado > 0 || doc.presupuesto.tope[m] > 0,
+    };
+  }
+  return sale;
+}
+
+/** Los pagos que faltan, del más urgente al último. Sin fecha, al final. */
+export function proximosPagos(pagos: Pago[]) {
+  return pagos
+    .filter((p) => !p.pagado)
+    .sort((a, b) => (a.vence || "9999").localeCompare(b.vence || "9999"));
+}
+
+export const pagoVencido = (p: Pago) => !p.pagado && p.vence !== "" && p.vence < hoyISO();
+
+export function formatearMonto(n: number, m: Moneda) {
+  return new Intl.NumberFormat("es-AR", { style: "currency", currency: m, maximumFractionDigits: 0 }).format(n);
+}
+
+/** Rubros que aparecen en tareas pero no tienen a nadie asignado en el equipo. */
+export function rubrosSinCubrir(doc: DocPanel): Rubro[] {
+  const cubiertos = new Set(doc.equipo.filter((r) => r.estado !== "descartado").map((r) => r.rubro));
+  const pedidos = new Set(doc.tareas.map((t) => t.rubro).filter((r): r is Rubro => !!r && r !== "otro"));
+  return RUBROS.map((r) => r.id).filter((r) => pedidos.has(r) && !cubiertos.has(r));
 }

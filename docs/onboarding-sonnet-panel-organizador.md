@@ -744,9 +744,11 @@ moneda; no hay una "principal"). El dólar de referencia sigue siendo opcional.
 |---|---|
 | 0. Maqueta | Salteada: Benja pidió avanzar; se muestra con capturas del panel real. |
 | 1. Menú lateral | Hecha (`Menu.tsx`, columna fija desde 64rem y cajón en celular). |
-| 2. Modelo de datos | Parcial: `equipo`, `tareas`, `plantilla` + `plantillas.ts` + validación + `scripts/probar-datos.mjs`. Faltan `cotizaciones`, `pagos`, `presupuesto`, `momentos`, `afinidades`, `miembros`. |
+| 2. Modelo de datos | Parcial: `equipo`, `tareas`, `plantilla`, `cotizaciones`, `pagos`, `presupuesto` (tope por moneda y dólar de referencia) + `plantillas.ts` + validación + `scripts/probar-datos.mjs`. Faltan `momentos`, `afinidades`, `miembros`. |
 | 5. Checklist | Hecha (`Checklist.tsx`, con responsable creable desde la ficha, hoja nueva en el Excel y bloque en el Resumen). |
-| 3, 4, 6, 7, 8 | Pendientes. Sigue Equipo, después Presupuesto. |
+| 3. Equipo | Hecha (`Equipo.tsx`: alta, ficha, estados, WhatsApp, rubros sin cubrir, lo que tiene asignado). |
+| 4. Presupuesto | Hecha (`Presupuesto.tsx`: totales ARS y USD, tope, dólar de referencia, próximos pagos, cotizaciones por rubro, pagos, seña y saldo). |
+| 6, 7, 8 | Pendientes. Sigue Cronograma, después Mesas con personas y el cierre del Resumen y el Excel. |
 
 Notas para quien siga:
 - La vista Equipo todavía no existe: el responsable se crea desde la ficha de una tarea

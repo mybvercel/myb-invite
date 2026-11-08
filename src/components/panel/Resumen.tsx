@@ -1,11 +1,12 @@
 "use client";
 
-import { avisos, hoyISO, metricas, ocupacion, progresoChecklist, venceTarea } from "@/panel/logica";
+import { avisos, formatearMonto, hoyISO, metricas, ocupacion, pagoVencido, progresoChecklist, proximosPagos, rubrosSinCubrir, venceTarea } from "@/panel/logica";
+import { nombreRubro } from "@/panel/tipos";
 import type { DocPanel } from "@/panel/tipos";
 import { Avisos, Cifra } from "./piezas";
 import { Plano } from "./Plano";
 
-type Ir = (v: "invitados" | "mesas" | "salon" | "checklist") => void;
+type Ir = (v: "invitados" | "mesas" | "salon" | "checklist" | "equipo" | "presupuesto") => void;
 
 export function Resumen({ doc, irA, evento }: { doc: DocPanel; irA: Ir; evento: Date | null }) {
   const m = metricas(doc);
@@ -27,6 +28,8 @@ export function Resumen({ doc, irA, evento }: { doc: DocPanel; irA: Ir; evento: 
     .sort((a, b) => (a.v || "9999").localeCompare(b.v || "9999"))
     .slice(0, 4);
   const nombreResp = new Map(doc.equipo.map((r) => [r.id, r.nombre]));
+  const pagosPendientes = proximosPagos(doc.pagos).slice(0, 3);
+  const sinCubrir = rubrosSinCubrir(doc);
 
   return (
     <div className="pnl-seccion pnl-resumen">
@@ -72,6 +75,26 @@ export function Resumen({ doc, irA, evento }: { doc: DocPanel; irA: Ir; evento: 
           <p className="pnl-nota">Armá la lista de lo que hay que hacer, con responsable y fecha para cada cosa.</p>
         )}
       </section>
+
+      {(pagosPendientes.length > 0 || sinCubrir.length > 0) && (
+        <section className="pnl-resumen__bloque">
+          <div className="pnl-h2-fila">
+            <h2 className="pnl-h2">Plata y proveedores</h2>
+            <button className="pnl-enlace" onClick={() => irA(pagosPendientes.length ? "presupuesto" : "equipo")}>Abrir</button>
+          </div>
+          {pagosPendientes.length > 0 && (
+            <ul className="pnl-lista-simple">
+              {pagosPendientes.map((p) => (
+                <li key={p.id}>
+                  <span>{p.concepto || "Pago"} <span className="pnl-tenue">· {p.responsableId ? nombreResp.get(p.responsableId) : nombreRubro(p.rubro)}</span></span>
+                  <span className={`pnl-num ${pagoVencido(p) ? "pnl-error" : "pnl-tenue"}`}>{formatearMonto(p.monto, p.moneda)} · {p.vence ? p.vence.split("-").reverse().slice(0, 2).join("/") : "sin fecha"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {sinCubrir.length > 0 && <p className="pnl-nota">Sin proveedor todavía: {sinCubrir.map(nombreRubro).join(", ")}.</p>}
+        </section>
+      )}
 
       <section className="pnl-resumen__bloque">
         <h2 className="pnl-h2">Qué falta</h2>

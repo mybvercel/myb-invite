@@ -2,27 +2,31 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parsearFecha } from "@/invitaciones/fecha";
-import { esperadas, metricas, novedades, progresoChecklist, venceTarea } from "@/panel/logica";
-import { esPlanCompleto, ETAPAS, NOMBRE_PLAN, type DocPanel, type Plan, type Tema } from "@/panel/tipos";
+import { esperadas, metricas, novedades, pagoVencido, progresoChecklist, totalesPresupuesto, venceTarea } from "@/panel/logica";
+import { esPlanCompleto, ETAPAS, MONEDAS, nombreRubro, NOMBRE_PLAN, type DocPanel, type Plan, type Tema } from "@/panel/tipos";
 import { descargarXlsx, type Hoja } from "@/panel/xlsx";
 import { Checklist } from "./Checklist";
+import { Equipo } from "./Equipo";
 import { Estilo } from "./Estilo";
 import { Fechas, falta } from "./Fechas";
 import { Invitados } from "./Invitados";
 import { Links } from "./Links";
 import { Menu, type ItemMenu } from "./Menu";
 import { Mesas } from "./Mesas";
+import { Presupuesto } from "./Presupuesto";
 import { Resumen } from "./Resumen";
 import { Salon } from "./Salon";
 
 /** `clave`: cambios seguidos con la misma clave se deshacen de una vez. */
 export type Cambiar = (f: (d: DocPanel) => DocPanel, clave?: string) => void;
 
-type Vista = "resumen" | "checklist" | "invitados" | "links" | "mesas" | "salon" | "estilo";
+type Vista = "resumen" | "checklist" | "equipo" | "presupuesto" | "invitados" | "links" | "mesas" | "salon" | "estilo";
 
 const TITULO_VISTA: Record<Vista, string> = {
   resumen: "Resumen",
   checklist: "Checklist",
+  equipo: "Equipo",
+  presupuesto: "Presupuesto",
   invitados: "Invitados",
   links: "Links personales",
   mesas: "Mesas",
@@ -341,6 +345,59 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
       });
     }
 
+    if (doc.equipo.length) {
+      hojas.push({
+        nombre: "Equipo",
+        columnas: [
+          { titulo: "Rubro", ancho: 22 },
+          { titulo: "Nombre", ancho: 28 },
+          { titulo: "Estado", ancho: 12 },
+          { titulo: "Contacto", ancho: 24 },
+          { titulo: "Teléfono", ancho: 16 },
+          { titulo: "Email", ancho: 28 },
+          { titulo: "Notas", ancho: 36 },
+        ],
+        filas: doc.equipo.map((r) => [nombreRubro(r.rubro), r.nombre, r.estado, r.contacto, r.telefono, r.email, r.notas]),
+      });
+    }
+
+    if (doc.cotizaciones.length || doc.pagos.length) {
+      const resp = new Map(doc.equipo.map((r) => [r.id, r.nombre]));
+      const tot = totalesPresupuesto(doc);
+      hojas.push({
+        nombre: "Presupuesto",
+        columnas: [
+          { titulo: "Rubro", ancho: 22 },
+          { titulo: "Proveedor", ancho: 26 },
+          { titulo: "Detalle", ancho: 36 },
+          { titulo: "Monto", ancho: 14 },
+          { titulo: "Moneda", ancho: 9 },
+          { titulo: "Elegida", ancho: 9 },
+        ],
+        filas: [
+          ...doc.cotizaciones.map((c): (string | number)[] => [nombreRubro(c.rubro), c.responsableId ? (resp.get(c.responsableId) ?? "") : "", c.descripcion, c.monto, c.moneda, c.elegida ? "Sí" : ""]),
+          ...MONEDAS.filter((mo) => tot[mo].hay).flatMap((mo): (string | number)[][] => [
+            ["", "", `Total comprometido ${mo}`, tot[mo].comprometido, mo, ""],
+            ["", "", `Pagado ${mo}`, tot[mo].pagado, mo, ""],
+            ["", "", `Falta pagar ${mo}`, tot[mo].falta, mo, ""],
+          ]),
+        ],
+      });
+      hojas.push({
+        nombre: "Pagos",
+        columnas: [
+          { titulo: "Rubro", ancho: 22 },
+          { titulo: "Proveedor", ancho: 26 },
+          { titulo: "Concepto", ancho: 24 },
+          { titulo: "Monto", ancho: 14 },
+          { titulo: "Moneda", ancho: 9 },
+          { titulo: "Vence", ancho: 12 },
+          { titulo: "Pagado", ancho: 9 },
+        ],
+        filas: doc.pagos.map((p) => [nombreRubro(p.rubro), p.responsableId ? (resp.get(p.responsableId) ?? "") : "", p.concepto, p.monto, p.moneda, p.vence.split("-").reverse().join("/"), p.pagado ? "Sí" : ""]),
+      });
+    }
+
     hojas.push({
       nombre: "Catering",
       columnas: [{ titulo: "Restricción", ancho: 26 }, { titulo: "Personas", ancho: 10 }],
@@ -388,6 +445,7 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
 
   const evento = parsearFecha(fecha);
   const prog = progresoChecklist(doc.tareas);
+  const vencidos = doc.pagos.filter(pagoVencido).length;
   const detalleEvento = evento
     ? `${evento.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }).replace(/\./g, "")} · ${falta(evento).texto}`
     : undefined;
@@ -403,6 +461,10 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
           { id: "links", nombre: "Links", dato: String(doc.invitados.filter((i) => i.enlace).length) },
           { id: "mesas", nombre: "Mesas", dato: nuevasSinMesa ? `${nuevasSinMesa} por ubicar` : m.mesas ? `${m.sentados}/${m.esperados}` : undefined },
           { id: "salon", nombre: "Salón", dato: `${Math.round(m.areaTotal)} m²` },
+        ],
+        [
+          { id: "equipo", nombre: "Equipo", dato: doc.equipo.length ? String(doc.equipo.length) : undefined },
+          { id: "presupuesto", nombre: "Presupuesto", dato: vencidos ? `${vencidos} ${vencidos === 1 ? "vencido" : "vencidos"}` : undefined },
         ],
         [{ id: "estilo", nombre: "Estilo" }],
       ]
@@ -564,6 +626,8 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
           </>
         )}
         {vista === "checklist" && completo && <Checklist doc={doc} cambiar={cambiar} evento={evento} />}
+        {vista === "equipo" && completo && <Equipo doc={doc} cambiar={cambiar} />}
+        {vista === "presupuesto" && completo && <Presupuesto doc={doc} cambiar={cambiar} />}
         {vista === "invitados" && (
           <Invitados doc={doc} cambiar={cambiar} completo={completo} nombres={nombres} enlaceInvitacion={enlaceInvitacion} />
         )}

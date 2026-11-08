@@ -1063,3 +1063,99 @@ body:has(.pnl--base-noche) { background: #141512; }
   .pnl-tope .pnl-cabecera__acciones { gap: 0.4rem; }
 }
 .pnl-ficha__campos--tarea input[type="date"] { min-width: 0; }
+
+/* ── Equipo ───────────────────────────────────────────────── */
+
+.pnl-h3 { font-size: 0.82rem; font-weight: 600; color: var(--tinta-2); margin-bottom: 0.4rem; }
+.pnl-equipo__cabeza { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; }
+.pnl-sincubrir { display: flex; flex-direction: column; margin-top: 0.4rem; border-top: 1px solid var(--linea); }
+.pnl-sincubrir li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--linea); font-size: 0.92rem; }
+
+.pnl-equipo { border-top: 1px solid var(--tinta); }
+.pnl-miembro { border-bottom: 1px solid var(--linea); }
+.pnl-miembro.es-abierta { border-bottom-color: var(--linea-2); }
+.pnl-miembro.es-descartado .pnl-miembro__nombre { color: var(--tinta-3); text-decoration: line-through; }
+.pnl .pnl-miembro__fila { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; width: 100%; min-height: 3.25rem; padding: 0.5rem 0.25rem; text-align: left; }
+.pnl .pnl-miembro__fila:hover .pnl-miembro__nombre { text-decoration: underline; text-decoration-color: var(--linea-2); text-underline-offset: 3px; }
+.pnl-miembro__rubro { font-size: 0.8rem; font-weight: 600; color: var(--tinta-2); }
+.pnl-miembro__quien { display: flex; flex-direction: column; min-width: 0; }
+.pnl-miembro__nombre { overflow-wrap: anywhere; }
+.pnl-miembro__contacto { font-size: 0.78rem; }
+.pnl-estado { font-size: 0.78rem; white-space: nowrap; color: var(--tinta-3); }
+.pnl-estado--contratado { color: var(--acento); font-weight: 600; }
+.pnl--base-noche .pnl-estado--contratado { color: color-mix(in srgb, var(--acento) 55%, #fff); }
+.pnl-estado--cotizando { color: var(--tinta-2); }
+@media (max-width: 640px) {
+  .pnl .pnl-miembro__fila { grid-template-columns: minmax(0, 1fr) auto; }
+  .pnl-miembro__rubro { grid-column: 1 / -1; font-size: 0.74rem; color: var(--tinta-3); }
+  .pnl-miembro__rubro:empty { display: none; }
+}
+
+.pnl-campo--ancho { grid-column: 1 / -1; }
+.pnl-ficha--equipo, .pnl-ficha--alta, .pnl-ficha--rubro { padding-inline: 0.75rem; }
+.pnl-ficha--alta { border: 1px solid var(--linea-2); border-radius: var(--radio); }
+.pnl-ficha__campos--equipo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 761px) { .pnl-ficha__campos--equipo { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pnl-ficha__campos--equipo .pnl-campo--ancho { grid-column: span 2; } }
+.pnl-ficha__botones--izq { margin-left: 0; }
+.pnl-miembro__detalle { display: grid; gap: 1rem 1.5rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+
+/* ── Presupuesto ──────────────────────────────────────────── */
+
+.pnl-moneda { display: flex; flex-direction: column; gap: 0.75rem; }
+.pnl-moneda__tope { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; }
+.pnl-moneda__tope input, .pnl-h2-fila > .pnl-input-chico { width: 9rem; text-align: right; }
+.pnl-cifras--tres { grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--tinta); }
+.pnl-cifras--tres .pnl-cifra { min-width: 0; }
+.pnl-cifras--tres .pnl-cifra__valor { font-size: clamp(0.82rem, 3.7vw, 1.45rem); white-space: nowrap; }
+@media (max-width: 640px) {
+  .pnl-cifras--tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pnl-cifras--tres .pnl-cifra:nth-child(odd) { padding-left: 1rem; border-left: 1px solid var(--linea); }
+  .pnl-cifras--tres .pnl-cifra:first-child { padding-left: 0; border-left: 0; }
+  .pnl-cifras--tres .pnl-cifra:nth-child(n + 3) { border-top: 0; }
+}
+
+.pnl-vencimientos { border-top: 1px solid var(--linea); }
+.pnl-vencimientos li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--linea); font-size: 0.9rem; }
+.pnl-vencimientos__fecha { color: var(--tinta-2); font-size: 0.82rem; }
+.pnl-vencimientos__fecha.es-tarde { color: var(--alerta); font-weight: 600; }
+.pnl-vencimientos__que { overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .pnl-vencimientos li { grid-template-columns: 4rem minmax(0, 1fr) auto; }
+  .pnl-vencimientos li .pnl-enlace { grid-column: 2 / -1; justify-self: start; }
+}
+
+.pnl-rubros { border-top: 1px solid var(--tinta); }
+.pnl-rubro { border-bottom: 1px solid var(--linea); }
+.pnl-rubro.es-abierta { border-bottom-color: var(--linea-2); }
+.pnl .pnl-rubro__fila { display: grid; grid-template-columns: 11rem minmax(0, 1fr); align-items: center; gap: 0.75rem; width: 100%; min-height: 3.25rem; padding: 0.5rem 0.25rem; text-align: left; }
+.pnl .pnl-rubro__fila:hover .pnl-rubro__nombre { text-decoration: underline; text-decoration-color: var(--linea-2); text-underline-offset: 3px; }
+.pnl-rubro__nombre { font-weight: 500; }
+.pnl-rubro__datos { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.1rem 1rem; font-size: 0.86rem; text-align: right; }
+@media (max-width: 640px) {
+  .pnl .pnl-rubro__fila { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+  .pnl-rubro__datos { justify-content: flex-start; text-align: left; }
+}
+
+.pnl-ficha--rubro { gap: 1.4rem; }
+.pnl-cotizaciones { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.5rem; }
+.pnl-cotizacion { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.75rem; border: 1px solid var(--linea-2); border-radius: var(--radio); background: var(--superficie); }
+.pnl-cotizacion.es-elegida { border-color: var(--acento); box-shadow: inset 2px 0 0 var(--acento); }
+.pnl-cotizacion__campos { display: grid; gap: 0.6rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 761px) { .pnl-cotizacion__campos { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1fr) 6rem; } .pnl-cotizacion__campos .pnl-campo--ancho { grid-column: auto; } }
+.pnl-cotizacion__pie { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+.pnl-pagos { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+.pnl-pago { display: grid; gap: 0.4rem 0.5rem; grid-template-columns: 2.5rem minmax(0, 1fr) auto; align-items: center; }
+.pnl-pago input:not([type="checkbox"]), .pnl-pago select { min-height: 2.5rem; padding: 0.35rem 0.6rem; border: 1px solid var(--linea-2); border-radius: var(--radio); background: var(--superficie); font-size: 16px; min-width: 0; width: 100%; }
+.pnl-pago.es-pagado .pnl-pago__concepto, .pnl-pago.es-pagado .pnl-pago__monto { color: var(--tinta-3); }
+.pnl-pago__check { display: grid; place-items: center; height: 2.5rem; cursor: pointer; }
+.pnl-pago__check input { width: 1.15rem; height: 1.15rem; accent-color: var(--acento); }
+.pnl-pago__concepto { grid-column: 2 / -1; }
+.pnl-pago__monto { grid-column: 2; }
+.pnl-pago__moneda { grid-column: 3; width: 5.5rem !important; }
+.pnl-pago__vence { grid-column: 2; }
+.pnl-pago > .pnl-enlace { grid-column: 3; justify-self: end; }
+@media (min-width: 761px) {
+  .pnl-pago { grid-template-columns: 2.5rem minmax(0, 1.4fr) 8rem 5.5rem 10rem auto; }
+  .pnl-pago__concepto, .pnl-pago__monto, .pnl-pago__moneda, .pnl-pago__vence, .pnl-pago > .pnl-enlace { grid-column: auto; }
+}
