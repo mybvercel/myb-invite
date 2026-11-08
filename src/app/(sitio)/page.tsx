@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Briefcase, Cake, Heart, MessageCircle } from "lucide-react";
+import ResenasGoogle from "@/components/ResenasGoogle";
 import PreciosBento from "@/components/PreciosBento";
 import { GlowCard } from "@/components/ui/spotlight-card";
 import {
@@ -13,7 +14,6 @@ import {
   INCLUYE_GENERAL,
   PLANES,
   PREGUNTAS,
-  RESENAS,
   WHATSAPP,
   enlaceDemo,
   whatsappPara,
@@ -242,26 +242,6 @@ export default function Invitaciones() {
                 </div>
               </div>
             </section>
-
-            {/* Reseñas: sólo si hay reseñas reales cargadas */}
-            {RESENAS.length > 0 && (
-              <section className="tid-seccion">
-                <div className="tid-marco">
-                  <div className="tid-encabezado tid-encabezado--centro">
-                    <h2 className="tid-titulo tid-h2">Lo que dicen.</h2>
-                  </div>
-                  <ul className="tid-resenas">
-                    {RESENAS.map((r) => (
-                      <li key={r.nombre} className="tid-resena">
-                        <p className="tid-resena__texto">{r.texto}</p>
-                        <p className="tid-resena__quien">{r.nombre}</p>
-                        <p className="tid-resena__evento">{r.evento}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </section>
-            )}
           </div>
         )}
 
@@ -283,6 +263,9 @@ export default function Invitaciones() {
                 />
               </div>
             </section>
+
+        {/* Reseñas de Google: sólo si hay reseñas reales cargadas */}
+        <ResenasGoogle />
 
         {/* Preguntas: valen para cualquier evento, así que están siempre */}
         <section className="tid-seccion tid-seccion--tenue">

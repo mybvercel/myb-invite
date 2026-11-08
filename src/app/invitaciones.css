@@ -349,3 +349,45 @@
 .tid-modelos > li { display: flex; flex-direction: column; gap: 0.65rem; }
 .tid .tid-boton--lleno, .tid .tid-globo { color: #fff; }
 .tid .tid-plan--destacado .tid-boton--lleno { color: var(--verde-hondo); }
+
+/* ── Reseñas con el formato de Google ──────────────────────── */
+
+.tid-gr__cabeza { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; margin-bottom: 1.5rem; }
+.tid-gr__marca { display: flex; align-items: center; gap: 0.85rem; }
+.tid-gr__titulo { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+.tid-gr__resumen { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.15rem; font-size: 0.9rem; color: #5f6368; }
+.tid-gr__resumen b { font-size: 1.05rem; color: #202124; }
+.tid-gr__estrellas { display: inline-flex; gap: 1px; }
+.tid-gr__estrellas svg { fill: #fbbc04; }
+.tid-gr__estrellas svg.tid-gr__vacia { fill: #dadce0; }
+.tid-gr__acciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.tid-gr__boton {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 2.5rem; padding: 0 1.1rem;
+  border: 1px solid #dadce0; border-radius: 999px; background: #fff; color: #1a73e8;
+  font-size: 0.88rem; font-weight: 600; transition: background-color 160ms var(--salida);
+}
+.tid-gr__boton:hover { background: #f1f6fe; }
+.tid-gr__boton--lleno { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+.tid-gr__boton--lleno:hover { background: #1765cc; }
+.tid .tid-gr__boton--lleno { color: #fff; }
+
+.tid-gr__lista {
+  display: grid; gap: 1rem; grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) { .tid-gr__lista { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 47.99rem) {
+  .tid-gr__lista { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0.85rem; margin-inline: -1rem; padding: 0.25rem 1rem 0.75rem; scrollbar-width: none; }
+  .tid-gr__lista::-webkit-scrollbar { display: none; }
+  .tid-gr__tarjeta { flex: 0 0 86%; scroll-snap-align: center; }
+  .tid-gr__acciones { width: 100%; }
+  .tid-gr__acciones .tid-gr__boton { flex: 1; padding: 0 0.6rem; font-size: 0.8rem; white-space: nowrap; }
+}
+.tid-gr__tarjeta { padding: 1.15rem 1.2rem 1.3rem; background: #fff; border: 1px solid #dadce0; border-radius: 12px; }
+.tid-gr__quien { display: flex; align-items: center; gap: 0.75rem; }
+.tid-gr__avatar { display: grid; place-items: center; flex: none; width: 2.5rem; height: 2.5rem; border-radius: 50%; color: #fff; font-size: 1.05rem; font-weight: 500; }
+.tid-gr__nombre { font-size: 0.92rem; font-weight: 600; color: #202124; }
+.tid-gr__evento { font-size: 0.78rem; color: #5f6368; }
+.tid-gr__g { margin-left: auto; align-self: flex-start; }
+.tid-gr__linea { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.85rem; }
+.tid-gr__cuando { font-size: 0.8rem; color: #5f6368; }
+.tid-gr__texto { margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.55; color: #3c4043; }

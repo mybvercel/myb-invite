@@ -296,7 +296,23 @@ export function detectarMoneda(): Moneda {
 
 /* ── Reseñas ───────────────────────────────────────────────── */
 
-export type Resena = { nombre: string; evento: string; texto: string };
+export type Resena = {
+  nombre: string;
+  evento: string;
+  texto: string;
+  /** Estrellas de 1 a 5; si falta, 5. */
+  estrellas?: number;
+  /** Tal como lo muestra Google: "hace 2 semanas". */
+  cuando?: string;
+};
+
+/** Perfil de Google: ver todas las reseñas y dejar una nueva. */
+export const GOOGLE_VER =
+  "https://www.google.com/search?q=M%26B%20Digital&stick=H4sIAAAAAAAAAONgU1IxqLA0M0tLTjUxS01NTTE1SrMyqDBJNLIwSUxJs7RITTI3TExexMrtq-ak4JKZnlmSmAMALq6eEzYAAAA&mat=CXqIpSsh6V4m";
+export const GOOGLE_ESCRIBIR = "https://g.page/r/Caxx65jfSihKEAE/review";
+
+/** Puntaje y cantidad reales del perfil. Mientras sea null no se muestra el resumen. */
+export const GOOGLE_RESUMEN: { puntaje: number; cantidad: number } | null = null;
 
 /**
  * Vacío a propósito: no se inventan reseñas de un negocio real. Cargá acá las
