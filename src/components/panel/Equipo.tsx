@@ -108,7 +108,7 @@ export function Equipo({ doc, cambiar }: { doc: DocPanel; cambiar: Cambiar }) {
                 <button className="pnl-miembro__fila" onClick={() => setAbierto(abierto === r.id ? null : r.id)} aria-expanded={abierto === r.id}>
                   <span className="pnl-miembro__rubro">{nuevaSeccion ? nombreRubro(r.rubro) : ""}</span>
                   <span className="pnl-miembro__quien">
-                    <span className="pnl-miembro__nombre">{r.nombre}{r.esPersona ? <span className="pnl-tenue"> · del entorno</span> : null}</span>
+                    <span className="pnl-miembro__nombre">{r.nombre || "Sin nombre"}{r.esPersona ? <span className="pnl-tenue"> · del entorno</span> : null}</span>
                     {(r.contacto || r.telefono) && <span className="pnl-tenue pnl-miembro__contacto">{[r.contacto, r.telefono].filter(Boolean).join(" · ")}</span>}
                   </span>
                   <span className={`pnl-estado pnl-estado--${r.estado}`}>{nombreEstado(r.estado)}</span>

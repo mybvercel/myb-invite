@@ -279,6 +279,20 @@ export type Presupuesto = {
   dolar: number;
 };
 
+/* ── Cronograma del día ──────────────────────────────────────── */
+
+/** Un momento de la fiesta, minuto a minuto. Es lo que se le pasa al DJ, al fotógrafo y al salón. */
+export type Momento = {
+  id: string;
+  /** "HH:MM". */
+  hora: string;
+  titulo: string;
+  lugar: string;
+  /** Ids del equipo que tienen que estar atentos a este momento. */
+  responsables: string[];
+  notas: string;
+};
+
 /* ── Ajustes ─────────────────────────────────────────────────
    Todo lo automático es opcional: hay parejas que quieren decidir silla por
    silla, y el panel no puede decidir por ellas sin permiso. */
@@ -327,6 +341,7 @@ export type DocPanel = {
   cotizaciones: Cotizacion[];
   pagos: Pago[];
   presupuesto: Presupuesto;
+  momentos: Momento[];
 };
 
 export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
@@ -343,4 +358,5 @@ export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
   cotizaciones: [],
   pagos: [],
   presupuesto: { tope: { ARS: 0, USD: 0 }, dolar: 0 },
+  momentos: [],
 });

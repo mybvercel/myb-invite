@@ -1,5 +1,5 @@
 import { idNuevo, norm } from "./logica";
-import type { DocPanel, Etapa, Plantilla, Rubro, Tarea } from "./tipos";
+import type { DocPanel, Etapa, Momento, Plantilla, Rubro, Tarea } from "./tipos";
 
 /**
  * Los checklists de arranque. El organizador no empieza con la hoja en blanco:
@@ -162,4 +162,51 @@ export function aplicarPlantilla(doc: DocPanel, id: Plantilla): DocPanel {
       origen: "plantilla",
     }));
   return { ...doc, plantilla: id, tareas: [...doc.tareas, ...nuevas] };
+}
+
+/* ── El día, minuto a minuto ─────────────────────────────────── */
+
+type FilaDia = [hora: string, titulo: string, lugar?: string];
+
+const DIA: Record<Plantilla, FilaDia[]> = {
+  casamiento: [
+    ["20:30", "Recepción y cóctel", "Jardín"],
+    ["21:30", "Entrada de los novios", "Salón"],
+    ["22:00", "Plato principal", "Salón"],
+    ["23:00", "Vals", "Pista"],
+    ["23:30", "Baile", "Pista"],
+    ["01:00", "Mesa dulce y postre", "Salón"],
+    ["02:30", "Fin de fiesta", "Pista"],
+    ["04:30", "Cierre", "Salón"],
+  ],
+  quince: [
+    ["21:00", "Recepción y cóctel", "Jardín"],
+    ["22:00", "Entrada de la quinceañera", "Salón"],
+    ["22:30", "Plato principal", "Salón"],
+    ["23:30", "Vals", "Pista"],
+    ["00:00", "Ceremonia de las velas", "Pista"],
+    ["00:30", "Baile", "Pista"],
+    ["02:00", "Mesa dulce y postre", "Salón"],
+    ["04:30", "Cierre", "Salón"],
+  ],
+  cumple: [
+    ["20:00", "Llegada de los invitados"],
+    ["21:00", "Comida"],
+    ["22:30", "Torta y brindis"],
+    ["23:00", "Baile"],
+    ["01:30", "Cierre"],
+  ],
+  empresa: [
+    ["09:00", "Acreditación", "Entrada"],
+    ["09:30", "Bienvenida"],
+    ["10:00", "Charlas", "Sala principal"],
+    ["12:30", "Corte y almuerzo"],
+    ["14:00", "Segunda parte"],
+    ["17:00", "Cierre y brindis"],
+  ],
+};
+
+/** Los momentos de arranque de cada evento, ya con id. Se suman a los que haya. */
+export function momentosDe(id: Plantilla): Momento[] {
+  return DIA[id].map(([hora, titulo, lugar]) => ({ id: idNuevo(), hora, titulo, lugar: lugar ?? "", responsables: [], notas: "" }));
 }

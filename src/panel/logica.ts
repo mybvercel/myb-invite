@@ -14,6 +14,7 @@ import {
   type Etapa,
   type Invitado,
   type Moneda,
+  type Momento,
   type Pago,
   type Plantilla,
   type Responsable,
@@ -726,7 +727,8 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
   const equipo: Responsable[] = (Array.isArray(d.equipo) ? d.equipo : []).slice(0, 120).flatMap((x): Responsable[] => {
     const r = x as Record<string, unknown>;
     const nombre = txt(r.nombre, 80).trim();
-    if (!nombre) return [];
+    // Una fila con id y el nombre borrado a medias se conserva: si no, se esfumaría mientras escriben.
+    if (!nombre && !r.id) return [];
     const estado = r.estado === "buscando" || r.estado === "cotizando" || r.estado === "descartado" ? r.estado : "contratado";
     return [
       {
@@ -747,7 +749,7 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
   const tareas: Tarea[] = (Array.isArray(d.tareas) ? d.tareas : []).slice(0, 400).flatMap((x): Tarea[] => {
     const t = x as Record<string, unknown>;
     const titulo = txt(t.titulo, 140).trim();
-    if (!titulo) return [];
+    if (!titulo && !t.id) return [];
     const hecha = t.hecha === true;
     return [
       {
@@ -801,6 +803,22 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     };
   });
 
+  const momentos: Momento[] = (Array.isArray(d.momentos) ? d.momentos : []).slice(0, 150).flatMap((x): Momento[] => {
+    const m = x as Record<string, unknown>;
+    const titulo = txt(m.titulo, 100).trim();
+    if (!titulo && !m.id) return [];
+    return [
+      {
+        id: unico(m.id),
+        hora: typeof m.hora === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(m.hora) ? m.hora : "20:00",
+        titulo,
+        lugar: txt(m.lugar, 60),
+        responsables: (Array.isArray(m.responsables) ? m.responsables : []).filter((r): r is string => typeof r === "string" && idsEquipo.has(r)).slice(0, 12),
+        notas: txt(m.notas, 300),
+      },
+    ];
+  });
+
   const pr = (d.presupuesto ?? {}) as Record<string, unknown>;
   const tp = (pr.tope ?? {}) as Record<string, unknown>;
   const presupuesto = {
@@ -845,6 +863,7 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     cotizaciones,
     pagos,
     presupuesto,
+    momentos,
   };
 }
 
@@ -937,4 +956,23 @@ export function rubrosSinCubrir(doc: DocPanel): Rubro[] {
   const cubiertos = new Set(doc.equipo.filter((r) => r.estado !== "descartado").map((r) => r.rubro));
   const pedidos = new Set(doc.tareas.map((t) => t.rubro).filter((r): r is Rubro => !!r && r !== "otro"));
   return RUBROS.map((r) => r.id).filter((r) => pedidos.has(r) && !cubiertos.has(r));
+}
+
+/* ── Cronograma del día ──────────────────────────────────────── */
+
+/** Minutos desde el mediodía de arranque: lo que pasa de madrugada va después de la noche. */
+export function minutosMomento(hora: string) {
+  const [h, m] = hora.split(":").map(Number);
+  return ((h < 6 ? h + 24 : h) * 60) + m;
+}
+
+export const ordenarMomentos = (ms: Momento[]) => [...ms].sort((a, b) => minutosMomento(a.hora) - minutosMomento(b.hora));
+
+/** La hora media hora después de la última, para el próximo momento. */
+export function horaSiguiente(ms: Momento[]) {
+  if (!ms.length) return "20:00";
+  const ult = ordenarMomentos(ms)[ms.length - 1];
+  const [h, m] = ult.hora.split(":").map(Number);
+  const t = (h * 60 + m + 30) % (24 * 60);
+  return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }

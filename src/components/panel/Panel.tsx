@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parsearFecha } from "@/invitaciones/fecha";
-import { esperadas, metricas, novedades, pagoVencido, progresoChecklist, totalesPresupuesto, venceTarea } from "@/panel/logica";
+import { esperadas, metricas, novedades, ordenarMomentos, pagoVencido, progresoChecklist, totalesPresupuesto, venceTarea } from "@/panel/logica";
 import { esPlanCompleto, ETAPAS, MONEDAS, nombreRubro, NOMBRE_PLAN, type DocPanel, type Plan, type Tema } from "@/panel/tipos";
 import { descargarXlsx, type Hoja } from "@/panel/xlsx";
 import { Checklist } from "./Checklist";
+import { Cronograma } from "./Cronograma";
 import { Equipo } from "./Equipo";
 import { Estilo } from "./Estilo";
 import { Fechas, falta } from "./Fechas";
@@ -20,11 +21,12 @@ import { Salon } from "./Salon";
 /** `clave`: cambios seguidos con la misma clave se deshacen de una vez. */
 export type Cambiar = (f: (d: DocPanel) => DocPanel, clave?: string) => void;
 
-type Vista = "resumen" | "checklist" | "equipo" | "presupuesto" | "invitados" | "links" | "mesas" | "salon" | "estilo";
+type Vista = "resumen" | "checklist" | "cronograma" | "equipo" | "presupuesto" | "invitados" | "links" | "mesas" | "salon" | "estilo";
 
 const TITULO_VISTA: Record<Vista, string> = {
   resumen: "Resumen",
   checklist: "Checklist",
+  cronograma: "Cronograma",
   equipo: "Equipo",
   presupuesto: "Presupuesto",
   invitados: "Invitados",
@@ -345,6 +347,21 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
       });
     }
 
+    if (doc.momentos.length) {
+      const resp = new Map(doc.equipo.map((r) => [r.id, r.nombre]));
+      hojas.push({
+        nombre: "Cronograma del día",
+        columnas: [
+          { titulo: "Hora", ancho: 8 },
+          { titulo: "Momento", ancho: 36 },
+          { titulo: "Lugar", ancho: 22 },
+          { titulo: "Quién", ancho: 30 },
+          { titulo: "Notas", ancho: 44 },
+        ],
+        filas: ordenarMomentos(doc.momentos).map((mo) => [mo.hora, mo.titulo, mo.lugar, mo.responsables.map((r) => resp.get(r) ?? "").filter(Boolean).join(", "), mo.notas]),
+      });
+    }
+
     if (doc.equipo.length) {
       hojas.push({
         nombre: "Equipo",
@@ -455,6 +472,7 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
         [
           { id: "resumen", nombre: "Resumen" },
           { id: "checklist", nombre: "Checklist", dato: prog.total ? `${prog.hechas}/${prog.total}` : undefined },
+          { id: "cronograma", nombre: "Cronograma" },
         ],
         [
           { id: "invitados", nombre: "Invitados", dato: String(doc.invitados.length) },
@@ -626,6 +644,9 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
           </>
         )}
         {vista === "checklist" && completo && <Checklist doc={doc} cambiar={cambiar} evento={evento} />}
+        {vista === "cronograma" && completo && (
+          <Cronograma doc={doc} cambiar={cambiar} evento={evento} nombres={nombres} fechaTexto={fecha} irA={setVista} />
+        )}
         {vista === "equipo" && completo && <Equipo doc={doc} cambiar={cambiar} />}
         {vista === "presupuesto" && completo && <Presupuesto doc={doc} cambiar={cambiar} />}
         {vista === "invitados" && (

@@ -11,8 +11,8 @@ const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const jiti = createJiti(import.meta.url, { alias: { "@": path.join(raiz, "src") } });
 
 const { docVacio } = await jiti.import("../src/panel/tipos.ts");
-const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist, totalesPresupuesto, proximosPagos, rubrosSinCubrir, formatearMonto } = await jiti.import("../src/panel/logica.ts");
-const { aplicarPlantilla, PLANTILLAS } = await jiti.import("../src/panel/plantillas.ts");
+const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist, totalesPresupuesto, proximosPagos, rubrosSinCubrir, formatearMonto, ordenarMomentos, horaSiguiente } = await jiti.import("../src/panel/logica.ts");
+const { aplicarPlantilla, momentosDe, PLANTILLAS } = await jiti.import("../src/panel/plantillas.ts");
 
 let fallas = 0;
 const igual = (nombre, real, esperado) => {
@@ -53,7 +53,8 @@ const s = sanearDoc(sucio, docVacio());
 igual("rubro inválido pasa a 'otro'", s.equipo[0].rubro, "otro");
 igual("estado inválido pasa a 'contratado'", s.equipo[0].estado, "contratado");
 igual("teléfono cortado a 30", s.equipo[0].telefono.length, 30);
-igual("equipo sin nombre se descarta", s.equipo.length, 1);
+igual("una fila con id y sin nombre se conserva", s.equipo.length, 2);
+igual("una fila sin id ni nombre se descarta", sanearDoc({ ...d, equipo: [{ nombre: "" }], tareas: [{ titulo: "" }], momentos: [{ titulo: "" }] }, docVacio()).equipo.length, 0);
 igual("tareas vacías se descartan", s.tareas.length, 3);
 igual("responsable existente se conserva", s.tareas[0].responsableId, "e1");
 igual("hechaEl inválida se limpia", s.tareas[0].hechaEl, "");
@@ -121,6 +122,19 @@ igual("fecha de pago inválida se limpia", s2.pagos[0].vence, "");
 igual("pagadoEl se limpia si no está pagado", s2.pagos[0].pagadoEl, "");
 igual("tope y dólar acotados", [s2.presupuesto.tope.ARS, s2.presupuesto.tope.USD, s2.presupuesto.dolar], [0, 0, 1e7]);
 igual("viejo sin presupuesto", normalizar(viejo, "#2e6f4e").presupuesto, { tope: { ARS: 0, USD: 0 }, dolar: 0 });
+
+// 6b. Momentos del día.
+const dia = sanearDoc({ ...docVacio(), equipo: [{ id: "e1", nombre: "DJ" }], momentos: [
+  { id: "m1", hora: "25:99", titulo: "Hora mala", responsables: ["e1", "fantasma"] },
+  { id: "m2", hora: "01:30", titulo: "Madrugada" },
+  { id: "m3", hora: "23:00", titulo: "Noche" },
+] }, docVacio());
+igual("hora inválida pasa a 20:00", dia.momentos[0].hora, "20:00");
+igual("responsables filtrados contra el equipo", dia.momentos[0].responsables, ["e1"]);
+igual("la madrugada va después de la noche", ordenarMomentos(dia.momentos).map((m) => m.id), ["m1", "m3", "m2"]);
+igual("hora siguiente: media hora después de la última", horaSiguiente(dia.momentos), "02:00");
+igual("hora siguiente sin momentos", horaSiguiente([]), "20:00");
+igual("plantilla del día: casamiento", momentosDe("casamiento").length > 5 && momentosDe("casamiento").every((m) => /^\d\d:\d\d$/.test(m.hora)), true);
 
 // 7. Rubros sin cubrir.
 const sc = docVacio();

@@ -166,7 +166,7 @@ export function Checklist({ doc, cambiar, evento }: { doc: DocPanel; cambiar: Ca
                         <input type="checkbox" checked={t.hecha} onChange={() => tildar(t)} aria-label={`Hecha: ${t.titulo}`} />
                       </label>
                       <button className="pnl-tarea__cuerpo" onClick={() => setAbierta(abierta === t.id ? null : t.id)} aria-expanded={abierta === t.id}>
-                        <span className="pnl-tarea__titulo">{t.titulo}</span>
+                        <span className="pnl-tarea__titulo">{t.titulo || "Sin título"}</span>
                         <span className="pnl-tarea__meta">
                           {t.rubro && <span>{nombreRubro(t.rubro)}</span>}
                           <span className={quien ? "" : "pnl-tenue"}>{quien || "Sin responsable"}</span>

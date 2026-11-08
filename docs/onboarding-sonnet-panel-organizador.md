@@ -744,11 +744,12 @@ moneda; no hay una "principal"). El dólar de referencia sigue siendo opcional.
 |---|---|
 | 0. Maqueta | Salteada: Benja pidió avanzar; se muestra con capturas del panel real. |
 | 1. Menú lateral | Hecha (`Menu.tsx`, columna fija desde 64rem y cajón en celular). |
-| 2. Modelo de datos | Parcial: `equipo`, `tareas`, `plantilla`, `cotizaciones`, `pagos`, `presupuesto` (tope por moneda y dólar de referencia) + `plantillas.ts` + validación + `scripts/probar-datos.mjs`. Faltan `momentos`, `afinidades`, `miembros`. |
+| 2. Modelo de datos | Parcial: `equipo`, `tareas`, `plantilla`, `cotizaciones`, `pagos`, `presupuesto` (tope por moneda y dólar de referencia) + `plantillas.ts` + validación + `scripts/probar-datos.mjs`. Faltan `afinidades`, `miembros`. `momentos` ya está. |
 | 5. Checklist | Hecha (`Checklist.tsx`, con responsable creable desde la ficha, hoja nueva en el Excel y bloque en el Resumen). |
 | 3. Equipo | Hecha (`Equipo.tsx`: alta, ficha, estados, WhatsApp, rubros sin cubrir, lo que tiene asignado). |
 | 4. Presupuesto | Hecha (`Presupuesto.tsx`: totales ARS y USD, tope, dólar de referencia, próximos pagos, cotizaciones por rubro, pagos, seña y saldo). |
-| 6, 7, 8 | Pendientes. Sigue Cronograma, después Mesas con personas y el cierre del Resumen y el Excel. |
+| 6. Cronograma | Hecha (`Cronograma.tsx`: Preparación con línea de Hoy, tareas y pagos tildables; El día con plantillas, detalle, responsables del equipo e impresión; hoja en el Excel). |
+| 7, 8 | Pendientes. Sigue Mesas con personas y afinidad, después el cierre del Resumen y el Excel. |
 
 Notas para quien siga:
 - La vista Equipo todavía no existe: el responsable se crea desde la ficha de una tarea
@@ -757,3 +758,6 @@ Notas para quien siga:
   demos da 404 porque no hay motor de datos en memoria).
 - El nombre `pnl-barra` ya era la barra de progreso; la barra de arriba del contenido
   se llama `pnl-tope`.
+- El servidor ya no descarta filas de equipo, tareas o momentos que tienen `id` y el nombre
+  vacío: si se descartaran, se esfumarían mientras el usuario borra y reescribe el campo. Las
+  vistas muestran "Sin nombre" o "Sin título" en esos casos.
