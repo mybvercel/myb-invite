@@ -11,7 +11,7 @@ const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const jiti = createJiti(import.meta.url, { alias: { "@": path.join(raiz, "src") } });
 
 const { docVacio } = await jiti.import("../src/panel/tipos.ts");
-const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist, totalesPresupuesto, proximosPagos, rubrosSinCubrir, formatearMonto, ordenarMomentos, horaSiguiente } = await jiti.import("../src/panel/logica.ts");
+const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist, totalesPresupuesto, proximosPagos, rubrosSinCubrir, formatearMonto, ordenarMomentos, horaSiguiente, miembrosDe, asientos, ocupacion, ocupantes, porSentar, conMiembro, sentar, afinidadesRotas } = await jiti.import("../src/panel/logica.ts");
 const { aplicarPlantilla, momentosDe, PLANTILLAS } = await jiti.import("../src/panel/plantillas.ts");
 
 let fallas = 0;
@@ -135,6 +135,54 @@ igual("la madrugada va después de la noche", ordenarMomentos(dia.momentos).map(
 igual("hora siguiente: media hora después de la última", horaSiguiente(dia.momentos), "02:00");
 igual("hora siguiente sin momentos", horaSiguiente([]), "20:00");
 igual("plantilla del día: casamiento", momentosDe("casamiento").length > 5 && momentosDe("casamiento").every((m) => /^\d\d:\d\d$/.test(m.hora)), true);
+
+// 8. Personas dentro de una fila.
+const fila = (id, nombre, personas, extra = {}) => ({ id, nombre, grupo: "", personas, estado: "confirmado", telefono: "", comidas: [], notas: "", mesa: null, miembros: [], origen: "manual", alias: [], rsvp: null, cancion: "", enlace: null, ...extra });
+const mesaEl = (id, capacidad, extra = {}) => ({ id, tipo: "mesa", clase: "redonda", nombre: id, x: 0, y: 0, ancho: 1.5, largo: 1.5, giro: 0, capacidad, ...extra });
+const gomez = fila("g", "Familia Gómez", 4, { grupo: "Familia Gómez" });
+igual("miembros: se completan con Acompañante", miembrosDe(gomez).map((m) => m.nombre), ["Familia Gómez", "Acompañante 2", "Acompañante 3", "Acompañante 4"]);
+igual("miembros: ids estables", miembrosDe(gomez).map((m) => m.id), ["g~0", "g~1", "g~2", "g~3"]);
+igual("sin mesa: todos en null", [...asientos(gomez)], [[null, 4]]);
+const sentadaG = { ...gomez, mesa: "m1" };
+igual("sentada entera", [...asientos(sentadaG)], [["m1", 4]]);
+const aparte = conMiembro(sentadaG, "g~2", { mesa: "m2" });
+igual("una persona aparte: 3 en m1 y 1 en m2", Object.fromEntries(asientos(aparte)), { m2: 1, m1: 3 });
+igual("por sentar descuenta a los de aparte", porSentar(aparte), 3);
+igual("ocupación suma por persona", Object.fromEntries(ocupacion([aparte, fila("x", "Ana", 2, { mesa: "m2" })])), { m2: 3, m1: 3 });
+igual("ocupantes de m2: 1 de la familia y Ana entera", ocupantes([aparte, fila("x", "Ana", 2, { mesa: "m2" })], "m2").map((o) => [o.inv.id, o.miembros.length, o.entera]), [["g", 1, false], ["x", 2, true]]);
+igual("no viene no ocupa", [...asientos({ ...aparte, estado: "no-viene" })], []);
+
+const salon2 = { ancho: 20, largo: 20, elementos: [mesaEl("m1", 6), mesaEl("m2", 6), mesaEl("m3", 6)] };
+// sentar respeta a quien ya se sentó aparte
+const base2 = [conMiembro({ ...gomez }, "g~3", { mesa: "m3" }), fila("p", "Pérez", 2, { grupo: "Pérez" })];
+const r2 = sentar(base2, salon2, false, true, []);
+igual("sentar: la familia con una persona aparte entra con las otras 3", r2.invitados[0].mesa !== null && ocupacion(r2.invitados).get("m3") >= 1, true);
+igual("sentar: nadie se pasa de la capacidad", [...ocupacion(r2.invitados).values()].every((n) => n <= 6), true);
+const r3 = sentar(r2.invitados, salon2, true, true, []);
+igual("rehacer borra los asientos aparte", r3.invitados.every((i) => i.miembros.every((m) => m.mesa === null)), true);
+
+// afinidades
+const A = fila("a", "Ana", 3), Bf = fila("b", "Beto", 3), C = fila("c", "Cora", 3);
+const sep = sentar([A, Bf, C], salon2, false, true, [{ id: "1", a: "a", b: "b", tipo: "separados" }]);
+const mA = sep.invitados[0].mesa, mB = sep.invitados[1].mesa;
+igual("separados: nunca en la misma mesa", mA !== null && mB !== null && mA !== mB, true);
+const jun = sentar([fila("a", "Ana", 2), fila("b", "Beto", 2), fila("c", "Cora", 2), fila("d", "Dani", 2)], salon2, false, true, [{ id: "1", a: "a", b: "d", tipo: "juntos" }]);
+igual("juntos: comparten mesa si entran", jun.invitados[0].mesa === jun.invitados[3].mesa && jun.invitados[0].mesa !== null, true);
+const grandes = sentar([fila("a", "Ana", 5), fila("d", "Dani", 5)], salon2, false, true, [{ id: "1", a: "a", b: "d", tipo: "juntos" }]);
+igual("juntos que no entran en una mesa: se sientan por separado igual", grandes.invitados[0].mesa !== null && grandes.invitados[1].mesa !== null && grandes.invitados[0].mesa !== grandes.invitados[1].mesa, true);
+
+const docAf = { ...docVacio(), salon: salon2, invitados: [fila("a", "Ana", 2, { mesa: "m1" }), fila("b", "Beto", 2, { mesa: "m1" }), fila("c", "Cora", 2, { mesa: "m2" })], afinidades: [{ id: "1", a: "a", b: "b", tipo: "separados" }, { id: "2", a: "a", b: "c", tipo: "juntos" }, { id: "3", a: "b", b: "c", tipo: "separados" }] };
+const rotas = afinidadesRotas(docAf);
+igual("afinidades rotas: 2 de 3", rotas.map((r) => r.af.id), ["1", "2"]);
+igual("separados juntos: dice en qué mesa", rotas[0].mesa, "m1");
+
+// sanear
+const sucio3 = { ...docAf, invitados: [{ ...fila("a", "Ana", 2), mesa: "m1", miembros: [{ id: "a~0", nombre: "Ana", mesa: "m2" }, { id: "a~1", nombre: "X", mesa: "no-existe" }, { id: "a~2", nombre: "sobra", mesa: null }] }, fila("b", "Beto", 1)], afinidades: [{ id: "1", a: "a", b: "b", tipo: "separados" }, { id: "2", a: "b", b: "a", tipo: "juntos" }, { id: "3", a: "a", b: "a", tipo: "juntos" }, { id: "4", a: "a", b: "fantasma", tipo: "juntos" }] };
+const s3 = sanearDoc(sucio3, docVacio());
+igual("miembros se recortan a las personas", s3.invitados[0].miembros.length, 2);
+igual("mesa de miembro inexistente pasa a null", s3.invitados[0].miembros.map((m) => m.mesa), ["m2", null]);
+igual("afinidades: sin repetidos, sin sí mismo ni fantasmas", s3.afinidades.map((a) => a.id), ["1"]);
+igual("doc viejo: sin afinidades ni miembros", [normalizar(viejo, "#2e6f4e").afinidades.length], [0]);
 
 // 7. Rubros sin cubrir.
 const sc = docVacio();

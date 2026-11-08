@@ -12,7 +12,9 @@ import {
   type Elemento,
   type Enlace,
   type Etapa,
+  type Afinidad,
   type Invitado,
+  type Miembro,
   type Moneda,
   type Momento,
   type Pago,
@@ -60,6 +62,57 @@ const entre = (n: number, min: number, max: number) => Math.min(max, Math.max(mi
 /** Cuántas personas se esperan de una fila: las que no vienen no cuentan. */
 export const esperadas = (i: Invitado) => (i.estado === "no-viene" ? 0 : i.personas);
 
+/* ── Personas dentro de una fila ───────────────────────────────
+   `personas` manda: una fila de 4 tiene 4 miembros aunque no se hayan
+   guardado. Los que no están guardados se arman al vuelo, con un id estable
+   (el de la fila más su posición) para poder seleccionarlos y arrastrarlos. */
+
+/** Los miembros de una fila, completando con "Acompañante N" los que no tienen datos. */
+export function miembrosDe(inv: Invitado): Miembro[] {
+  const guardados = inv.miembros ?? [];
+  return Array.from({ length: inv.personas }, (_, k) => {
+    const g = guardados[k];
+    if (g) return g;
+    return { id: `${inv.id}~${k}`, nombre: k === 0 ? inv.nombre : `Acompañante ${k + 1}`, mesa: null };
+  });
+}
+
+/** Cuántas personas de la fila se sientan aparte, en su propia mesa. */
+const apartes = (inv: Invitado) =>
+  esperadas(inv) === 0 ? 0 : (inv.miembros ?? []).slice(0, inv.personas).filter((m) => m.mesa).length;
+
+/** Las que todavía dependen de la mesa de la fila: las que no se sientan aparte. */
+export const porSentar = (inv: Invitado) => Math.max(0, esperadas(inv) - apartes(inv));
+
+/** Dónde se sienta cada persona de la fila: mesa → cuántas. La clave null son las que no tienen mesa. */
+export function asientos(inv: Invitado): Map<string | null, number> {
+  const sale = new Map<string | null, number>();
+  const n = esperadas(inv);
+  if (n === 0) return sale;
+  for (const m of (inv.miembros ?? []).slice(0, inv.personas)) if (m.mesa) sale.set(m.mesa, (sale.get(m.mesa) ?? 0) + 1);
+  const resto = porSentar(inv);
+  if (resto > 0) sale.set(inv.mesa, (sale.get(inv.mesa) ?? 0) + resto);
+  return sale;
+}
+
+/** Quién se sienta en una mesa: la fila entera o sólo algunas de sus personas. */
+export function ocupantes(invitados: Invitado[], mesa: string) {
+  const lista: { inv: Invitado; miembros: Miembro[]; entera: boolean }[] = [];
+  for (const inv of invitados) {
+    if (esperadas(inv) === 0) continue;
+    const todos = miembrosDe(inv);
+    const aca = todos.filter((m) => (m.mesa ? m.mesa === mesa : inv.mesa === mesa));
+    if (aca.length) lista.push({ inv, miembros: aca, entera: aca.length === todos.length });
+  }
+  return lista;
+}
+
+/** Edita una persona de la fila: la guarda con su id y el cambio. */
+export function conMiembro(inv: Invitado, id: string, cambio: Partial<Miembro>): Invitado {
+  const todos = miembrosDe(inv).map((m) => (m.id === id ? { ...m, ...cambio } : m));
+  return { ...inv, miembros: todos };
+}
+
 /* ── Confirmaciones → invitados ───────────────────────────────
    Cada confirmación que llega de la invitación se cruza con la lista por
    nombre. Si el organizador ya tenía a esa persona cargada, se actualiza su
@@ -105,6 +158,7 @@ export function mezclarConfirmaciones(doc: DocPanel, confirmaciones: Confirmacio
         comidas: [],
         notas: "",
         mesa: null,
+        miembros: [],
         origen: "rsvp",
         alias: [clave],
         rsvp: null,
@@ -421,55 +475,112 @@ export function distribuirMesas(salon: Salon, cantidad: number, clase: Clase = "
 
 export function ocupacion(invitados: Invitado[]) {
   const porMesa = new Map<string, number>();
-  for (const i of invitados) if (i.mesa) porMesa.set(i.mesa, (porMesa.get(i.mesa) ?? 0) + esperadas(i));
+  for (const i of invitados) {
+    for (const [mesa, n] of asientos(i)) if (mesa) porMesa.set(mesa, (porMesa.get(mesa) ?? 0) + n);
+  }
   return porMesa;
 }
 
-export function sentar(invitados: Invitado[], salon: Salon, rehacer = false, porEtiqueta = true) {
+/**
+ * Sienta a los que faltan, respetando a las familias y, si las hay, las
+ * afinidades: los que van "juntos" comparten mesa cuando entran, y los
+ * "separados" nunca caen en la misma. Quien ya se sentó aparte (una persona
+ * con su propia mesa) no se mueve, salvo que se rehaga todo.
+ */
+export function sentar(invitados: Invitado[], salon: Salon, rehacer = false, porEtiqueta = true, afinidades: Afinidad[] = []) {
   const mesas = salon.elementos.filter((e) => e.tipo === "mesa");
   const idsMesa = new Set(mesas.map((m) => m.id));
 
   const resultado = invitados.map((i) => ({
     ...i,
+    miembros: (i.miembros ?? []).map((m) => (rehacer || (m.mesa && !idsMesa.has(m.mesa)) ? { ...m, mesa: null } : m)),
     mesa: i.estado === "no-viene" ? null : rehacer || !i.mesa || !idsMesa.has(i.mesa) ? null : i.mesa,
   }));
+  type Fila = (typeof resultado)[number];
 
   const libres = new Map(mesas.map((m) => [m.id, m.capacidad ?? 0]));
   for (const [id, n] of ocupacion(resultado)) libres.set(id, (libres.get(id) ?? 0) - n);
 
   // Los grupos a sentar. Sin grupo, cada fila es su propio grupo.
-  const grupos = new Map<string, typeof resultado>();
+  const grupos = new Map<string, Fila[]>();
   for (const i of resultado) {
-    if (i.mesa || esperadas(i) === 0) continue;
+    if (i.mesa || porSentar(i) === 0) continue;
     const clave = i.grupo.trim() ? "g:" + norm(i.grupo) : "i:" + i.id;
     grupos.set(clave, [...(grupos.get(clave) ?? []), i]);
   }
 
-  const orden = [...grupos.values()].sort(
-    (a, b) => b.reduce((t, i) => t + esperadas(i), 0) - a.reduce((t, i) => t + esperadas(i), 0),
-  );
+  // Los que van juntos se sientan como una sola unidad, si entran en una mesa.
+  const unidadDe = new Map<string, string>();
+  for (const [k, fs] of grupos) for (const f of fs) unidadDe.set(f.id, k);
+  const tamano = (fs: Fila[]) => fs.reduce((t, i) => t + porSentar(i), 0);
+  const maxMesa = Math.max(0, ...mesas.filter((m) => !m.principal).map((m) => m.capacidad ?? 0));
+  for (const af of afinidades) {
+    if (af.tipo !== "juntos") continue;
+    const ka = unidadDe.get(af.a);
+    const kb = unidadDe.get(af.b);
+    if (!ka || !kb || ka === kb) continue;
+    const ua = grupos.get(ka)!;
+    const ub = grupos.get(kb)!;
+    if (maxMesa > 0 && tamano(ua) + tamano(ub) > maxMesa) continue;
+    grupos.set(ka, [...ua, ...ub]);
+    grupos.delete(kb);
+    for (const f of ub) unidadDe.set(f.id, ka);
+  }
+
+  const orden = [...grupos.values()].sort((x, y) => tamano(y) - tamano(x));
+
+  /** Las mesas donde se sienta alguien de esa fila, según cómo va quedando todo. */
+  const mesasDe = (id: string) => {
+    const f = resultado.find((r) => r.id === id);
+    return f ? [...asientos(f).keys()].filter((k): k is string => !!k) : [];
+  };
+  /** Mesas que no sirven: ahí hay alguien con quien no se tienen que sentar. */
+  const vetadas = (ids: string[]) => {
+    const v = new Set<string>();
+    for (const af of afinidades) {
+      if (af.tipo !== "separados") continue;
+      const otro = ids.includes(af.a) ? af.b : ids.includes(af.b) ? af.a : null;
+      if (otro && !ids.includes(otro)) mesasDe(otro).forEach((m) => v.add(m));
+    }
+    return v;
+  };
+  /** Mesas donde ya está alguien con quien quieren sentarse. */
+  const queridas = (ids: string[]) => {
+    const q: string[] = [];
+    for (const af of afinidades) {
+      if (af.tipo !== "juntos") continue;
+      const otro = ids.includes(af.a) ? af.b : ids.includes(af.b) ? af.a : null;
+      if (otro && !ids.includes(otro)) q.push(...mesasDe(otro));
+    }
+    return q;
+  };
 
   let partidos = 0;
   let sinLugar = 0;
 
   for (const grupo of orden) {
-    const total = grupo.reduce((t, i) => t + esperadas(i), 0);
+    const total = tamano(grupo);
+    const ids = grupo.map((i) => i.id);
+    const veto = vetadas(ids);
+    const entra = (id: string) => (libres.get(id) ?? 0) >= total && !veto.has(id);
 
     // Si parte del grupo ya está sentada, se intenta primero esa mesa.
     const yaSentado = resultado.find((r) => r.mesa && grupo[0].grupo.trim() && norm(r.grupo) === norm(grupo[0].grupo))?.mesa;
 
     let destino: string | null = null;
     const etiquetada = porEtiqueta ? mesaEtiquetada(grupo[0], mesas) : null;
+    const cerca = queridas(ids).find(entra);
 
-    if (etiquetada && (libres.get(etiquetada.id) ?? 0) >= total) destino = etiquetada.id;
-    else if (yaSentado && (libres.get(yaSentado) ?? 0) >= total) destino = yaSentado;
+    if (etiquetada && entra(etiquetada.id)) destino = etiquetada.id;
+    else if (cerca) destino = cerca;
+    else if (yaSentado && entra(yaSentado)) destino = yaSentado;
     else {
       // Best fit, pero las mesas etiquetadas para otra familia van al final.
       const conEtiqueta = new Set(mesas.filter((m) => m.etiquetas?.length).map((m) => m.id));
       const principal = new Set(mesas.filter((m) => m.principal).map((m) => m.id));
       destino =
         [...libres.entries()]
-          .filter(([id, l]) => l >= total && !principal.has(id))
+          .filter(([id]) => entra(id) && !principal.has(id))
           .sort((a, b) => Number(conEtiqueta.has(a[0])) - Number(conEtiqueta.has(b[0])) || a[1] - b[1])[0]?.[0] ?? null;
     }
 
@@ -481,9 +592,12 @@ export function sentar(invitados: Invitado[], salon: Salon, rehacer = false, por
 
     // No entra entero: fila por fila, a la mesa más vacía donde quepa.
     partidos++;
-    for (const i of [...grupo].sort((a, b) => esperadas(b) - esperadas(a))) {
-      const n = esperadas(i);
-      const opcion = [...libres.entries()].filter(([id, l]) => l >= n && !mesas.find((m) => m.id === id)?.principal).sort((a, b) => b[1] - a[1])[0];
+    for (const i of [...grupo].sort((a, b) => porSentar(b) - porSentar(a))) {
+      const n = porSentar(i);
+      const vetoFila = vetadas([i.id]);
+      const opcion = [...libres.entries()]
+        .filter(([id, l]) => l >= n && !vetoFila.has(id) && !mesas.find((m) => m.id === id)?.principal)
+        .sort((a, b) => b[1] - a[1])[0];
       if (!opcion) {
         sinLugar += n;
         continue;
@@ -494,6 +608,24 @@ export function sentar(invitados: Invitado[], salon: Salon, rehacer = false, por
   }
 
   return { invitados: resultado, partidos, sinLugar };
+}
+
+/** Afinidades que no se cumplen: "separados" en la misma mesa, o "juntos" en mesas distintas. */
+export function afinidadesRotas(doc: DocPanel) {
+  const por = new Map(doc.invitados.map((i) => [i.id, i]));
+  const mesasDe = (i: Invitado) => new Set([...asientos(i).keys()].filter((k): k is string => !!k));
+  const sale: { af: Afinidad; a: Invitado; b: Invitado; mesa: string | null }[] = [];
+  for (const af of doc.afinidades ?? []) {
+    const a = por.get(af.a);
+    const b = por.get(af.b);
+    if (!a || !b) continue;
+    const ma = mesasDe(a);
+    const mb = mesasDe(b);
+    const comunes = [...ma].filter((m) => mb.has(m));
+    if (af.tipo === "separados" && comunes.length) sale.push({ af, a, b, mesa: comunes[0] });
+    if (af.tipo === "juntos" && ma.size && mb.size && !comunes.length) sale.push({ af, a, b, mesa: null });
+  }
+  return sale;
 }
 
 /* ── Números y avisos ────────────────────────────────────────── */
@@ -527,7 +659,7 @@ export function metricas(doc: DocPanel) {
     pendientes: sumar((i) => i.estado === "pendiente"),
     noVienen: sumar((i) => i.estado === "no-viene"),
     esperados: invitados.reduce((t, i) => t + esperadas(i), 0),
-    sentados: invitados.filter((i) => i.mesa).reduce((t, i) => t + esperadas(i), 0),
+    sentados: [...ocupacion(invitados).values()].reduce((t, n) => t + n, 0),
     grupos: new Set(invitados.map((i) => norm(i.grupo)).filter(Boolean)).size,
     mesas: mesas.length,
     lugares: mesas.reduce((t, m) => t + (m.capacidad ?? 0), 0),
@@ -589,6 +721,14 @@ export function avisos(doc: DocPanel, plan: "basico" | "completo"): Aviso[] {
   for (const mesa of doc.salon.elementos.filter((e) => e.tipo === "mesa")) {
     const n = ocup.get(mesa.id) ?? 0;
     if (n > (mesa.capacidad ?? 0)) lista.push({ nivel: "alerta", texto: `${mesa.nombre} tiene ${n} personas y ${mesa.capacidad} sillas.` });
+  }
+
+  for (const r of afinidadesRotas(doc)) {
+    const mesa = r.mesa ? doc.salon.elementos.find((e) => e.id === r.mesa)?.nombre : "";
+    lista.push({
+      nivel: r.af.tipo === "separados" ? "alerta" : "consejo",
+      texto: r.af.tipo === "separados" ? `${r.a.nombre} y ${r.b.nombre} están en ${mesa} y marcaste que no se sienten juntos.` : `${r.a.nombre} y ${r.b.nombre} querían sentarse juntos y están en mesas distintas.`,
+    });
   }
 
   // Familias partidas en más de una mesa.
@@ -693,17 +833,23 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     if (!nombre) return [];
     const estado = i.estado === "confirmado" || i.estado === "no-viene" ? i.estado : "pendiente";
     const mesa = typeof i.mesa === "string" && idsMesa.has(i.mesa) ? i.mesa : null;
+    const id = txt(i.id, 24) || idNuevo();
+    const personas = Math.round(num(i.personas, 1, 30, 1));
     return [
       {
-        id: txt(i.id, 24) || idNuevo(),
+        id,
         nombre,
         grupo: txt(i.grupo, 60),
-        personas: Math.round(num(i.personas, 1, 30, 1)),
+        personas,
         estado,
         telefono: txt(i.telefono, 30),
         comidas: (Array.isArray(i.comidas) ? i.comidas : []).slice(0, 8).map((c) => txt(c, 40)).filter(Boolean),
         notas: txt(i.notas, 300),
         mesa,
+        miembros: (Array.isArray(i.miembros) ? i.miembros : []).slice(0, personas).map((y, k): Miembro => {
+          const m = y as Record<string, unknown>;
+          return { id: txt(m.id, 40) || `${id}~${k}`, nombre: txt(m.nombre, 80), mesa: typeof m.mesa === "string" && idsMesa.has(m.mesa) ? m.mesa : null };
+        }),
         origen: i.origen === "rsvp" ? "rsvp" : "manual",
         alias: (Array.isArray(i.alias) ? i.alias : []).slice(0, 10).map((a) => txt(a, 80)).filter(Boolean),
         rsvp: typeof i.rsvp === "string" && !Number.isNaN(Date.parse(i.rsvp)) ? i.rsvp : null,
@@ -819,6 +965,17 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     ];
   });
 
+  const idsInvitado = new Set(invitados.map((i) => i.id));
+  const pares = new Set<string>();
+  const afinidades: Afinidad[] = (Array.isArray(d.afinidades) ? d.afinidades : []).slice(0, 600).flatMap((x): Afinidad[] => {
+    const f = x as Record<string, unknown>;
+    if (typeof f.a !== "string" || typeof f.b !== "string" || f.a === f.b || !idsInvitado.has(f.a) || !idsInvitado.has(f.b)) return [];
+    const par = [f.a, f.b].sort().join("|");
+    if (pares.has(par)) return [];
+    pares.add(par);
+    return [{ id: unico(f.id), a: f.a, b: f.b, tipo: f.tipo === "separados" ? "separados" : "juntos" }];
+  });
+
   const pr = (d.presupuesto ?? {}) as Record<string, unknown>;
   const tp = (pr.tope ?? {}) as Record<string, unknown>;
   const presupuesto = {
@@ -864,6 +1021,7 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     pagos,
     presupuesto,
     momentos,
+    afinidades,
   };
 }
 

@@ -744,12 +744,13 @@ moneda; no hay una "principal"). El dólar de referencia sigue siendo opcional.
 |---|---|
 | 0. Maqueta | Salteada: Benja pidió avanzar; se muestra con capturas del panel real. |
 | 1. Menú lateral | Hecha (`Menu.tsx`, columna fija desde 64rem y cajón en celular). |
-| 2. Modelo de datos | Parcial: `equipo`, `tareas`, `plantilla`, `cotizaciones`, `pagos`, `presupuesto` (tope por moneda y dólar de referencia) + `plantillas.ts` + validación + `scripts/probar-datos.mjs`. Faltan `afinidades`, `miembros`. `momentos` ya está. |
+| 2. Modelo de datos | Parcial: `equipo`, `tareas`, `plantilla`, `cotizaciones`, `pagos`, `presupuesto` (tope por moneda y dólar de referencia) + `plantillas.ts` + validación + `scripts/probar-datos.mjs`. `momentos`, `afinidades` y `miembros` (en `Invitado`) ya están. |
 | 5. Checklist | Hecha (`Checklist.tsx`, con responsable creable desde la ficha, hoja nueva en el Excel y bloque en el Resumen). |
 | 3. Equipo | Hecha (`Equipo.tsx`: alta, ficha, estados, WhatsApp, rubros sin cubrir, lo que tiene asignado). |
 | 4. Presupuesto | Hecha (`Presupuesto.tsx`: totales ARS y USD, tope, dólar de referencia, próximos pagos, cotizaciones por rubro, pagos, seña y saldo). |
 | 6. Cronograma | Hecha (`Cronograma.tsx`: Preparación con línea de Hoy, tareas y pagos tildables; El día con plantillas, detalle, responsables del equipo e impresión; hoja en el Excel). |
-| 7, 8 | Pendientes. Sigue Mesas con personas y afinidad, después el cierre del Resumen y el Excel. |
+| 7. Mesas con personas | Hecha (`Mesas.tsx`: personas desplegables en Sin mesa, chips por persona en cada mesa, una persona se sienta aparte y vuelve con su familia; ficha de Invitados con nombres y afinidades; `sentar` respeta juntos y separados; avisos de afinidades rotas). El arrastre usa el drag and drop del navegador (mouse) y en celular se toca y se elige la mesa, igual que antes. |
+| 8 | Pendiente: cierre del Resumen y del Excel (el Excel ya trae Checklist, Equipo, Presupuesto, Pagos, Cronograma y Mesas con personas). |
 
 Notas para quien siga:
 - La vista Equipo todavía no existe: el responsable se crea desde la ficha de una tarea
@@ -761,3 +762,9 @@ Notas para quien siga:
 - El servidor ya no descarta filas de equipo, tareas o momentos que tienen `id` y el nombre
   vacío: si se descartaran, se esfumarían mientras el usuario borra y reescribe el campo. Las
   vistas muestran "Sin nombre" o "Sin título" en esos casos.
+- Personas dentro de una fila: `Invitado.miembros` sólo guarda a quien tiene nombre propio o se
+  sienta aparte; el resto se arma al vuelo con `miembrosDe(inv)`. Todo lo que cuenta lugares
+  pasa por `asientos`, `ocupacion`, `ocupantes` y `porSentar` en `logica.ts`: no uses
+  `inv.mesa` suelto para contar gente.
+- Hay un aviso de hidratación en el plano (`Centro` de `Muebles.tsx`: un `cx` numérico no
+  coincide entre servidor y cliente por decimales). Viene de antes y no afecta lo que se ve.

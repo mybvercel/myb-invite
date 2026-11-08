@@ -1230,3 +1230,36 @@ body:has(.pnl--base-noche) { background: #141512; }
   .pnl-momento__fila { grid-template-columns: 6.4rem minmax(0, 1fr) auto; }
   .pnl-momento__hora { padding-inline: 0.45rem; font-size: 16px; }
 }
+
+/* ── Mesas: personas y afinidad ──────────────────────────────── */
+
+.pnl-unidad__fila { display: flex; align-items: center; gap: 0.5rem; }
+.pnl-unidad__fila .pnl-unidad { flex: 1; min-width: 0; }
+.pnl-unidad__ver { min-height: 2.5rem; padding-inline: 0.25rem; font-size: 0.78rem; }
+
+.pnl-personas { display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0.4rem 0 0.2rem 0.5rem; margin-left: 0.4rem; border-left: 2px solid var(--linea-2); }
+.pnl-personas--mesa { padding: 0.3rem 0 0.1rem 0; margin-left: 0; border-left: 0; }
+
+.pnl-persona { display: inline-flex; align-items: center; border: 1px solid var(--linea-2); border-radius: var(--radio); background: var(--superficie); }
+.pnl-persona.es-aparte { border-color: var(--acento); }
+.pnl-persona.es-elegida { border-color: var(--acento); background: var(--acento-suave); box-shadow: 0 0 0 2px var(--acento-suave); }
+.pnl .pnl-persona__cuerpo { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.25rem; padding: 0.15rem 0.5rem 0.15rem 0.3rem; max-width: 12rem; cursor: grab; }
+.pnl .pnl-persona__cuerpo:active { cursor: grabbing; }
+.pnl-persona__ini { display: grid; place-items: center; flex: none; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--acento-suave); color: var(--tinta); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.02em; }
+.pnl-persona.es-aparte .pnl-persona__ini { background: var(--acento); color: var(--sobre-acento); }
+.pnl-persona__nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.8rem; }
+.pnl-persona .pnl-quitar { margin-right: 0.15rem; }
+
+.pnl-mesa__ocupante { display: flex; flex-direction: column; gap: 0.1rem; }
+.pnl-mesa__ocupante-fila { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+
+.pnl-ficha__personas, .pnl-ficha__afin { border: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.pnl-ficha__personas legend, .pnl-ficha__afin legend { font-size: 0.75rem; color: var(--tinta-2); margin-bottom: 0.3rem; padding: 0; }
+.pnl-ficha__personas-lista { display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+.pnl-ficha__personas-lista input { min-height: 2.5rem; padding: 0.4rem 0.65rem; border: 1px solid var(--linea-2); border-radius: var(--radio); background: var(--superficie); font-size: 16px; min-width: 0; width: 100%; }
+.pnl-ficha__personas-lista input:focus { outline: none; border-color: var(--acento); box-shadow: 0 0 0 3px var(--acento-suave); }
+.pnl-afin__alta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.pnl-afin__alta .pnl-select { width: auto; max-width: 100%; }
+.pnl-etiqueta--separados { border-color: color-mix(in srgb, var(--alerta) 50%, transparent); }
+.pnl-mesa__ocupante-fila { text-align: left; }
+.pnl-mesa__ocupante-fila > span:first-child { flex: 1; min-width: 0; }

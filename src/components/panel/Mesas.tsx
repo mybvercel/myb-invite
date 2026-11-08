@@ -1,25 +1,66 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { esperadas, metricas, nombrePorEtiquetas, norm, novedades, nuevoElemento, ocupacion, sentar } from "@/panel/logica";
-import type { Ajustes, DocPanel, Elemento, Invitado } from "@/panel/tipos";
+import { afinidadesRotas, conMiembro, metricas, miembrosDe, nombrePorEtiquetas, norm, novedades, nuevoElemento, ocupacion, ocupantes, porSentar, sentar } from "@/panel/logica";
+import type { Ajustes, DocPanel, Elemento, Invitado, Miembro } from "@/panel/tipos";
 import type { Cambiar } from "./Panel";
 import { Cifra, EditorEtiquetas } from "./piezas";
 import { Plano } from "./Plano";
 
-/** Lo que se sienta de una vez: una familia entera, o una fila suelta. */
-type Unidad = { clave: string; nombre: string; personas: number; ids: string[]; nuevo: boolean };
+/** Lo que se sienta de una vez: una familia entera, una fila suelta, o una sola persona. */
+type Unidad = {
+  clave: string;
+  nombre: string;
+  personas: number;
+  ids: string[];
+  nuevo: boolean;
+  /** Las personas de la unidad que todavía no tienen mesa. */
+  gente?: { inv: string; miembro: Miembro }[];
+  /** Si es una sola persona: de qué fila es y cuál. */
+  miembro?: { inv: string; id: string };
+};
+
+const iniciales = (n: string) =>
+  n
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p.charAt(0).toUpperCase())
+    .join("") || "?";
+
+/** Una persona, como ficha chica: sus iniciales y su nombre. Se toca para elegirla o se arrastra. */
+function Persona({ m, elegida, onElegir, onArrastrar, onQuitar }: { m: Miembro; elegida?: boolean; onElegir: () => void; onArrastrar: () => void; onQuitar?: () => void }) {
+  return (
+    <span className={`pnl-persona${elegida ? " es-elegida" : ""}${m.mesa ? " es-aparte" : ""}`}>
+      <button
+        className="pnl-persona__cuerpo"
+        aria-pressed={!!elegida}
+        draggable
+        onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.setData("text/plain", m.id); onArrastrar(); }}
+        onClick={(e) => { e.stopPropagation(); onElegir(); }}
+        title={m.mesa ? "Sentada aparte de su familia" : "Tocala y después tocá una mesa"}
+      >
+        <span className="pnl-persona__ini" aria-hidden>{iniciales(m.nombre)}</span>
+        <span className="pnl-persona__nombre">{m.nombre || "Sin nombre"}</span>
+      </button>
+      {onQuitar && (
+        <button className="pnl-quitar" onClick={(e) => { e.stopPropagation(); onQuitar(); }} aria-label={`Volver a sentar a ${m.nombre} con su familia`} title="Volver con su familia">×</button>
+      )}
+    </span>
+  );
+}
 
 function unidadesSinMesa(invitados: Invitado[], nuevos: Set<string>): Unidad[] {
   const mapa = new Map<string, Unidad>();
   for (const i of invitados) {
-    if (i.mesa || esperadas(i) === 0) continue;
+    if (i.mesa || porSentar(i) === 0) continue;
     const g = i.grupo.trim();
     const clave = g ? "g:" + norm(g) : "i:" + i.id;
-    const u = mapa.get(clave) ?? { clave, nombre: g || i.nombre, personas: 0, ids: [], nuevo: false };
-    u.personas += esperadas(i);
+    const u = mapa.get(clave) ?? { clave, nombre: g || i.nombre, personas: 0, ids: [], nuevo: false, gente: [] };
+    u.personas += porSentar(i);
     u.ids.push(i.id);
     u.nuevo ||= nuevos.has(i.id);
+    u.gente!.push(...miembrosDe(i).filter((m) => !m.mesa).map((miembro) => ({ inv: i.id, miembro })));
     mapa.set(clave, u);
   }
   // Los recién confirmados arriba: son los que hay que ubicar ahora.
@@ -45,16 +86,40 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
   const [resaltada, setResaltada] = useState<string | null>(null);
   const [verPlano, setVerPlano] = useState(true);
   const [resultado, setResultado] = useState("");
+  const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
 
   const m = metricas(doc);
   const mesas = doc.salon.elementos.filter((e) => e.tipo === "mesa").sort(ordenMesas);
   const ocup = ocupacion(doc.invitados);
   const nuevos = useMemo(() => new Set(novedades(doc).map((i) => i.id)), [doc]);
   const unidades = unidadesSinMesa(doc.invitados, nuevos);
+  const rotas = afinidadesRotas(doc);
+  const nombreMesaDe = (id: string | null) => mesas.find((x) => x.id === id)?.nombre ?? "la misma mesa";
   const grupos = [...new Set(doc.invitados.map((i) => i.grupo.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
   const asignar = (ids: string[], mesa: string | null) =>
     cambiar((d) => ({ ...d, invitados: d.invitados.map((i) => (ids.includes(i.id) ? { ...i, mesa } : i)) }));
+
+  /** Una sola persona a una mesa, aparte de su familia. Con null vuelve con ella. */
+  const asignarPersona = (inv: string, miembro: string, mesa: string | null) =>
+    cambiar((d) => ({ ...d, invitados: d.invitados.map((i) => (i.id === inv ? conMiembro(i, miembro, { mesa }) : i)) }));
+
+  const unidadDePersona = (inv: Invitado, m: Miembro): Unidad => ({
+    clave: "p:" + m.id,
+    nombre: m.nombre || inv.nombre,
+    personas: 1,
+    ids: [inv.id],
+    nuevo: false,
+    miembro: { inv: inv.id, id: m.id },
+  });
+
+  const alternar = (clave: string) =>
+    setAbiertas((a) => {
+      const n = new Set(a);
+      if (n.has(clave)) n.delete(clave);
+      else n.add(clave);
+      return n;
+    });
 
   const editarMesa = (id: string, c: Partial<Elemento>) =>
     cambiar((d) => ({
@@ -70,13 +135,14 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
 
   const soltarEn = (mesa: string, u: Unidad | null) => {
     if (!u) return;
-    asignar(u.ids, mesa);
+    if (u.miembro) asignarPersona(u.miembro.inv, u.miembro.id, mesa);
+    else asignar(u.ids, mesa);
     setElegida(null);
     setResaltada(mesa);
   };
 
   const automatico = (rehacer: boolean) => {
-    const r = sentar(doc.invitados, doc.salon, rehacer, doc.ajustes.porEtiqueta);
+    const r = sentar(doc.invitados, doc.salon, rehacer, doc.ajustes.porEtiqueta, doc.afinidades);
     cambiar((d) => ({ ...d, invitados: r.invitados }));
     const partes = [
       r.partidos ? `${r.partidos} ${r.partidos === 1 ? "familia no entraba entera y quedó repartida" : "familias no entraban enteras y quedaron repartidas"}` : "",
@@ -158,6 +224,20 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
         </div>
       </div>
       {resultado && <p className="pnl-nota" role="status">{resultado}</p>}
+      {rotas.length > 0 && (
+        <ul className="pnl-avisos" aria-label="Afinidades que no se cumplen">
+          {rotas.map((r) => (
+            <li key={r.af.id} className={`pnl-aviso pnl-aviso--${r.af.tipo === "separados" ? "alerta" : "consejo"}`}>
+              <span className="pnl-aviso__marca" aria-hidden>{r.af.tipo === "separados" ? "!" : "→"}</span>
+              <span>
+                {r.af.tipo === "separados"
+                  ? `${r.a.nombre} y ${r.b.nombre} están juntos en ${nombreMesaDe(r.mesa)} y marcaste que no.`
+                  : `${r.a.nombre} y ${r.b.nombre} querían sentarse juntos y están en mesas distintas.`}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className="pnl-mesas">
         <aside className="pnl-mesas__espera" aria-label="Sin mesa">
@@ -170,6 +250,7 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
               <ul className="pnl-mesas__unidades">
                 {unidades.map((u) => (
                   <li key={u.clave}>
+                    <div className="pnl-unidad__fila">
                     <button
                       className="pnl-unidad"
                       aria-pressed={elegida?.clave === u.clave}
@@ -184,6 +265,29 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
                       </span>
                       <span className="pnl-num">{u.personas}</span>
                     </button>
+                    {u.personas > 1 && (
+                      <button className="pnl-enlace pnl-unidad__ver" onClick={() => alternar(u.clave)} aria-expanded={abiertas.has(u.clave)}>
+                        {abiertas.has(u.clave) ? "Ocultar" : "Personas"}
+                      </button>
+                    )}
+                    </div>
+                    {abiertas.has(u.clave) && (
+                      <div className="pnl-personas">
+                        {u.gente!.map(({ inv, miembro }) => {
+                          const fila = doc.invitados.find((x) => x.id === inv)!;
+                          const unidad = unidadDePersona(fila, miembro);
+                          return (
+                            <Persona
+                              key={miembro.id}
+                              m={miembro}
+                              elegida={elegida?.clave === unidad.clave}
+                              onElegir={() => setElegida(elegida?.clave === unidad.clave ? null : unidad)}
+                              onArrastrar={() => setElegida(unidad)}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -207,7 +311,7 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
             {mesas.map((mesa) => {
               const n = ocup.get(mesa.id) ?? 0;
               const cap = mesa.capacidad ?? 0;
-              const aca = doc.invitados.filter((i) => i.mesa === mesa.id && esperadas(i) > 0);
+              const aca = ocupantes(doc.invitados, mesa.id);
               const entra = elegida ? cap - n >= elegida.personas : true;
               const etiquetas = mesa.etiquetas ?? [];
               const sugerido = nombrePorEtiquetas(etiquetas);
@@ -251,17 +355,43 @@ export function Mesas({ doc, cambiar, irASalon }: { doc: DocPanel; cambiar: Camb
                     <p className="pnl-nota">{elegida ? (entra ? "Tocá para sentarlos acá" : "No entran") : "Vacía"}</p>
                   ) : (
                     <ul className="pnl-mesa__lista">
-                      {aca.map((i) => (
-                        <li key={i.id}>
-                          <span>
-                            {i.nombre}
-                            {i.personas > 1 && <span className="pnl-tenue"> ×{i.personas}</span>}
-                            {nuevos.has(i.id) && <span className="pnl-marca pnl-unidad__nuevo">nuevo</span>}
-                            {i.grupo && norm(i.grupo) !== norm(i.nombre) && <span className="pnl-mesa__grupo">{i.grupo}</span>}
-                          </span>
-                          <button className="pnl-quitar" onClick={(e) => { e.stopPropagation(); asignar([i.id], null); }} aria-label={`Sacar a ${i.nombre} de ${mesa.nombre}`}>×</button>
-                        </li>
-                      ))}
+                      {aca.map(({ inv: i, miembros, entera }) => {
+                        const conLaFamilia = i.mesa === mesa.id;
+                        return (
+                          <li key={i.id} className="pnl-mesa__ocupante">
+                            <div className="pnl-mesa__ocupante-fila">
+                              <span>
+                                {i.nombre}
+                                {entera
+                                  ? i.personas > 1 && <span className="pnl-tenue"> ×{i.personas}</span>
+                                  : <span className="pnl-tenue"> · {miembros.length} de {i.personas}</span>}
+                                {nuevos.has(i.id) && <span className="pnl-marca pnl-unidad__nuevo">nuevo</span>}
+                                {i.grupo && norm(i.grupo) !== norm(i.nombre) && <span className="pnl-mesa__grupo">{i.grupo}</span>}
+                              </span>
+                              {conLaFamilia && (
+                                <button className="pnl-quitar" onClick={(e) => { e.stopPropagation(); asignar([i.id], null); }} aria-label={`Sacar a ${i.nombre} de ${mesa.nombre}`}>×</button>
+                              )}
+                            </div>
+                            {i.personas > 1 && (
+                              <div className="pnl-personas pnl-personas--mesa">
+                                {miembros.map((mi) => {
+                                  const unidad = unidadDePersona(i, mi);
+                                  return (
+                                    <Persona
+                                      key={mi.id}
+                                      m={mi}
+                                      elegida={elegida?.clave === unidad.clave}
+                                      onElegir={() => setElegida(elegida?.clave === unidad.clave ? null : unidad)}
+                                      onArrastrar={() => setElegida(unidad)}
+                                      onQuitar={mi.mesa === mesa.id ? () => asignarPersona(i.id, mi.id, null) : undefined}
+                                    />
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
 

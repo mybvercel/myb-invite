@@ -32,6 +32,26 @@ export const ESTADOS: { id: Estado; nombre: string }[] = [
   { id: "no-viene", nombre: "No viene" },
 ];
 
+/**
+ * Una persona dentro de una fila de invitados. Una familia de cuatro es una
+ * fila con cuatro miembros. Sólo hace falta guardarlos cuando tienen nombre
+ * propio o se sientan aparte; el resto se deduce de `personas`.
+ */
+export type Miembro = {
+  id: string;
+  nombre: string;
+  /** null: se sienta con su fila (`Invitado.mesa`). Con valor: en esa mesa, aparte. */
+  mesa: string | null;
+};
+
+/** Dos filas que se sientan juntas o que se tienen que sentar lejos. */
+export type Afinidad = {
+  id: string;
+  a: string;
+  b: string;
+  tipo: "juntos" | "separados";
+};
+
 export type Invitado = {
   id: string;
   nombre: string;
@@ -45,6 +65,8 @@ export type Invitado = {
   notas: string;
   /** Id de la mesa (un elemento del salón) o null si todavía no tiene lugar. */
   mesa: string | null;
+  /** Las personas de la fila, con su nombre y, si se sientan aparte, su mesa. */
+  miembros: Miembro[];
   /** "manual" si lo cargó el organizador; "rsvp" si apareció al confirmar. */
   origen: "manual" | "rsvp";
   /**
@@ -342,6 +364,7 @@ export type DocPanel = {
   pagos: Pago[];
   presupuesto: Presupuesto;
   momentos: Momento[];
+  afinidades: Afinidad[];
 };
 
 export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
@@ -359,4 +382,5 @@ export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
   pagos: [],
   presupuesto: { tope: { ARS: 0, USD: 0 }, dolar: 0 },
   momentos: [],
+  afinidades: [],
 });

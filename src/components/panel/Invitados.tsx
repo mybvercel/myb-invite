@@ -2,8 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import { COMIDAS } from "@/lib/rsvp-comun";
-import { avisos, esperadas, idNuevo, metricas, norm, ocupacion, posiblesDuplicados } from "@/panel/logica";
-import { ESTADOS, type DocPanel, type Estado, type Invitado } from "@/panel/tipos";
+import { avisos, esperadas, idNuevo, metricas, miembrosDe, norm, ocupacion, porSentar, posiblesDuplicados } from "@/panel/logica";
+import { ESTADOS, type Afinidad, type DocPanel, type Estado, type Invitado } from "@/panel/tipos";
 import type { Cambiar } from "./Panel";
 import { Avisos, Cifra } from "./piezas";
 
@@ -27,6 +27,7 @@ export const nuevo = (datos: Partial<Invitado> & { nombre: string }): Invitado =
   comidas: [],
   notas: "",
   mesa: null,
+  miembros: [],
   origen: "manual",
   alias: [],
   rsvp: null,
@@ -89,7 +90,7 @@ export function Invitados({ doc, cambiar, completo, nombres, enlaceInvitacion }:
   const visibles = useMemo(() => {
     const q = norm(busqueda);
     const lista = doc.invitados.filter((i) => {
-      if (filtro === "sin-mesa" ? i.mesa || i.estado === "no-viene" : filtro !== "todos" && i.estado !== filtro) return false;
+      if (filtro === "sin-mesa" ? i.mesa || i.estado === "no-viene" || porSentar(i) === 0 : filtro !== "todos" && i.estado !== filtro) return false;
       return !q || norm(`${i.nombre} ${i.grupo} ${i.telefono}`).includes(q);
     });
     const rango: Record<Estado, number> = { pendiente: 0, confirmado: 1, "no-viene": 2 };
@@ -107,6 +108,14 @@ export function Invitados({ doc, cambiar, completo, nombres, enlaceInvitacion }:
     cambiar((d) => ({ ...d, invitados: d.invitados.map((i) => (i.id === id ? { ...i, ...cambios } : i)) }));
 
   const agregar = (lista: Invitado[]) => cambiar((d) => ({ ...d, invitados: [...d.invitados, ...lista] }));
+
+  /** Dos filas, juntas o separadas. Si ya había algo entre las dos, se reemplaza. */
+  const ponerAfinidad = (a: string, b: string, tipo: Afinidad["tipo"]) =>
+    cambiar((d) => ({
+      ...d,
+      afinidades: [...d.afinidades.filter((x) => !((x.a === a && x.b === b) || (x.a === b && x.b === a))), { id: idNuevo(), a, b, tipo }],
+    }));
+  const quitarAfinidad = (id: string) => cambiar((d) => ({ ...d, afinidades: d.afinidades.filter((x) => x.id !== id) }));
 
   const borrar = (inv: Invitado) =>
     cambiar((d) => {
@@ -317,6 +326,11 @@ export function Invitados({ doc, cambiar, completo, nombres, enlaceInvitacion }:
                     borrar={() => { borrar(i); setAbierto(null); }}
                     unirCon={(destino) => { unir(i, destino); setAbierto(null); }}
                     cerrar={() => setAbierto(null)}
+                    completo={completo}
+                    otros={doc.invitados.filter((x) => x.id !== i.id)}
+                    afinidades={doc.afinidades.filter((x) => x.a === i.id || x.b === i.id)}
+                    ponerAfinidad={(otro, tipo) => ponerAfinidad(i.id, otro, tipo)}
+                    quitarAfinidad={quitarAfinidad}
                   />
                 )}
               </div>
@@ -417,10 +431,17 @@ type FichaProps = {
   borrar: () => void;
   unirCon: (destino: Invitado) => void;
   cerrar: () => void;
+  completo: boolean;
+  otros: Invitado[];
+  afinidades: Afinidad[];
+  ponerAfinidad: (otro: string, tipo: Afinidad["tipo"]) => void;
+  quitarAfinidad: (id: string) => void;
 };
 
-function Ficha({ inv, candidatos, editar, borrar, unirCon, cerrar }: FichaProps) {
+function Ficha({ inv, candidatos, editar, borrar, unirCon, cerrar, completo, otros, afinidades, ponerAfinidad, quitarAfinidad }: FichaProps) {
   const [seguro, setSeguro] = useState(false);
+  const [tipoNuevo, setTipoNuevo] = useState<Afinidad["tipo"]>("juntos");
+  const nombreDe = (id: string) => otros.find((x) => x.id === id)?.nombre ?? "";
 
   return (
     <div className="pnl-ficha">
@@ -456,6 +477,60 @@ function Ficha({ inv, candidatos, editar, borrar, unirCon, cerrar }: FichaProps)
           </label>
         ))}
       </fieldset>
+
+      {completo && inv.personas > 1 && (
+        <fieldset className="pnl-ficha__personas">
+          <legend>Quiénes son</legend>
+          <div className="pnl-ficha__personas-lista">
+            {miembrosDe(inv).map((m, k) => (
+              <input
+                key={m.id}
+                value={m.nombre}
+                maxLength={80}
+                aria-label={`Nombre de la persona ${k + 1}`}
+                onChange={(e) => editar({ miembros: miembrosDe(inv).map((x) => (x.id === m.id ? { ...x, nombre: e.target.value } : x)) })}
+              />
+            ))}
+          </div>
+          <p className="pnl-nota">Con sus nombres, en Mesas podés sentar a cada uno donde prefieras.</p>
+        </fieldset>
+      )}
+
+      {completo && (
+        <fieldset className="pnl-ficha__afin">
+          <legend>Con quién se sienta</legend>
+          {afinidades.length > 0 && (
+            <ul className="pnl-etiquetas">
+              {afinidades.map((a) => {
+                const otro = a.a === inv.id ? a.b : a.a;
+                return (
+                  <li key={a.id} className={`pnl-etiqueta pnl-etiqueta--${a.tipo}`}>
+                    {a.tipo === "juntos" ? "Junto a" : "Lejos de"} {nombreDe(otro)}
+                    <button onClick={() => quitarAfinidad(a.id)} aria-label={`Quitar: ${nombreDe(otro)}`}>×</button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <div className="pnl-afin__alta">
+            <select className="pnl-select" value={tipoNuevo} onChange={(e) => setTipoNuevo(e.target.value as Afinidad["tipo"])} aria-label="Tipo de afinidad">
+              <option value="juntos">Sentar junto a</option>
+              <option value="separados">No sentar con</option>
+            </select>
+            <select
+              className="pnl-select"
+              value=""
+              onChange={(e) => e.target.value && ponerAfinidad(e.target.value, tipoNuevo)}
+              aria-label="Elegir con quién"
+              disabled={otros.length === 0}
+            >
+              <option value="">{otros.length ? "elegir invitado…" : "no hay más invitados"}</option>
+              {[...otros].sort((a, b) => a.nombre.localeCompare(b.nombre)).map((o) => <option key={o.id} value={o.id}>{o.nombre}{o.grupo ? ` · ${o.grupo}` : ""}</option>)}
+            </select>
+          </div>
+          <p className="pnl-nota">El sentado automático lo respeta, y Mesas te avisa si algo no se cumple.</p>
+        </fieldset>
+      )}
 
       <label className="pnl-campo">
         <span>Notas</span>

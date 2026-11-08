@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parsearFecha } from "@/invitaciones/fecha";
-import { esperadas, metricas, novedades, ordenarMomentos, pagoVencido, progresoChecklist, totalesPresupuesto, venceTarea } from "@/panel/logica";
+import { metricas, novedades, ocupantes, ordenarMomentos, pagoVencido, porSentar, progresoChecklist, totalesPresupuesto, venceTarea } from "@/panel/logica";
 import { esPlanCompleto, ETAPAS, MONEDAS, nombreRubro, NOMBRE_PLAN, type DocPanel, type Plan, type Tema } from "@/panel/tipos";
 import { descargarXlsx, type Hoja } from "@/panel/xlsx";
 import { Checklist } from "./Checklist";
@@ -312,12 +312,12 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
           { titulo: "Invitados", ancho: 80 },
         ],
         filas: mesas.map((x) => {
-          const aca = doc.invitados.filter((i) => i.mesa === x.id && esperadas(i) > 0);
+          const aca = ocupantes(doc.invitados, x.id);
           return [
             x.nombre,
             x.capacidad ?? 0,
-            aca.reduce((t, i) => t + esperadas(i), 0),
-            aca.map((i) => (i.personas > 1 ? `${i.nombre} (${i.personas})` : i.nombre)).join(", "),
+            aca.reduce((t, o) => t + o.miembros.length, 0),
+            aca.map((o) => (o.entera ? (o.inv.personas > 1 ? `${o.inv.nombre} (${o.inv.personas})` : o.inv.nombre) : `${o.inv.nombre}: ${o.miembros.map((m) => m.nombre).join(" y ")}`)).join(", "),
           ];
         }),
       });
@@ -454,7 +454,7 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
 
   const m = metricas(doc);
   const nuevas = novedades(doc);
-  const nuevasSinMesa = completo ? nuevas.filter((i) => i.estado === "confirmado" && !i.mesa).length : 0;
+  const nuevasSinMesa = completo ? nuevas.filter((i) => i.estado === "confirmado" && !i.mesa && porSentar(i) > 0).length : 0;
   const nombreMesa = new Map(doc.salon.elementos.filter((e) => e.tipo === "mesa").map((e) => [e.id, e.nombre]));
 
   const marcarVisto = () =>
