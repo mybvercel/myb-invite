@@ -1,13 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { esperadas, metricas, novedades } from "@/panel/logica";
-import { esPlanCompleto, NOMBRE_PLAN, type DocPanel, type Plan, type Tema } from "@/panel/tipos";
+import { parsearFecha } from "@/invitaciones/fecha";
+import { esperadas, metricas, novedades, progresoChecklist, venceTarea } from "@/panel/logica";
+import { esPlanCompleto, ETAPAS, NOMBRE_PLAN, type DocPanel, type Plan, type Tema } from "@/panel/tipos";
 import { descargarXlsx, type Hoja } from "@/panel/xlsx";
+import { Checklist } from "./Checklist";
 import { Estilo } from "./Estilo";
-import { Fechas } from "./Fechas";
+import { Fechas, falta } from "./Fechas";
 import { Invitados } from "./Invitados";
 import { Links } from "./Links";
+import { Menu, type ItemMenu } from "./Menu";
 import { Mesas } from "./Mesas";
 import { Resumen } from "./Resumen";
 import { Salon } from "./Salon";
@@ -15,7 +18,17 @@ import { Salon } from "./Salon";
 /** `clave`: cambios seguidos con la misma clave se deshacen de una vez. */
 export type Cambiar = (f: (d: DocPanel) => DocPanel, clave?: string) => void;
 
-type Vista = "resumen" | "invitados" | "links" | "mesas" | "salon" | "estilo";
+type Vista = "resumen" | "checklist" | "invitados" | "links" | "mesas" | "salon" | "estilo";
+
+const TITULO_VISTA: Record<Vista, string> = {
+  resumen: "Resumen",
+  checklist: "Checklist",
+  invitados: "Invitados",
+  links: "Links personales",
+  mesas: "Mesas",
+  salon: "Salón",
+  estilo: "Estilo",
+};
 
 type Props = {
   slug: string;
@@ -57,6 +70,7 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
   const [guardado, setGuardado] = useState<EstadoGuardado>("guardado");
   const [docServidor, setDocServidor] = useState<DocPanel | null>(null);
   const [selSalon, setSelSalon] = useState<string | undefined>();
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   const irASalon = (id?: string) => {
     setSelSalon(id);
@@ -303,6 +317,30 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
       });
     }
 
+    if (doc.tareas.length) {
+      const ev = parsearFecha(fecha);
+      const resp = new Map(doc.equipo.map((r) => [r.id, r.nombre]));
+      hojas.push({
+        nombre: "Checklist",
+        columnas: [
+          { titulo: "Tarea", ancho: 52 },
+          { titulo: "Cuándo", ancho: 22 },
+          { titulo: "Vence", ancho: 12 },
+          { titulo: "Estado", ancho: 10 },
+          { titulo: "Quién se encarga", ancho: 24 },
+          { titulo: "Notas", ancho: 36 },
+        ],
+        filas: doc.tareas.map((t) => [
+          t.titulo,
+          ETAPAS.find((e) => e.id === t.etapa)?.nombre ?? "",
+          venceTarea(t, ev).split("-").reverse().join("/"),
+          t.hecha ? "Hecha" : "Falta",
+          t.responsableId ? (resp.get(t.responsableId) ?? "") : "",
+          t.notas,
+        ]),
+      });
+    }
+
     hojas.push({
       nombre: "Catering",
       columnas: [{ titulo: "Restricción", ancho: 26 }, { titulo: "Personas", ancho: 10 }],
@@ -328,7 +366,7 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
     });
 
     void descargarXlsx(`invitados-${slug}.xlsx`, hojas);
-  }, [doc, completo, slug]);
+  }, [doc, completo, slug, fecha]);
 
   /* ── Estilo ─────────────────────────────────────────────────── */
 
@@ -348,16 +386,33 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
   const marcarVisto = () =>
     cambiar((d) => ({ ...d, ajustes: { ...d.ajustes, vistoHasta: novedades(d)[0]?.rsvp ?? d.ajustes.vistoHasta } }));
 
-  const pestanas: { id: Vista; nombre: string; dato?: string }[] = completo
+  const evento = parsearFecha(fecha);
+  const prog = progresoChecklist(doc.tareas);
+  const detalleEvento = evento
+    ? `${evento.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }).replace(/\./g, "")} · ${falta(evento).texto}`
+    : undefined;
+
+  const grupos: ItemMenu[][] = completo
     ? [
-        { id: "resumen", nombre: "Resumen" },
-        { id: "invitados", nombre: "Invitados", dato: String(doc.invitados.length) },
-        { id: "links", nombre: "Links", dato: String(doc.invitados.filter((i) => i.enlace).length) },
-        { id: "mesas", nombre: "Mesas", dato: nuevasSinMesa ? `${nuevasSinMesa} por ubicar` : m.mesas ? `${m.sentados}/${m.esperados}` : undefined },
-        { id: "salon", nombre: "Salón", dato: `${Math.round(m.areaTotal)} m²` },
-        { id: "estilo", nombre: "Estilo" },
+        [
+          { id: "resumen", nombre: "Resumen" },
+          { id: "checklist", nombre: "Checklist", dato: prog.total ? `${prog.hechas}/${prog.total}` : undefined },
+        ],
+        [
+          { id: "invitados", nombre: "Invitados", dato: String(doc.invitados.length) },
+          { id: "links", nombre: "Links", dato: String(doc.invitados.filter((i) => i.enlace).length) },
+          { id: "mesas", nombre: "Mesas", dato: nuevasSinMesa ? `${nuevasSinMesa} por ubicar` : m.mesas ? `${m.sentados}/${m.esperados}` : undefined },
+          { id: "salon", nombre: "Salón", dato: `${Math.round(m.areaTotal)} m²` },
+        ],
+        [{ id: "estilo", nombre: "Estilo" }],
       ]
     : [];
+
+  const elegir = (id: string) => {
+    setVista(id as Vista);
+    setMenuAbierto(false);
+    window.scrollTo({ top: 0 });
+  };
 
   const textoGuardado: Record<EstadoGuardado, string> = {
     guardado: "Guardado",
@@ -367,14 +422,8 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
     conflicto: "Editado en otro dispositivo",
   };
 
-  return (
-    <div className={`pnl pnl--base-${tema.base}${completo ? "" : " pnl--sobrio"}`} style={estiloTema}>
-      <header className="pnl-cabecera">
-        <div className="pnl-cabecera__fila">
-          <p className="pnl-rotulo">
-            Panel del evento <span aria-hidden>·</span> Plan {NOMBRE_PLAN[plan]}
-          </p>
-          <div className="pnl-cabecera__acciones">
+  const acciones = (
+    <div className="pnl-cabecera__acciones">
             <span className={`pnl-guardado pnl-guardado--${guardado}`} aria-live="polite">
               {textoGuardado[guardado]}
               {guardado === "error" && (
@@ -392,42 +441,16 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
               </button>
             </span>
             <a className="pnl-btn" href={enlaceInvitacion} target="_blank" rel="noreferrer">
-              Ver invitación
+              Ver<span className="pnl-solo-ancho"> invitación</span>
             </a>
             <button className="pnl-btn pnl-btn--lleno" onClick={exportar}>
-              Bajar Excel
+              <span className="pnl-solo-ancho">Bajar </span>Excel
             </button>
           </div>
-        </div>
+  );
 
-        <div className="pnl-encabezado">
-          <h1 className="pnl-titulo">{nombres}</h1>
-          <Fechas
-            fecha={fecha}
-            cierre={cierre}
-            limite={doc.ajustes.limite}
-            pendientes={m.pendientes}
-            onLimite={(limite) => cambiar((d) => ({ ...d, ajustes: { ...d.ajustes, limite } }), "limite")}
-          />
-        </div>
-
-        {pestanas.length > 0 && (
-          <nav className="pnl-pestanas" aria-label="Secciones del panel">
-            {pestanas.map((p) => (
-              <button
-                key={p.id}
-                className="pnl-pestana"
-                aria-current={vista === p.id ? "page" : undefined}
-                onClick={() => setVista(p.id)}
-              >
-                {p.nombre}
-                {p.dato && <span className="pnl-pestana__dato">{p.dato}</span>}
-              </button>
-            ))}
-          </nav>
-        )}
-      </header>
-
+  const bandas = (
+    <>
       {guardado === "conflicto" && (
         <div className="pnl-banda" role="alert">
           <p>Alguien editó el panel desde otro dispositivo mientras lo tenías abierto.</p>
@@ -468,8 +491,79 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
         </section>
       )}
 
-      <main className="pnl-cuerpo">
-        {vista === "resumen" && <Resumen doc={doc} irA={setVista} />}
+    </>
+  );
+
+  /* El plan básico no tiene menú: una sola sección, como siempre. */
+  if (!completo) {
+    return (
+      <div className={`pnl pnl--base-${tema.base} pnl--sobrio`} style={estiloTema}>
+        <header className="pnl-cabecera">
+          <div className="pnl-cabecera__fila">
+            <p className="pnl-rotulo">
+              Panel del evento <span aria-hidden>·</span> Plan {NOMBRE_PLAN[plan]}
+            </p>
+            {acciones}
+          </div>
+          <div className="pnl-encabezado">
+            <h1 className="pnl-titulo">{nombres}</h1>
+            <Fechas
+              fecha={fecha}
+              cierre={cierre}
+              limite={doc.ajustes.limite}
+              pendientes={m.pendientes}
+              onLimite={(limite) => cambiar((d) => ({ ...d, ajustes: { ...d.ajustes, limite } }), "limite")}
+            />
+          </div>
+        </header>
+        {bandas}
+        <main className="pnl-cuerpo">
+          <Invitados doc={doc} cambiar={cambiar} completo={false} nombres={nombres} enlaceInvitacion={enlaceInvitacion} />
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`pnl pnl--base-${tema.base}`} style={estiloTema}>
+      <div className="pnl-app">
+        <Menu
+          nombres={nombres}
+          detalle={detalleEvento}
+          plan={NOMBRE_PLAN[plan]}
+          grupos={grupos}
+          actual={vista}
+          abierto={menuAbierto}
+          onElegir={elegir}
+          onCerrar={() => setMenuAbierto(false)}
+        />
+        <div className="pnl-app__col" inert={menuAbierto}>
+          <header className="pnl-tope">
+            <button className="pnl-btn pnl-tope__menu" onClick={() => setMenuAbierto(true)} aria-expanded={menuAbierto}>
+              Menú
+            </button>
+            <h1 className="pnl-tope__titulo">{TITULO_VISTA[vista]}</h1>
+            {acciones}
+          </header>
+          {bandas}
+          <main className="pnl-cuerpo">
+        {vista === "resumen" && (
+          <>
+            {completo && (
+              <div className="pnl-resumen-fechas">
+                <Fechas
+                  fecha={fecha}
+                  cierre={cierre}
+                  limite={doc.ajustes.limite}
+                  pendientes={m.pendientes}
+                  onLimite={(limite) => cambiar((d) => ({ ...d, ajustes: { ...d.ajustes, limite } }), "limite")}
+                />
+              </div>
+            )}
+            <Resumen doc={doc} irA={setVista} evento={evento} />
+          </>
+        )}
+        {vista === "checklist" && completo && <Checklist doc={doc} cambiar={cambiar} evento={evento} />}
         {vista === "invitados" && (
           <Invitados doc={doc} cambiar={cambiar} completo={completo} nombres={nombres} enlaceInvitacion={enlaceInvitacion} />
         )}
@@ -477,7 +571,9 @@ export function Panel({ slug, nombres, fecha, cierre, plan, inicial, enlaceInvit
         {vista === "mesas" && completo && <Mesas doc={doc} cambiar={cambiar} irASalon={irASalon} />}
         {vista === "salon" && completo && <Salon doc={doc} cambiar={cambiar} seleccionInicial={selSalon} />}
         {vista === "estilo" && completo && <Estilo tema={doc.tema} nombres={nombres} cambiar={cambiar} />}
-      </main>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

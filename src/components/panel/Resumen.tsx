@@ -1,13 +1,13 @@
 "use client";
 
-import { avisos, metricas, ocupacion } from "@/panel/logica";
+import { avisos, hoyISO, metricas, ocupacion, progresoChecklist, venceTarea } from "@/panel/logica";
 import type { DocPanel } from "@/panel/tipos";
 import { Avisos, Cifra } from "./piezas";
 import { Plano } from "./Plano";
 
-type Ir = (v: "invitados" | "mesas" | "salon") => void;
+type Ir = (v: "invitados" | "mesas" | "salon" | "checklist") => void;
 
-export function Resumen({ doc, irA }: { doc: DocPanel; irA: Ir }) {
+export function Resumen({ doc, irA, evento }: { doc: DocPanel; irA: Ir; evento: Date | null }) {
   const m = metricas(doc);
   const lista = avisos(doc, "completo");
   const total = m.confirmados + m.pendientes + m.noVienen;
@@ -18,6 +18,15 @@ export function Resumen({ doc, irA }: { doc: DocPanel; irA: Ir }) {
     .sort((a, b) => (b.rsvp ?? "").localeCompare(a.rsvp ?? ""))
     .slice(0, 6);
   const canciones = doc.invitados.filter((i) => i.cancion).slice(0, 12);
+
+  const prog = progresoChecklist(doc.tareas);
+  const hoy = hoyISO();
+  const proximas = doc.tareas
+    .filter((t) => !t.hecha)
+    .map((t) => ({ t, v: venceTarea(t, evento) }))
+    .sort((a, b) => (a.v || "9999").localeCompare(b.v || "9999"))
+    .slice(0, 4);
+  const nombreResp = new Map(doc.equipo.map((r) => [r.id, r.nombre]));
 
   return (
     <div className="pnl-seccion pnl-resumen">
@@ -33,6 +42,34 @@ export function Resumen({ doc, irA }: { doc: DocPanel; irA: Ir }) {
             <span className="pnl-barra__si" style={{ width: `${pct(m.confirmados)}%` }} />
             <span className="pnl-barra__no" style={{ width: `${pct(m.noVienen)}%` }} />
           </div>
+        )}
+      </section>
+
+      <section className="pnl-resumen__bloque">
+        <div className="pnl-h2-fila">
+          <h2 className="pnl-h2">Checklist</h2>
+          <button className="pnl-enlace" onClick={() => irA("checklist")}>{prog.total ? "Abrir checklist" : "Armar checklist"}</button>
+        </div>
+        {prog.total ? (
+          <>
+            <p className="pnl-nota pnl-num">{prog.hechas} de {prog.total} hechas · {prog.pct}%</p>
+            <div className="pnl-barra" role="img" aria-label={`${prog.pct}% del checklist hecho`}>
+              <span className="pnl-barra__si" style={{ width: `${prog.pct}%` }} />
+            </div>
+            <ul className="pnl-lista-simple">
+              {proximas.map(({ t, v }) => (
+                <li key={t.id}>
+                  <span>{t.titulo}</span>
+                  <span className={`pnl-num ${v && v < hoy ? "pnl-error" : "pnl-tenue"}`}>
+                    {t.responsableId ? `${nombreResp.get(t.responsableId) ?? ""} · ` : ""}
+                    {v ? v.split("-").reverse().slice(0, 2).join("/") : "sin fecha"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="pnl-nota">Armá la lista de lo que hay que hacer, con responsable y fecha para cada cosa.</p>
         )}
       </section>
 

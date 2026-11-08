@@ -22,7 +22,7 @@ const deISO = (s: string) => {
   return new Date(a, m - 1, d, 23, 59);
 };
 
-function falta(f: Date) {
+export function falta(f: Date) {
   const dias = Math.ceil((f.getTime() - Date.now()) / DIA);
   if (dias > 1) return { texto: `faltan ${dias} días`, vencido: false };
   if (dias === 1) return { texto: "es mañana", vencido: false };

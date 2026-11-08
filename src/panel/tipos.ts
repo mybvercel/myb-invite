@@ -143,6 +143,100 @@ export type Tema = {
   fuente: Fuente;
 };
 
+/* ── Equipo: quién se encarga de qué ─────────────────────────── */
+
+export type Rubro =
+  | "salon"
+  | "catering"
+  | "fotografia"
+  | "video"
+  | "musica"
+  | "luces"
+  | "ambientacion"
+  | "torta"
+  | "vestuario"
+  | "belleza"
+  | "ceremonia"
+  | "show"
+  | "cotillon"
+  | "souvenirs"
+  | "transporte"
+  | "alojamiento"
+  | "organizacion"
+  | "otro";
+
+export const RUBROS: { id: Rubro; nombre: string }[] = [
+  { id: "salon", nombre: "Salón" },
+  { id: "catering", nombre: "Catering" },
+  { id: "fotografia", nombre: "Fotografía" },
+  { id: "video", nombre: "Video" },
+  { id: "musica", nombre: "DJ y música" },
+  { id: "luces", nombre: "Luces y sonido" },
+  { id: "ambientacion", nombre: "Ambientación y flores" },
+  { id: "torta", nombre: "Torta y mesa dulce" },
+  { id: "vestuario", nombre: "Vestuario" },
+  { id: "belleza", nombre: "Maquillaje y peinado" },
+  { id: "ceremonia", nombre: "Ceremonia" },
+  { id: "show", nombre: "Show y animación" },
+  { id: "cotillon", nombre: "Cotillón" },
+  { id: "souvenirs", nombre: "Souvenirs" },
+  { id: "transporte", nombre: "Traslados" },
+  { id: "alojamiento", nombre: "Alojamiento" },
+  { id: "organizacion", nombre: "Organización" },
+  { id: "otro", nombre: "Otro" },
+];
+
+export const nombreRubro = (r: Rubro | null) => RUBROS.find((x) => x.id === r)?.nombre ?? "";
+
+export type EstadoProveedor = "buscando" | "cotizando" | "contratado" | "descartado";
+
+/** Un proveedor o alguien del entorno (la tía que hace los souvenirs). */
+export type Responsable = {
+  id: string;
+  rubro: Rubro;
+  nombre: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+  estado: EstadoProveedor;
+  /** true si es alguien del entorno y no un proveedor que cobra. */
+  esPersona: boolean;
+  notas: string;
+};
+
+/* ── Checklist ─────────────────────────────────────────────── */
+
+export type Etapa = "12m" | "9m" | "6m" | "3m" | "1m" | "semana" | "dia" | "despues";
+
+/** Cuántos días antes del evento vence cada etapa (negativo: después). */
+export const ETAPAS: { id: Etapa; nombre: string; dias: number }[] = [
+  { id: "12m", nombre: "Un año antes o más", dias: 365 },
+  { id: "9m", nombre: "Nueve meses antes", dias: 270 },
+  { id: "6m", nombre: "Seis meses antes", dias: 180 },
+  { id: "3m", nombre: "Tres meses antes", dias: 90 },
+  { id: "1m", nombre: "El último mes", dias: 30 },
+  { id: "semana", nombre: "La última semana", dias: 7 },
+  { id: "dia", nombre: "El día", dias: 0 },
+  { id: "despues", nombre: "Después", dias: -14 },
+];
+
+export type Plantilla = "casamiento" | "quince" | "cumple" | "empresa";
+
+export type Tarea = {
+  id: string;
+  titulo: string;
+  hecha: boolean;
+  /** ISO de cuándo se tildó. */
+  hechaEl: string;
+  etapa: Etapa;
+  /** "AAAA-MM-DD". Vacío: sale de la etapa y la fecha del evento. */
+  vence: string;
+  responsableId: string | null;
+  rubro: Rubro | null;
+  notas: string;
+  origen: "plantilla" | "manual";
+};
+
 /* ── Ajustes ─────────────────────────────────────────────────
    Todo lo automático es opcional: hay parejas que quieren decidir silla por
    silla, y el panel no puede decidir por ellas sin permiso. */
@@ -183,6 +277,11 @@ export type DocPanel = {
    * alguien que confirmó sería inútil: reaparecería en la próxima lectura.
    */
   descartes: Record<string, string>;
+  /** Proveedores y personas que se encargan de algo. */
+  equipo: Responsable[];
+  tareas: Tarea[];
+  /** Qué plantilla de checklist se cargó. Vacío: todavía no eligieron. */
+  plantilla: Plantilla | "";
 };
 
 export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
@@ -193,4 +292,7 @@ export const docVacio = (acento = "#2e6f4e"): DocPanel => ({
   tema: { acento, base: "papel", fuente: "instrument" },
   ajustes: { ...AJUSTES_INICIALES },
   descartes: {},
+  equipo: [],
+  tareas: [],
+  plantilla: "",
 });

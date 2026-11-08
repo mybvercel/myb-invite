@@ -911,3 +911,155 @@ body:has(.pnl--base-noche) { background: #141512; }
   .pnl-fechas { width: 100%; }
   .pnl-fecha { flex: 1 1 0; min-width: 0; }
 }
+
+/* ── Menú al costado ──────────────────────────────────────────
+   En pantalla grande es una columna fija; en el celular, un cajón que se abre
+   con el botón "Menú". Los grupos se separan con una línea fina, sin títulos. */
+
+.pnl-app__col { min-width: 0; }
+.pnl-app__col .pnl-cuerpo { max-width: 68rem; margin: 0; }
+.pnl-app__col .pnl-banda { max-width: none; margin-inline: 0; }
+.pnl-app__col .pnl-novedades { max-width: none; margin-inline: 0; }
+
+.pnl-tope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.9rem var(--lado);
+  border-bottom: 1px solid var(--linea);
+}
+.pnl-tope__titulo { font-family: var(--display); font-weight: 400; font-size: clamp(1.45rem, 4vw, 2rem); line-height: 1.1; letter-spacing: -0.01em; margin-right: auto; }
+.pnl--sobrio .pnl-tope__titulo { font-weight: 600; }
+.pnl-tope .pnl-cabecera__acciones { width: 100%; }
+
+.pnl .pnl-menu__velo {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(10, 10, 8, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms var(--salida);
+}
+.pnl .pnl-menu__velo[data-abierto] { opacity: 1; pointer-events: auto; }
+
+.pnl-menu {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 60;
+  width: min(86vw, 20rem);
+  overflow-y: auto;
+  padding: 1.4rem 1rem 2rem;
+  background: var(--superficie);
+  border-right: 1px solid var(--linea-2);
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 220ms var(--salida), visibility 0s linear 220ms;
+}
+.pnl-menu[data-abierto] { transform: none; visibility: visible; transition-delay: 0s; }
+
+.pnl-menu__marca { padding: 0 0.5rem 1.15rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--tinta); }
+.pnl-menu__nombres { font-family: var(--display); font-size: 1.6rem; line-height: 1.08; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.pnl--sobrio .pnl-menu__nombres { font-weight: 600; }
+.pnl-menu__detalle { margin-top: 0.6rem; font-size: 0.8rem; color: var(--tinta-2); }
+.pnl-menu__plan { margin-top: 0.15rem; font-size: 0.74rem; color: var(--tinta-3); }
+
+.pnl-menu__grupo { padding-block: 0.45rem; border-bottom: 1px solid var(--linea); }
+.pnl-menu__grupo:last-child { border-bottom: 0; }
+.pnl .pnl-menu__item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radio);
+  text-align: left;
+  font-size: 0.92rem;
+  color: var(--tinta-2);
+  transition: background-color 140ms var(--salida), color 140ms var(--salida);
+}
+.pnl .pnl-menu__item:hover { color: var(--tinta); background: var(--acento-suave); }
+.pnl .pnl-menu__item[aria-current="page"] { color: var(--tinta); font-weight: 500; background: var(--acento-suave); }
+.pnl .pnl-menu__item[aria-current="page"]::before { content: ""; position: absolute; left: 0; top: 0.5rem; bottom: 0.5rem; width: 2px; background: var(--acento); }
+.pnl-menu__dato { font-size: 0.72rem; color: var(--tinta-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+@media (min-width: 64rem) {
+  .pnl-app { display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); align-items: start; }
+  .pnl .pnl-menu__velo { display: none; }
+  .pnl-menu {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    width: auto;
+    z-index: auto;
+    padding: 1.75rem 0.9rem 2rem;
+    transform: none;
+    visibility: visible;
+    transition: none;
+  }
+  .pnl .pnl-tope__menu { display: none; }
+  .pnl-tope { flex-wrap: nowrap; padding-block: 1.1rem; }
+  .pnl-tope .pnl-cabecera__acciones { width: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pnl-menu, .pnl .pnl-menu__velo { transition: none; }
+}
+
+.pnl-resumen-fechas { margin-bottom: clamp(1.1rem, 3vw, 1.6rem); }
+
+/* ── Checklist ────────────────────────────────────────────── */
+
+.pnl-checklist__progreso { display: flex; flex-direction: column; gap: 0.6rem; }
+.pnl-checklist__cuenta { font-size: 1.05rem; }
+.pnl-checklist__cuenta b { font-size: 1.5rem; font-weight: 500; }
+.pnl-checklist__barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; }
+.pnl-checklist__plantilla { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; }
+.pnl-checklist__alta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.pnl-checklist__alta .pnl-buscar { flex: 1 1 14rem; max-width: none; }
+
+.pnl-filtros { display: inline-flex; border: 1px solid var(--linea-2); border-radius: var(--radio); overflow: hidden; }
+.pnl .pnl-filtros button { min-height: 2.5rem; padding: 0 0.9rem; font-size: 0.86rem; background: var(--superficie); color: var(--tinta-2); }
+.pnl .pnl-filtros button + button { border-left: 1px solid var(--linea-2); }
+.pnl .pnl-filtros button[aria-pressed="true"] { background: var(--acento); color: var(--sobre-acento); }
+
+.pnl-etapa { display: flex; flex-direction: column; gap: 0.5rem; }
+.pnl-tareas { border-top: 1px solid var(--tinta); }
+.pnl-tarea { border-bottom: 1px solid var(--linea); }
+.pnl-tarea.es-abierta { border-bottom-color: var(--linea-2); }
+.pnl-tarea__fila { display: grid; grid-template-columns: 2.75rem minmax(0, 1fr) auto; align-items: center; min-height: 3.25rem; }
+.pnl-tarea__check { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; cursor: pointer; }
+.pnl-tarea__check input { width: 1.15rem; height: 1.15rem; accent-color: var(--acento); cursor: pointer; }
+.pnl .pnl-tarea__cuerpo { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; padding: 0.55rem 0.25rem; text-align: left; }
+.pnl .pnl-tarea__cuerpo:hover .pnl-tarea__titulo { text-decoration: underline; text-decoration-color: var(--linea-2); text-underline-offset: 3px; }
+.pnl-tarea__titulo { overflow-wrap: anywhere; font-size: 0.95rem; }
+.pnl-tarea.es-hecha .pnl-tarea__titulo { color: var(--tinta-3); text-decoration: line-through; text-decoration-color: var(--linea-2); }
+.pnl-tarea__meta { display: flex; flex-wrap: wrap; gap: 0.1rem 0.8rem; font-size: 0.76rem; color: var(--tinta-2); }
+.pnl-tarea__fecha { padding-left: 0.75rem; font-size: 0.8rem; color: var(--tinta-3); text-align: right; white-space: nowrap; }
+.pnl-tarea__fecha.es-tarde { color: var(--alerta); }
+@media (max-width: 640px) { .pnl-tarea__tarde { display: none; } }
+
+.pnl-ficha--tarea { padding-inline: 0.75rem; }
+.pnl-ficha__campos--tarea { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pnl-ficha__campos--tarea .pnl-campo--ancho { grid-column: 1 / -1; }
+.pnl-ficha__campos--tarea small { font-size: 0.72rem; }
+@media (min-width: 761px) { .pnl-ficha__campos--tarea { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.pnl-ficha__nuevo { display: flex; flex-direction: column; gap: 0.65rem; padding: 0.75rem; border-left: 2px solid var(--acento); background: var(--acento-suave); }
+.pnl-campo select { width: 100%; }
+
+.pnl-plantillas { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); column-gap: 1.5rem; margin-top: 0.75rem; border-top: 1px solid var(--tinta); }
+.pnl .pnl-plantilla { display: flex; flex-direction: column; gap: 0.15rem; width: 100%; min-height: 4rem; padding: 0.9rem 0.5rem; border-bottom: 1px solid var(--linea); text-align: left; transition: background-color 140ms var(--salida); }
+.pnl .pnl-plantilla:hover { background: var(--acento-suave); }
+.pnl-plantilla__nombre { font-size: 1.05rem; font-weight: 500; }
+
+.pnl-solo-ancho { display: none; }
+@media (min-width: 641px) { .pnl-solo-ancho { display: inline; } }
+@media (max-width: 480px) {
+  .pnl-ficha__campos--tarea { grid-template-columns: minmax(0, 1fr); }
+  .pnl-tope .pnl-cabecera__acciones { gap: 0.4rem; }
+}
+.pnl-ficha__campos--tarea input[type="date"] { min-width: 0; }

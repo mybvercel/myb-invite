@@ -1,5 +1,23 @@
 import type { Confirmacion } from "@/lib/rsvp-comun";
-import { AJUSTES_INICIALES, docVacio, type Ajustes, type Clase, type DocPanel, type Elemento, type Enlace, type Invitado, type Salon, type Tipo } from "./tipos";
+import {
+  AJUSTES_INICIALES,
+  docVacio,
+  ETAPAS,
+  RUBROS,
+  type Ajustes,
+  type Clase,
+  type DocPanel,
+  type Elemento,
+  type Enlace,
+  type Etapa,
+  type Invitado,
+  type Plantilla,
+  type Responsable,
+  type Rubro,
+  type Salon,
+  type Tarea,
+  type Tipo,
+} from "./tipos";
 
 /**
  * Lo que hace "inteligente" al panel, en funciones puras: cruzar las
@@ -690,6 +708,61 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     ];
   });
 
+  const rubro = (v: unknown, def: Rubro): Rubro => (RUBROS.some((r) => r.id === v) ? (v as Rubro) : def);
+  const fechaISO = (v: unknown) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : "");
+
+  const ids = new Set<string>();
+  const unico = (v: unknown) => {
+    let id = txt(v, 24) || idNuevo();
+    while (ids.has(id)) id = idNuevo();
+    ids.add(id);
+    return id;
+  };
+
+  const equipo: Responsable[] = (Array.isArray(d.equipo) ? d.equipo : []).slice(0, 120).flatMap((x): Responsable[] => {
+    const r = x as Record<string, unknown>;
+    const nombre = txt(r.nombre, 80).trim();
+    if (!nombre) return [];
+    const estado = r.estado === "buscando" || r.estado === "cotizando" || r.estado === "descartado" ? r.estado : "contratado";
+    return [
+      {
+        id: unico(r.id),
+        rubro: rubro(r.rubro, "otro"),
+        nombre,
+        contacto: txt(r.contacto, 80),
+        telefono: txt(r.telefono, 30),
+        email: txt(r.email, 120),
+        estado,
+        esPersona: r.esPersona === true,
+        notas: txt(r.notas, 400),
+      },
+    ];
+  });
+  const idsEquipo = new Set(equipo.map((r) => r.id));
+
+  const tareas: Tarea[] = (Array.isArray(d.tareas) ? d.tareas : []).slice(0, 400).flatMap((x): Tarea[] => {
+    const t = x as Record<string, unknown>;
+    const titulo = txt(t.titulo, 140).trim();
+    if (!titulo) return [];
+    const hecha = t.hecha === true;
+    return [
+      {
+        id: unico(t.id),
+        titulo,
+        hecha,
+        hechaEl: hecha && typeof t.hechaEl === "string" && !Number.isNaN(Date.parse(t.hechaEl)) ? t.hechaEl : "",
+        etapa: ETAPAS.some((e) => e.id === t.etapa) ? (t.etapa as Etapa) : "3m",
+        vence: fechaISO(t.vence),
+        responsableId: typeof t.responsableId === "string" && idsEquipo.has(t.responsableId) ? t.responsableId : null,
+        rubro: t.rubro == null || t.rubro === "" ? null : rubro(t.rubro, "otro"),
+        notas: txt(t.notas, 400),
+        origen: t.origen === "plantilla" ? "plantilla" : "manual",
+      },
+    ];
+  });
+
+  const PLANTILLAS_ID: Plantilla[] = ["casamiento", "quince", "cumple", "empresa"];
+
   const a = (d.ajustes ?? {}) as Record<string, unknown>;
   const ajustes: Ajustes = {
     autoSentar: typeof a.autoSentar === "boolean" ? a.autoSentar : AJUSTES_INICIALES.autoSentar,
@@ -719,6 +792,9 @@ export function sanearDoc(bruto: unknown, previo: DocPanel): DocPanel | null {
     },
     ajustes,
     descartes,
+    equipo,
+    tareas,
+    plantilla: PLANTILLAS_ID.includes(d.plantilla as Plantilla) ? (d.plantilla as Plantilla) : "",
   };
 }
 
@@ -729,4 +805,37 @@ export function normalizar(bruto: unknown, acento: string): DocPanel {
   const d = (bruto ?? {}) as Partial<DocPanel>;
   const previo = { ...vacio, version: Number(d.version) || 0, actualizado: String(d.actualizado ?? vacio.actualizado), tema: { ...vacio.tema, ...(d.tema ?? {}) } };
   return sanearDoc(bruto, previo) ?? previo;
+}
+
+/* ── Checklist ───────────────────────────────────────────────── */
+
+const aISO = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+/**
+ * Cuándo vence una tarea: la fecha que se le puso, o si no, la de su etapa
+ * contada hacia atrás desde el evento. Sin fecha de evento y sin fecha propia
+ * no vence nunca ("").
+ */
+export function venceTarea(t: Tarea, evento: Date | null): string {
+  if (t.vence) return t.vence;
+  if (!evento) return "";
+  const dias = ETAPAS.find((e) => e.id === t.etapa)?.dias ?? 0;
+  const f = new Date(evento.getFullYear(), evento.getMonth(), evento.getDate() - dias);
+  return aISO(f);
+}
+
+export const hoyISO = () => aISO(new Date());
+
+export function tareasAtrasadas(tareas: Tarea[], evento: Date | null) {
+  const hoy = hoyISO();
+  return tareas.filter((t) => {
+    if (t.hecha) return false;
+    const v = venceTarea(t, evento);
+    return v !== "" && v < hoy;
+  });
+}
+
+export function progresoChecklist(tareas: Tarea[]) {
+  const hechas = tareas.filter((t) => t.hecha).length;
+  return { hechas, total: tareas.length, pct: tareas.length ? Math.round((hechas / tareas.length) * 100) : 0 };
 }
