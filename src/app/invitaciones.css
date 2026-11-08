@@ -391,3 +391,6 @@
 .tid-gr__linea { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.85rem; }
 .tid-gr__cuando { font-size: 0.8rem; color: #5f6368; }
 .tid-gr__texto { margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.55; color: #3c4043; }
+.tid-gr__respuesta { margin-top: 0.9rem; padding-left: 0.8rem; border-left: 2px solid #dadce0; font-size: 0.84rem; line-height: 1.5; color: #3c4043; }
+.tid-gr__resp-quien { margin-bottom: 0.15rem; font-size: 0.78rem; font-weight: 600; color: #202124; }
+

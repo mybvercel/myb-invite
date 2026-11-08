@@ -298,7 +298,10 @@ export function detectarMoneda(): Moneda {
 
 export type Resena = {
   nombre: string;
-  evento: string;
+  /** Opcional: Google no lo pide. */
+  evento?: string;
+  /** Respuesta del propietario en Google. */
+  respuesta?: string;
   texto: string;
   /** Estrellas de 1 a 5; si falta, 5. */
   estrellas?: number;
@@ -312,13 +315,35 @@ export const GOOGLE_VER =
 export const GOOGLE_ESCRIBIR = "https://g.page/r/Caxx65jfSihKEAE/review";
 
 /** Puntaje y cantidad reales del perfil. Mientras sea null no se muestra el resumen. */
-export const GOOGLE_RESUMEN: { puntaje: number; cantidad: number } | null = null;
+export const GOOGLE_RESUMEN: { puntaje: number; cantidad: number } | null = { puntaje: 5, cantidad: 6 };
 
 /**
  * Vacío a propósito: no se inventan reseñas de un negocio real. Cargá acá las
  * de clientes que te hayan dado el OK y la sección aparece sola.
  */
-export const RESENAS: Resena[] = [];
+export const RESENAS: Resena[] = [
+  {
+    nombre: "Santi Rojas",
+    texto: "La mejor empresa para contratar, unos genios los chicos y el pelado es crack",
+    cuando: "noviembre de 2026",
+  },
+  {
+    nombre: "Cecila Sanchez",
+    texto: "Excelente invitaciones",
+    respuesta: "Muchas Gracias Cecilia, estamos a disposición siempre!",
+    cuando: "noviembre de 2026",
+  },
+  {
+    nombre: "Franco Mozzoni",
+    texto: "excelente atención al cliente",
+    cuando: "noviembre de 2026",
+  },
+  {
+    nombre: "Pedro Heinz Videla",
+    texto: "muy educados y serviciales, un 10",
+    cuando: "noviembre de 2026",
+  },
+];
 
 /* ── Preguntas ─────────────────────────────────────────────── */
 

@@ -70,7 +70,7 @@ export default function ResenasGoogle() {
                 </span>
                 <div>
                   <p className="tid-gr__nombre">{r.nombre}</p>
-                  <p className="tid-gr__evento">{r.evento}</p>
+                  {r.evento && <p className="tid-gr__evento">{r.evento}</p>}
                 </div>
                 <span className="tid-gr__g">
                   <GoogleG size={18} />
@@ -81,6 +81,12 @@ export default function ResenasGoogle() {
                 {r.cuando && <span className="tid-gr__cuando">{r.cuando}</span>}
               </div>
               <p className="tid-gr__texto">{r.texto}</p>
+              {r.respuesta && (
+                <div className="tid-gr__respuesta">
+                  <p className="tid-gr__resp-quien">Respuesta del propietario</p>
+                  <p>{r.respuesta}</p>
+                </div>
+              )}
             </li>
           ))}
         </ul>
