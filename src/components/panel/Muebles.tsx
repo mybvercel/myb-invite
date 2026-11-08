@@ -28,7 +28,7 @@ export function sillas(e: Elemento): [number, number][] {
     const r = e.ancho / 2 + SILLA / 2;
     return Array.from({ length: n }, (_, i) => {
       const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-      return [Math.cos(a) * r, Math.sin(a) * r];
+      return [cos(a) * r, sin(a) * r];
     });
   }
   const cab = Math.min(e.ancho, e.largo) >= 0.8 && n >= 6 ? 2 : 0;
@@ -83,6 +83,10 @@ function Plato({ x, y }: { x: number; y: number }) {
 }
 
 /** Centro de mesa: flores alrededor de la tarjeta con el número. */
+/** Seno y coseno a 4 decimales: el servidor y el navegador no siempre coinciden en el último dígito y React avisa. */
+const cos = (a: number) => Math.round(Math.cos(a) * 1e4) / 1e4;
+const sin = (a: number) => Math.round(Math.sin(a) * 1e4) / 1e4;
+
 function Centro({ r, x = 0, y = 0, tarjeta = true }: { r: number; x?: number; y?: number; tarjeta?: boolean }) {
   const petalos = 7;
   return (
@@ -92,8 +96,8 @@ function Centro({ r, x = 0, y = 0, tarjeta = true }: { r: number; x?: number; y?
         const d = r * 0.72;
         return (
           <g key={i}>
-            <circle cx={Math.cos(a + 0.35) * d * 1.08} cy={Math.sin(a + 0.35) * d * 1.08} r={r * 0.2} className="pnl-m-centro__hoja" />
-            <circle cx={Math.cos(a) * d} cy={Math.sin(a) * d} r={r * 0.26} className={`pnl-m-centro__flor${i % 3 === 0 ? " es-clara" : ""}`} />
+            <circle cx={cos(a + 0.35) * d * 1.08} cy={sin(a + 0.35) * d * 1.08} r={r * 0.2} className="pnl-m-centro__hoja" />
+            <circle cx={cos(a) * d} cy={sin(a) * d} r={r * 0.26} className={`pnl-m-centro__flor${i % 3 === 0 ? " es-clara" : ""}`} />
           </g>
         );
       })}
@@ -143,7 +147,7 @@ function Mesa({ e, n }: { e: Elemento; n: number }) {
         puestos.map(([x, y], k) => {
           const a = haciaMesa(e, x, y);
           const d = SILLA / 2 + 0.17;
-          return <Plato key={k} x={x + Math.cos(a) * d} y={y + Math.sin(a) * d} />;
+          return <Plato key={k} x={x + cos(a) * d} y={y + sin(a) * d} />;
         })}
 
       {redonda ? (

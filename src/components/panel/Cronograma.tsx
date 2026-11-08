@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { formatearMonto, hoyISO, horaSiguiente, idNuevo, ordenarMomentos, venceTarea } from "@/panel/logica";
+import { generarIcs, type EventoIcs } from "@/panel/ics";
 import { momentosDe, PLANTILLAS } from "@/panel/plantillas";
 import { nombreRubro, type DocPanel, type Momento, type Plantilla } from "@/panel/tipos";
 import type { Cambiar } from "./Panel";
@@ -44,7 +45,7 @@ export function Cronograma({ doc, cambiar, evento, nombres, fechaTexto, irA }: {
         <button aria-pressed={vista === "dia"} onClick={() => setVista("dia")}>El día</button>
       </div>
       {vista === "preparacion" ? (
-        <Preparacion doc={doc} cambiar={cambiar} evento={evento} irA={irA} />
+        <Preparacion doc={doc} cambiar={cambiar} evento={evento} irA={irA} nombres={nombres} />
       ) : (
         <Dia doc={doc} cambiar={cambiar} nombres={nombres} fechaTexto={fechaTexto} />
       )}
@@ -54,7 +55,7 @@ export function Cronograma({ doc, cambiar, evento, nombres, fechaTexto, irA }: {
 
 /* ── Preparación ─────────────────────────────────────────────── */
 
-function Preparacion({ doc, cambiar, evento, irA }: { doc: DocPanel; cambiar: Cambiar; evento: Date | null; irA: Ir }) {
+function Preparacion({ doc, cambiar, evento, irA, nombres }: { doc: DocPanel; cambiar: Cambiar; evento: Date | null; irA: Ir; nombres: string }) {
   const [conHecho, setConHecho] = useState(false);
   const hoy = hoyISO();
   const nombreResp = useMemo(() => new Map(doc.equipo.map((r) => [r.id, r.nombre])), [doc.equipo]);
@@ -111,6 +112,26 @@ function Preparacion({ doc, cambiar, evento, irA }: { doc: DocPanel; cambiar: Ca
     );
   }
 
+  /** Baja un .ics con lo que falta hacer y pagar, para llevarlo al calendario del celular. */
+  const alCalendario = () => {
+    const eventos: EventoIcs[] = items
+      .filter((i) => !i.hecho)
+      .map((i) => ({
+        uid: i.clave,
+        fecha: i.fecha,
+        titulo: i.tipo === "evento" ? `El evento: ${nombres}` : `${i.tipo === "pago" ? "Pago" : "Tarea"}: ${i.titulo}`,
+        detalle: [i.quien && `Quién: ${i.quien}`, i.monto && `Monto: ${i.monto}`].filter(Boolean).join("\n") || undefined,
+        aviso: i.tipo === "pago",
+      }));
+    const blob = new Blob([generarIcs(eventos, `Organización ${nombres}`)], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "calendario-evento.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // La línea de "Hoy" va antes del primer ítem de hoy en adelante.
   const iHoy = items.findIndex((i) => i.fecha >= hoy);
   const meses: { mes: string; items: { i: Item; n: number }[] }[] = [];
@@ -135,10 +156,13 @@ function Preparacion({ doc, cambiar, evento, irA }: { doc: DocPanel; cambiar: Ca
             ? `${items.filter((i) => !i.hecho && i.fecha < hoy).length} cosas atrasadas`
             : "Todo al día"}
         </p>
-        <label className="pnl-check">
-          <input type="checkbox" checked={conHecho} onChange={(e) => setConHecho(e.target.checked)} />
-          Mostrar lo ya hecho
-        </label>
+        <div className="pnl-ficha__botones">
+          <label className="pnl-check">
+            <input type="checkbox" checked={conHecho} onChange={(e) => setConHecho(e.target.checked)} />
+            Mostrar lo ya hecho
+          </label>
+          <button className="pnl-btn" onClick={alCalendario}>Agregar a mi calendario</button>
+        </div>
       </div>
 
       {meses.map((g) => (

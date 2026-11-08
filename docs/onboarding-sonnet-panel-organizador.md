@@ -750,7 +750,10 @@ moneda; no hay una "principal"). El dólar de referencia sigue siendo opcional.
 | 4. Presupuesto | Hecha (`Presupuesto.tsx`: totales ARS y USD, tope, dólar de referencia, próximos pagos, cotizaciones por rubro, pagos, seña y saldo). |
 | 6. Cronograma | Hecha (`Cronograma.tsx`: Preparación con línea de Hoy, tareas y pagos tildables; El día con plantillas, detalle, responsables del equipo e impresión; hoja en el Excel). |
 | 7. Mesas con personas | Hecha (`Mesas.tsx`: personas desplegables en Sin mesa, chips por persona en cada mesa, una persona se sienta aparte y vuelve con su familia; ficha de Invitados con nombres y afinidades; `sentar` respeta juntos y separados; avisos de afinidades rotas). El arrastre usa el drag and drop del navegador (mouse) y en celular se toca y se elige la mesa, igual que antes. |
-| 8 | Pendiente: cierre del Resumen y del Excel (el Excel ya trae Checklist, Equipo, Presupuesto, Pagos, Cronograma y Mesas con personas). |
+| 8. Resumen y Excel | Hechos: el Resumen trae checklist, plata y proveedores, y avisos de afinidades; el Excel trae Checklist, Equipo, Presupuesto, Pagos, Cronograma y Mesas con personas. |
+| Extra 1 | Hecho: calendario `.ics` (`src/panel/ics.ts`, botón en Cronograma > Preparación) con aviso un día antes de cada pago. |
+| Mejoras | Montos con separador de miles (es-AR); corregido el aviso de hidratación del plano (seno y coseno redondeados). |
+| Siguen | Link de sólo lectura del cronograma para proveedores, varias versiones del plano, importar desde planilla, colaboradores con permisos. |
 
 Notas para quien siga:
 - La vista Equipo todavía no existe: el responsable se crea desde la ficha de una tarea

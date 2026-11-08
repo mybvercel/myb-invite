@@ -15,7 +15,10 @@ function corta(iso: string) {
   return t.replace(/\./g, "");
 }
 
-const numero = (v: string) => Math.max(0, Number(v.replace(/[^\d.]/g, "")) || 0);
+const numero = (v: string) => Math.max(0, Number(v.replace(/\D/g, "")) || 0);
+
+/** 6500000 → "6.500.000", para leer los montos de un vistazo. Sin monto, vacío. */
+const miles = (n: number) => (n ? n.toLocaleString("es-AR") : "");
 
 /**
  * Cuánto cuesta todo. Cada rubro junta las cotizaciones que pidieron, se elige
@@ -65,7 +68,7 @@ export function Presupuesto({ doc, cambiar }: { doc: DocPanel; cambiar: Cambiar 
                 <input
                   className="pnl-input-chico pnl-num"
                   inputMode="numeric"
-                  value={x.tope ? String(x.tope) : ""}
+                  value={miles(x.tope)}
                   placeholder="Sin tope"
                   onChange={(e) => tope(m, numero(e.target.value))}
                   aria-label={`Tope en ${NOMBRE_MONEDA[m].toLowerCase()}`}
@@ -97,7 +100,7 @@ export function Presupuesto({ doc, cambiar }: { doc: DocPanel; cambiar: Cambiar 
           <input
             className="pnl-input-chico pnl-num"
             inputMode="numeric"
-            value={doc.presupuesto.dolar ? String(doc.presupuesto.dolar) : ""}
+            value={miles(doc.presupuesto.dolar)}
             placeholder="No sumar"
             onChange={(e) => cambiar((d) => ({ ...d, presupuesto: { ...d.presupuesto, dolar: numero(e.target.value) } }), "dolar")}
             aria-label="Cuántos pesos vale un dólar"
@@ -264,7 +267,7 @@ function FilaRubro({ rubro, doc, cambiar, abierto, alternar }: { rubro: Rubro; d
                     </label>
                     <label className="pnl-campo">
                       <span>Monto</span>
-                      <input inputMode="numeric" className="pnl-num" value={c.monto ? String(c.monto) : ""} placeholder="0" onChange={(e) => cotizar(c.id, { monto: numero(e.target.value) }, `cot:${c.id}:m`)} />
+                      <input inputMode="numeric" className="pnl-num" value={miles(c.monto)} placeholder="0" onChange={(e) => cotizar(c.id, { monto: numero(e.target.value) }, `cot:${c.id}:m`)} />
                     </label>
                     <label className="pnl-campo pnl-campo--chico">
                       <span>Moneda</span>
@@ -301,7 +304,7 @@ function FilaRubro({ rubro, doc, cambiar, abierto, alternar }: { rubro: Rubro; d
                     <input type="checkbox" checked={p.pagado} onChange={() => pagar(p.id, { pagado: !p.pagado, pagadoEl: p.pagado ? "" : hoyISO() })} aria-label={`Pagado: ${p.concepto || "pago"}`} />
                   </label>
                   <input className="pnl-pago__concepto" value={p.concepto} maxLength={80} placeholder="Concepto (seña, saldo…)" onChange={(e) => pagar(p.id, { concepto: e.target.value }, `pago:${p.id}:c`)} aria-label="Concepto" />
-                  <input className="pnl-pago__monto pnl-num" inputMode="numeric" value={p.monto ? String(p.monto) : ""} placeholder="Monto" onChange={(e) => pagar(p.id, { monto: numero(e.target.value) }, `pago:${p.id}:m`)} aria-label="Monto" />
+                  <input className="pnl-pago__monto pnl-num" inputMode="numeric" value={miles(p.monto)} placeholder="Monto" onChange={(e) => pagar(p.id, { monto: numero(e.target.value) }, `pago:${p.id}:m`)} aria-label="Monto" />
                   <select className="pnl-select pnl-pago__moneda" value={p.moneda} onChange={(e) => pagar(p.id, { moneda: e.target.value as Moneda })} aria-label="Moneda">
                     {MONEDAS.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>

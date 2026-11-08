@@ -12,6 +12,7 @@ const jiti = createJiti(import.meta.url, { alias: { "@": path.join(raiz, "src") 
 
 const { docVacio } = await jiti.import("../src/panel/tipos.ts");
 const { normalizar, sanearDoc, venceTarea, tareasAtrasadas, progresoChecklist, totalesPresupuesto, proximosPagos, rubrosSinCubrir, formatearMonto, ordenarMomentos, horaSiguiente, miembrosDe, asientos, ocupacion, ocupantes, porSentar, conMiembro, sentar, afinidadesRotas } = await jiti.import("../src/panel/logica.ts");
+const { generarIcs } = await jiti.import("../src/panel/ics.ts");
 const { aplicarPlantilla, momentosDe, PLANTILLAS } = await jiti.import("../src/panel/plantillas.ts");
 
 let fallas = 0;
@@ -183,6 +184,19 @@ igual("miembros se recortan a las personas", s3.invitados[0].miembros.length, 2)
 igual("mesa de miembro inexistente pasa a null", s3.invitados[0].miembros.map((m) => m.mesa), ["m2", null]);
 igual("afinidades: sin repetidos, sin sí mismo ni fantasmas", s3.afinidades.map((a) => a.id), ["1"]);
 igual("doc viejo: sin afinidades ni miembros", [normalizar(viejo, "#2e6f4e").afinidades.length], [0]);
+
+// 9. Calendario (.ics).
+const ics = generarIcs([
+  { uid: "t1", fecha: "2026-12-31", titulo: "Tarea: pagar, llamar; confirmar", detalle: "Quién: Ana\nMonto: $ 1.000" },
+  { uid: "p1", fecha: "2027-01-05", titulo: "Pago: seña", aviso: true },
+  { uid: "mala", fecha: "pronto", titulo: "no va" },
+], "Casamiento", new Date("2026-11-08T12:00:00Z"));
+igual("ics: empieza y termina bien", [ics.startsWith("BEGIN:VCALENDAR\r\n"), ics.endsWith("END:VCALENDAR\r\n")], [true, true]);
+igual("ics: 2 eventos (la fecha inválida se salta)", (ics.match(/BEGIN:VEVENT/g) ?? []).length, 2);
+igual("ics: día completo termina al otro día (fin de año)", ics.includes("DTSTART;VALUE=DATE:20261231\r\nDTEND;VALUE=DATE:20270101"), true);
+igual("ics: escapa comas, punto y coma y saltos", ics.includes("SUMMARY:Tarea: pagar\\, llamar\\; confirmar") && ics.includes("DESCRIPTION:Quién: Ana\\nMonto: $ 1.000"), true);
+igual("ics: el pago lleva aviso un día antes", ics.includes("TRIGGER:-P1D"), true);
+igual("ics: un solo aviso", (ics.match(/BEGIN:VALARM/g) ?? []).length, 1);
 
 // 7. Rubros sin cubrir.
 const sc = docVacio();
