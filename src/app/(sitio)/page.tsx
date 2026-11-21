@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Briefcase, Cake, Heart, MessageCircle } from "lucide-react";
+import { ArrowRight, Briefcase, Cake, Heart, MessageCircle, Play } from "lucide-react";
 import ResenasGoogle from "@/components/ResenasGoogle";
 import PreciosBento from "@/components/PreciosBento";
 import { GlowCard } from "@/components/ui/spotlight-card";
@@ -114,6 +114,39 @@ function Preguntas() {
    Página
    ───────────────────────────────────────────────────────────── */
 
+/* Video de venta: la portada con un botón grande; al tocarlo suena con audio y controles. */
+function VideoPresentacion() {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [activo, setActivo] = useState(false);
+  return (
+    <div className="tid-video">
+      <video
+        ref={ref}
+        className="tid-video__medio"
+        src="/videos/invitacion-como-funciona.mp4"
+        poster="/videos/invitacion-como-funciona.jpg"
+        preload="none"
+        playsInline
+        controls={activo}
+        onPlay={() => setActivo(true)}
+      />
+      {!activo && (
+        <button
+          type="button"
+          className="tid-video__play"
+          onClick={() => { setActivo(true); ref.current?.play(); }}
+          aria-label="Ver el video de cómo funciona"
+        >
+          <span className="tid-video__pastilla">
+            <span className="tid-video__circulo"><Play size={20} fill="currentColor" aria-hidden="true" /></span>
+            <span className="tid-video__texto">Mirá cómo funciona · 1:29</span>
+          </span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function Invitaciones() {
   const [elegido, setElegido] = useState<TipoEvento | null>(null);
   const resultadoRef = useRef<HTMLDivElement>(null);
@@ -145,6 +178,8 @@ export default function Invitaciones() {
             Elegís el diseño, la mandás por WhatsApp y cada confirmación entra sola a tu lista.
             Sin perseguir a nadie.
           </p>
+
+          <VideoPresentacion />
 
           <div className="tid-eleccion">
             <div className="tid-eleccion__grilla">
