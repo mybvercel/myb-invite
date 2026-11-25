@@ -156,6 +156,11 @@ export default function Invitaciones() {
   const desplazar = (dir: 1 | -1) => {
     const carril = carrilRef.current;
     if (!carril) return;
+    // Al llegar a un extremo, la flecha vuelve al otro lado: el carrusel no se traba.
+    const alFinal = carril.scrollLeft + carril.clientWidth >= carril.scrollWidth - 4;
+    const alPrincipio = carril.scrollLeft <= 4;
+    if (dir === 1 && alFinal) return carril.scrollTo({ left: 0, behavior: "smooth" });
+    if (dir === -1 && alPrincipio) return carril.scrollTo({ left: carril.scrollWidth, behavior: "smooth" });
     carril.scrollBy({ left: dir * carril.clientWidth * 0.8, behavior: "smooth" });
   };
 

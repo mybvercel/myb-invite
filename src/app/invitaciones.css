@@ -200,10 +200,13 @@
 .tid-carrusel__flecha {
   position: absolute; top: 34%; z-index: 2; display: none;
   align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
-  border-radius: 50%; background: #fff; border: 1px solid var(--linea); box-shadow: var(--sombra);
-  color: var(--negro); font-size: 1.25rem; line-height: 1; cursor: pointer;
+  border-radius: 50%; background: var(--verde); border: 2px solid #fff;
+  box-shadow: 0 4px 14px rgba(13, 18, 16, 0.28);
+  color: #fff; font-size: 1.4rem; font-weight: 700; line-height: 1; cursor: pointer;
+  transition: background-color 200ms var(--salida), transform 200ms var(--salida);
 }
-.tid-carrusel__flecha:hover { background: var(--hueso); }
+.tid-carrusel__flecha:hover { background: var(--verde-hondo); transform: scale(1.06); }
+.tid-carrusel__flecha:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
 .tid-carrusel__flecha--ant { left: -1.1rem; }
 .tid-carrusel__flecha--sig { right: -1.1rem; }
 @media (min-width: 48rem) { .tid-carrusel__flecha { display: flex; } }
