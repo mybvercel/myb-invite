@@ -16,14 +16,12 @@ import "./cincuenta.css";
 import "./ejecutiva.css";
 import "./noir.css";
 import "./rasgado.css";
-import "./rosedal.css";
 import "./comun.css";
 import "./cupido.css";
 import "./hilo.css";
 import "./dijosi.css";
 import "./vinilo.css";
 import "./xoxo.css";
-import "./guirnalda.css";
 
 /* Dos familias y ninguna más.
    Pinyon es una spenceriana de verdad: Dancing Script y Great Vibes son las

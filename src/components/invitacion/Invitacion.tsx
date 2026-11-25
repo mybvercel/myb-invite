@@ -1,7 +1,5 @@
 import type { Invitacion as Datos } from "@/invitaciones/tipos";
 import InvitacionRasgado from "./rasgado/InvitacionRasgado";
-import InvitacionRosedal from "./rosedal/InvitacionRosedal";
-import InvitacionGuirnalda from "./guirnalda/InvitacionGuirnalda";
 import InvitacionCupido from "./cupido/InvitacionCupido";
 import InvitacionHilo from "./hilo/InvitacionHilo";
 import InvitacionDijoSi from "./dijosi/InvitacionDijoSi";
@@ -57,12 +55,6 @@ export default function Invitacion({ invitacion, personal }: { invitacion: Datos
   }
   if (invitacion.estilo === "rasgado") {
     return <InvitacionRasgado invitacion={invitacion} personal={personal} />;
-  }
-  if (invitacion.estilo === "rosedal") {
-    return <InvitacionRosedal invitacion={invitacion} personal={personal} />;
-  }
-  if (invitacion.estilo === "guirnalda") {
-    return <InvitacionGuirnalda invitacion={invitacion} personal={personal} />;
   }
   if (invitacion.estilo === "noir") {
     return <InvitacionNoir invitacion={invitacion} personal={personal} />;

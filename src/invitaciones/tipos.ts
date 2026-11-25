@@ -409,48 +409,6 @@ export type InvitacionNoir = InvitacionBase & {
 };
 
 /**
- * Guirnalda: una noche de luces cálidas sobre verde profundo. La foto de la
- * pareja ocupa la portada entera, una guirnalda de focos se enciende uno por
- * uno al llegar a ella, y en el cronograma cada hora es un foco que se prende
- * cuando el invitado llega. Las fotos son de la pareja, no hay ilustración.
- */
-export type InvitacionGuirnalda = InvitacionBase & {
-  estilo: "guirnalda";
-  guirnalda: {
-    /** La imagen que se ve al compartir el link por WhatsApp. */
-    compartir: string;
-    /** Foto vertical a pantalla completa. Los nombres van sobre su parte baja. */
-    portada: { src: string; alt: string };
-    /** Foto enmarcada en un arco, a mitad de la invitación. */
-    arco: { src: string; alt: string; pie: string };
-    /** Lo último que se lee, debajo de los nombres. */
-    cierre: string;
-  };
-};
-
-/**
- * Rosedal: hermano de Rosa. Sobre lacrado, papel y flores, pero con la foto de
- * la pareja dentro del arco y rosas rojas.
- */
-export type InvitacionRosedal = InvitacionBase & {
-  estilo: "rosedal";
-  carta: Carta;
-  rosedal: {
-    compartir: string;
-    /** Qué se celebra, para el calendario. Ej: "Nuestra boda". */
-    evento: string;
-    /** El arco de flores, recortado con alpha. Va sobre la foto. */
-    arco: string;
-    /** Dos cenefas: rosas y botánica. */
-    flores: [string, string];
-    sello: string;
-    portada: { src: string; alt: string };
-    foto: { src: string; alt: string; pie: string };
-    paleta: { nombre: string; color: string }[];
-  };
-};
-
-/**
  * Rasgado: papel crema y azul polvo, con las fotos de la pareja asomando por
  * bordes de papel rasgado. La entrada es un papel que el invitado rasga con el
  * dedo. Todo el borde es SVG generado: sirve cualquier foto.
@@ -533,17 +491,13 @@ export type Invitacion =
   | InvitacionCincuenta
   | InvitacionEjecutiva
   | InvitacionNoir
-  | InvitacionRosedal
   | InvitacionRasgado
-  | InvitacionEscena
-  | InvitacionGuirnalda;
+  | InvitacionEscena;
 
 /** La imagen de la previsualización en WhatsApp, sea cual sea el estilo. */
 export const imagenCompartir = (inv: Invitacion) =>
   "escena" in inv ? inv.escena.compartir
   : inv.estilo === "rasgado" ? inv.rasgado.compartir
-  : inv.estilo === "rosedal" ? inv.rosedal.compartir
-  : inv.estilo === "guirnalda" ? inv.guirnalda.compartir
   : inv.estilo === "noir"
     ? inv.noir.compartir
     : inv.estilo === "fotomaton"

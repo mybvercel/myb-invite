@@ -150,6 +150,14 @@ function VideoPresentacion() {
 export default function Invitaciones() {
   const [elegido, setElegido] = useState<TipoEvento | null>(null);
   const resultadoRef = useRef<HTMLDivElement>(null);
+  const carrilRef = useRef<HTMLUListElement>(null);
+
+  // Las flechas mueven el carril casi una pantalla, así el siguiente modelo asoma.
+  const desplazar = (dir: 1 | -1) => {
+    const carril = carrilRef.current;
+    if (!carril) return;
+    carril.scrollBy({ left: dir * carril.clientWidth * 0.8, behavior: "smooth" });
+  };
 
   const categoria = CATEGORIAS.find((c) => c.id === elegido);
   const modelos = DISENOS.filter((d) => d.tipo === elegido);
@@ -225,7 +233,9 @@ export default function Invitaciones() {
                 </div>
 
                 {modelos.length > 0 && (
-                  <ul className="tid-modelos">
+                  <div className="tid-carrusel">
+                  <button type="button" className="tid-carrusel__flecha tid-carrusel__flecha--ant" aria-label="Ver los modelos anteriores" onClick={() => desplazar(-1)}>←</button>
+                  <ul ref={carrilRef} className="tid-modelos">
                     {modelos.map((d) => (
                       <li key={`${d.tipo}-${d.id}`}>
                         <Link href={`${enlaceDemo(d)}${enlaceDemo(d).includes("?") ? "&" : "?"}v=1`} target="_blank" rel="opener" className="tid-modelo">
@@ -234,7 +244,7 @@ export default function Invitaciones() {
                               src={d.imagen}
                               alt={`Modelo ${d.nombre}`}
                               fill
-                              sizes="(max-width: 48rem) 45vw, 22vw"
+                              sizes="(max-width: 48rem) 70vw, 26vw"
                               className="tid-modelo__img"
                             />
                             <span className="tid-modelo__abrir">Abrir demo</span>
@@ -254,6 +264,9 @@ export default function Invitaciones() {
                       </li>
                     ))}
                   </ul>
+                  <button type="button" className="tid-carrusel__flecha tid-carrusel__flecha--sig" aria-label="Ver los modelos siguientes" onClick={() => desplazar(1)}>→</button>
+                  <p className="tid-carrusel__pista">Deslizá para ver más modelos</p>
+                  </div>
                 )}
 
                 {/* Con o sin modelos publicados, el diseño a medida se consulta:
