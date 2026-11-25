@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111b2a">
+  <title>Emilia & Nicolás · Una noche para recordar</title>
+  <meta name="description" content="Una invitación ilustrada, un brindis y una noche para recordar. Modelo de boda de MyB Invite.">
+  <link rel="stylesheet" href="diseno.css">
+</head>
+<body class="intro-active">
+  <div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Nuestra invitación animada" tabindex="-1">
+    <canvas id="pelicula" aria-hidden="true"></canvas>
+    <p class="intro-loading" id="cargando">Preparando una noche especial…</p>
+    <button class="skip" id="saltar">Saltar intro <span aria-hidden="true">↗</span></button>
+    <button class="intro-pause" id="pausa-intro" aria-label="Pausar introducción">Ⅱ</button>
+    <div class="progress" aria-hidden="true"><i id="progreso"></i></div>
+  </div>
+
+  <aside class="side side-l" aria-hidden="true"><p>Hay noches que lo cambian todo</p><b>Emilia<i>&</i>Nicolás</b><span>20 · 11 · 2027</span><small>Villa de las Rosas · San Isidro</small></aside>
+  <aside class="side side-r" aria-hidden="true"><img src="assets/palacio.webp" alt="" width="900" height="1599"></aside>
+
+  <main id="invitacion" tabindex="-1">
+    <header class="letter" id="inicio">
+      <div class="petals" aria-hidden="true"></div>
+      <button class="motion-toggle" id="movimiento" aria-pressed="false">Pausar movimiento</button>
+      <img class="doves drift" src="assets/palomas.webp" alt="" width="600" height="400">
+      <p class="opening">Hay noches que lo cambian todo.</p>
+      <h1><span>Emilia</span><b>&</b><span>Nicolás</span></h1>
+      <p class="marrying">Nos casamos</p>
+      <p class="date">20 · NOVIEMBRE · 2027</p>
+      <div class="couple-stage"><img class="couple sway" src="assets/pareja.webp" alt="Ilustración de los novios bailando" width="900" height="1350"></div>
+      <p class="welcome">Y queremos vivirla con vos.</p>
+      <nav class="entry-links" aria-label="Ir a la información"><a class="text-link" href="#lugar">Los detalles <span aria-hidden="true">↓</span></a><a class="text-link" href="#confirmar">Confirmar <span aria-hidden="true">↗</span></a></nav>
+    </header>
+
+    <section class="venue" id="lugar" aria-labelledby="venue-title">
+      <div class="night-sky" aria-hidden="true"></div>
+      <div class="venue-copy reveal">
+        <p>El escenario de nuestro sí</p>
+        <h2 id="venue-title">Villa de<br>las Rosas</h2>
+        <p>San Isidro · Buenos Aires</p>
+        <a class="text-link light" id="mapa" target="_blank" rel="noopener">Ver ubicación <span aria-hidden="true">↗</span></a>
+      </div>
+      <img class="venue-art" src="assets/palacio.webp" alt="Palacio ilustrado bajo la luz de la luna" width="900" height="1599" loading="lazy">
+      <span class="star s1" aria-hidden="true">✧</span><span class="star s2" aria-hidden="true">✧</span>
+    </section>
+
+    <section class="evening" aria-labelledby="agenda-title">
+      <div class="ballroom" aria-hidden="true"></div>
+      <h2 class="reveal" id="agenda-title">Así empieza<br>nuestra noche</h2>
+      <div class="agenda-wrap"><svg class="path" viewBox="0 0 400 700" preserveAspectRatio="none" aria-hidden="true"><path class="path-base" d="M200 0 C350 50 350 110 200 180 S30 310 200 370 S370 510 200 610 Q145 650 200 700"/><path id="camino" d="M200 0 C350 50 350 110 200 180 S30 310 200 370 S370 510 200 610 Q145 650 200 700" pathLength="1"/></svg>
+      <ol class="agenda">
+        <li class="reveal"><div class="slot"><time>17:30</time><h3>El sí</h3><p>Ceremonia en el jardín.</p></div><img class="doves-mini drift" src="assets/palomas.webp" alt="" width="900" height="600" loading="lazy"></li>
+        <li class="reveal"><div class="slot"><time>18:30</time><h3>El primer brindis</h3><p>Copas, abrazos y aperitivo.</p></div><img class="waiter float" src="assets/camarero.webp" alt="" width="900" height="1350" loading="lazy"></li>
+        <li class="reveal"><div class="slot"><time>20:00</time><h3>Que suene la música</h3><p>Cena y una pista hasta las 03:00.</p></div><img class="jazz sway" src="assets/musico.webp" alt="" width="900" height="1350" loading="lazy"></li>
+      </ol></div>
+      <div class="dress reveal"><p>Una noche para vestirnos de fiesta.</p><strong>Elegante</strong><button class="text-link" id="calendario">Guardar la fecha <span aria-hidden="true">↗</span></button></div>
+    </section>
+
+    <section class="rsvp" id="confirmar" aria-labelledby="rsvp-title">
+      <div class="rsvp-heading reveal"><p>Nos falta lo más importante.</p><h2 id="rsvp-title">Vos.</h2><p>Confirmá antes del 1 de noviembre.</p></div>
+      <form id="asistencia">
+        <label for="nombre">Tu nombre y apellido</label><input id="nombre" name="nombre" autocomplete="name" required maxlength="80" placeholder="Como querés que te llamemos">
+        <label for="email">Tu email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="160" placeholder="Para estar en contacto">
+        <fieldset><legend>¿Nos acompañás?</legend><label class="choice"><input type="radio" name="asiste" value="si" checked><span>Sí, ahí estaré</span></label><label class="choice"><input type="radio" name="asiste" value="no"><span>No podré ir</span></label></fieldset>
+        <div id="detalles-asistencia"><label for="personas">¿Cuántos vienen con esta invitación?</label><select id="personas" name="personas"><option value="1">Solo yo</option><option value="2">Somos 2</option><option value="3">Somos 3</option><option value="4">Somos 4</option></select><label for="comida">Algo que debamos saber del menú <span>(opcional)</span></label><textarea id="comida" name="comida" rows="2" maxlength="500" placeholder="Alergias o necesidades de alimentación"></textarea></div>
+        <p class="demo-note">Modelo de prueba. La respuesta se guarda solo en este dispositivo.</p>
+        <button class="submit" type="submit">Enviar mi respuesta <span aria-hidden="true">↗</span></button>
+        <p id="error" role="alert"></p>
+      </form>
+      <div class="answer" id="respuesta" hidden tabindex="-1" role="status"><img src="assets/palomas.webp" alt="" width="600" height="400"><h3 id="saludo"></h3><p id="mensaje-respuesta"></p><p class="demo-note">Respuesta de prueba guardada en este dispositivo.</p><button class="text-link" id="editar">Editar respuesta</button></div>
+      <footer><p>Que sea una noche inolvidable.</p><span class="signature">Emilia & Nicolás</span><button class="text-link" id="repetir">Volver a ver la película <span aria-hidden="true">↺</span></button><small>MYB INVITE · MODELO CON DATOS FICTICIOS</small></footer>
+    </section>
+  </main>
+  <noscript><style>.intro{display:none}body{overflow:auto}main[inert]{display:block}</style><p>Activá JavaScript para ver la animación y completar la confirmación.</p></noscript>
+  <script src="datos.js"></script><script src="pelicula.js"></script><script src="invitacion.js"></script>
+</body>
+</html>

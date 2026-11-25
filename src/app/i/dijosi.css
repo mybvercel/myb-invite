@@ -1,0 +1,165 @@
+/* Estilo Dijo que sí. Todo bajo .dq. Base en comun.css. */
+
+.dq.inv-columna{
+  --c-papel: #f1ede4;
+  --c-tinta: #3a2f2d;
+  --c-fuerte: #26191a;
+  --c-suave: #62524f;
+  --c-acento: #9c1220;
+  --c-sobre: #fff6ea;
+  --c-titulo: var(--font-italianno);
+  --c-mapa: sepia(0.2) saturate(0.6);
+  --c-radio: 99px;
+}
+.inv:has(.dq.inv-columna), body:has(.dq.inv-columna){ background: #171314; }
+.dq .cm-mapa__marco{ border-radius: 6px; }
+.dq .dq-serif{ font-family: var(--font-dmserif), Georgia, serif; font-weight: 400; font-size: clamp(1.9rem, 8.6vw, 2.4rem); line-height: 1.15; color: var(--c-fuerte); }
+.dq .dq-rojo{ color: var(--c-acento); }
+.dq .dq-mano{ font-family: var(--font-mano), cursive; font-size: clamp(1.5rem, 7vw, 1.9rem); line-height: 1.3; color: var(--c-fuerte); }
+.dq .dq-mano--grande{ font-size: clamp(2.3rem, 11.5vw, 3.1rem); }
+.dq .cm-hora small{ font-size: 0.5em; font-weight: 500; }
+
+/* ── Entrada: el telón ── */
+.dq .dq-tapa{ --tiro: 0; cursor: grab; }
+.dq .dq-pano{ position: absolute; inset-block: -2%; width: 51%; background: url("/invitaciones/dijo-que-si/telon.webp") 0 0 / 100% 100%; will-change: transform; }
+.dq .dq-pano--izq{ left: 0; transform-origin: 0 0; box-shadow: 6px 0 22px rgb(0 0 0 / 0.55); }
+.dq .dq-pano--der{ right: 0; transform-origin: 100% 0; background-position: 100% 0; }
+.dq .dq-tapa[data-estado="cerrada"] .dq-pano--izq{ transform: scaleX(calc(1 - var(--tiro) * 0.07)); }
+.dq .dq-tapa[data-estado="cerrada"] .dq-pano--der{ transform: scaleX(calc(1 - var(--tiro) * 0.07)); }
+.dq .dq-haz{ position: absolute; inset: -20%; background: radial-gradient(ellipse 34% 22% at 50% 42%, rgb(255 238 205 / 0.5), rgb(255 226 180 / 0.12) 60%, transparent 75%), linear-gradient(rgb(10 0 0 / 0.5), rgb(10 0 0 / 0.1) 40%, rgb(10 0 0 / 0.55)); mix-blend-mode: hard-light; animation: dq-foco 7s ease-in-out infinite; }
+@keyframes dq-foco{ 0%, 100%{ translate: -3% -1%; } 50%{ translate: 3% 2%; } }
+.dq .dq-tapa__texto{ position: absolute; top: 27svh; inset-inline: 1rem; color: #fff0d6; text-shadow: 0 2px 14px rgb(40 0 0 / 0.75); }
+.dq .dq-tapa__titulo{ font-family: var(--font-italianno); font-size: clamp(4rem, min(19vw, 14svh), 6rem); line-height: 1; }
+.dq .dq-tapa__nombres{ margin-top: 0.6rem; font-family: var(--font-dmserif); font-size: clamp(1.4rem, 6.4vw, 1.8rem); }
+.dq .dq-cordon{ position: absolute; left: 89%; top: 30svh; height: 50svh; translate: -50% 0; transform: translateY(calc(var(--tiro) * 70px)); transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1); fill: #c9983f; stroke: #c9983f; stroke-width: 5; overflow: visible; filter: drop-shadow(3px 6px 5px rgb(0 0 0 / 0.5)); }
+.dq .dq-cordon path{ fill: none; stroke-linecap: round; }
+.dq .dq-cordon > path:first-child{ stroke-width: 8; stroke: #a8772a; }
+.dq .dq-cordon .dq-cordon__trenza{ stroke: #f0cf85; stroke-width: 8; stroke-dasharray: 5 9; }
+.dq .dq-cordon__borla{ transform-origin: 30px 300px; animation: dq-borla 2.8s ease-in-out infinite; }
+.dq .dq-cordon__borla path:nth-child(2){ fill: #e0b55f; }
+@keyframes dq-borla{ 0%, 100%{ rotate: -5deg; } 50%{ rotate: 5deg; } }
+.dq .dq-tapa__indica{ position: absolute; inset-inline: 0; bottom: max(3svh, env(safe-area-inset-bottom)); color: #ffe9c6; text-shadow: 0 1px 8px #000; }
+.dq .dq-tapa[data-estado="abriendo"] :is(.dq-tapa__texto, .dq-tapa__indica, .dq-haz){ opacity: 0; transition: opacity 0.6s; animation: none; }
+.dq .dq-tapa[data-estado="abriendo"] .dq-cordon{ transform: translateY(-110svh); transition: transform 1.2s cubic-bezier(0.6, 0, 0.8, 0.4); }
+.dq .dq-tapa[data-estado="abriendo"] .dq-pano{ transition: transform 2.2s cubic-bezier(0.55, 0.02, 0.15, 1) 0.25s; }
+.dq .dq-tapa[data-estado="abriendo"] .dq-pano--izq{ transform: translateX(-12%) scaleX(0.04) skewX(-3deg); }
+.dq .dq-tapa[data-estado="abriendo"] .dq-pano--der{ transform: translateX(12%) scaleX(0.04) skewX(3deg); }
+
+/* ── Escenario ── */
+.dq .dq-escenario{ position: relative; padding: clamp(6.5rem, 17svh, 9rem) 0 4.4rem; display: flex; flex-direction: column; align-items: center; background: radial-gradient(ellipse 80% 34rem at 50% 6rem, #fffaf0, var(--c-papel) 75%); overflow: clip; }
+.dq .dq-lado{ position: absolute; top: 0; width: 27%; height: 25rem; background: url("/invitaciones/dijo-que-si/telon.webp") 0 0 / 320% 100%; filter: drop-shadow(0 6px 8px rgb(60 0 0 / 0.4)); animation: dq-brisa 7s ease-in-out infinite; }
+.dq .dq-lado--izq{ left: 0; transform-origin: 0 0; clip-path: polygon(0 0, 100% 0, 98% 10%, 92% 22%, 82% 34%, 68% 46%, 50% 56%, 34% 62%, 40% 65%, 50% 76%, 56% 88%, 58% 100%, 44% 97%, 30% 100%, 16% 97%, 0 100%); }
+.dq .dq-lado--der{ right: 0; transform-origin: 100% 0; background-position: 100% 0; clip-path: polygon(100% 0, 0 0, 2% 10%, 8% 22%, 18% 34%, 32% 46%, 50% 56%, 66% 62%, 60% 65%, 50% 76%, 44% 88%, 42% 100%, 56% 97%, 70% 100%, 84% 97%, 100% 100%); animation-delay: -3s; }
+@keyframes dq-brisa{ 0%, 100%{ transform: skewX(0deg); } 50%{ transform: skewX(-0.9deg); } }
+.dq .dq-lado i{ position: absolute; top: 61%; width: 46%; height: 1.1rem; background: linear-gradient(#f2d48b, #b07f2c 60%, #8a5d18); border-radius: 4px; }
+.dq .dq-lado--izq i{ left: 0; rotate: 5deg; }
+.dq .dq-lado--der i{ right: 0; rotate: -5deg; }
+.dq .dq-bola{ position: absolute; z-index: 2; left: 50%; top: 0; width: 5.6rem; margin-left: -2.8rem; transform: translateY(-11rem); transition: transform 2.2s cubic-bezier(0.25, 1.25, 0.4, 1) 1.2s; }
+.dq[data-abierta="true"] .dq-bola{ transform: translateY(1.1rem); }
+.dq .dq-bola::before{ content: ""; position: absolute; left: 50%; bottom: 100%; width: 1.5px; height: 14rem; background: #8b837a; }
+.dq .dq-bola__esfera{ display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; filter: drop-shadow(0 8px 12px rgb(40 20 10 / 0.35)); }
+.dq .dq-reflejos{ position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 2s 2.6s; }
+.dq[data-abierta="true"] .dq-reflejos{ opacity: 1; }
+.dq .dq-reflejos i{ position: absolute; width: 1.5rem; height: 1.15rem; border-radius: 45%; background: radial-gradient(#fff 20%, rgb(255 222 160 / 0.75) 55%, transparent 72%); scale: var(--e); animation: dq-reflejo var(--t) linear var(--d) infinite; }
+@keyframes dq-reflejo{ 0%{ transform: translate(-16rem, 2rem) rotate(-12deg); opacity: 0; } 15%, 85%{ opacity: 0.95; } 100%{ transform: translate(16rem, -1rem) rotate(10deg); opacity: 0; } }
+.dq .dq-si{ font-family: var(--font-italianno); font-weight: 400; color: var(--c-acento); font-size: clamp(2.8rem, 15.5vw, 4.6rem); line-height: 1; }
+.dq .dq-nombres{ font-family: var(--font-dmserif); font-size: clamp(1.5rem, 7vw, 1.9rem); color: var(--c-fuerte); margin-bottom: 4.4rem; }
+
+/* ── Tele ── */
+.dq .dq-tele{ position: relative; width: min(86%, 23rem); }
+.dq .dq-tele__caja{ display: block; width: 100%; overflow: visible; filter: drop-shadow(0 18px 18px rgb(50 10 10 / 0.35)); }
+.dq .dq-tele button.dq-tele__pantalla{ position: absolute; left: 8.9%; top: 19.5%; width: 61.1%; height: 66.4%; overflow: hidden; border-radius: 12% / 15%; background: #0a0909; }
+.dq .dq-tele__pantalla img{ transform: scaleY(0.004); filter: brightness(4); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s, filter 0.9s 0.5s, opacity 0.12s; }
+.dq .dq-tele[data-visible="true"] .dq-tele__pantalla img{ transform: none; filter: none; }
+.dq .dq-tele__nieve{ position: absolute; inset: -30%; opacity: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 2.6 -.9'/%3E%3C/filter%3E%3Crect width='180' height='180' fill='%23222'/%3E%3Crect width='180' height='180' filter='url(%23f)'/%3E%3C/svg%3E"); animation: dq-nieve 0.22s steps(3) infinite; }
+.dq .dq-tele[data-nieve="true"] .dq-tele__nieve{ opacity: 1; }
+@keyframes dq-nieve{ from{ translate: 0 0; } to{ translate: 14% -12%; } }
+.dq .dq-tele__vidrio{ position: absolute; inset: 0; background: repeating-linear-gradient(rgb(0 0 0 / 0.16) 0 1px, transparent 1px 3px), linear-gradient(125deg, rgb(255 255 255 / 0.34), transparent 34%), radial-gradient(ellipse at 50% 50%, transparent 52%, rgb(0 0 0 / 0.62)); animation: dq-parpadeo 4s steps(1) infinite; }
+@keyframes dq-parpadeo{ 0%, 92%, 96%, 100%{ opacity: 1; } 94%{ opacity: 0.72; } }
+.dq .dq-tele button.dq-tele__perilla{ position: absolute; left: 77.2%; top: 23%; width: 15%; min-width: 44px; aspect-ratio: 1; transform: rotate(calc(var(--vuelta) * 70deg - 30deg)); transition: transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.dq .dq-tele__perilla svg{ width: 100%; display: block; }
+.dq .dq-tele__pista{ position: absolute; inset-inline: 0; top: calc(100% + 0.4rem); font-family: var(--font-mano); font-size: 1.25rem; color: var(--c-suave); }
+
+/* ── Invitados y fecha ── */
+.dq .dq-queridos{ padding-bottom: 1rem; }
+.dq .dq-queridos .cm-texto{ margin-top: 0.9rem; }
+.dq .dq-dias{ display: flex; align-items: center; justify-content: center; gap: clamp(0.7rem, 4vw, 1.3rem); margin: 1.1rem 0 0.9rem; font-size: clamp(1.3rem, 6vw, 1.6rem); color: #a8686a; }
+.dq .dq-dias__es{ position: relative; display: grid; place-items: center; width: 6.2rem; height: 5.8rem; }
+.dq .dq-dias__es svg{ position: absolute; inset: 0; width: 100%; fill: #b8131f; animation: dq-late 1.7s ease-in-out infinite; }
+@keyframes dq-late{ 0%, 44%, 100%{ scale: 1; } 14%{ scale: 1.1; } 26%{ scale: 1.01; } 34%{ scale: 1.07; } }
+.dq .dq-dias__es b{ position: relative; font-size: 2.2rem; font-weight: 600; color: #fff4e8; }
+.dq .dq-mes{ text-transform: capitalize; }
+.dq .dq-dia .cm-hora{ margin: 0.3rem 0 1.1rem; color: var(--c-acento); }
+
+/* ── A M O R ── */
+.dq .dq-amor{ position: relative; padding: 1rem 0 1.4rem; }
+.dq .dq-kraft{ position: absolute; inset-inline: 0; top: 34%; height: 11.5rem; background: url("/invitaciones/dijo-que-si/kraft.webp") 50% / cover; }
+.dq .dq-kraft :is(.dq-kraft__arriba, .dq-kraft__abajo){ position: absolute; inset-inline: 0; }
+.dq .dq-kraft__arriba{ top: -1px; }
+.dq .dq-kraft__abajo{ bottom: -1px; }
+.dq .rg-borde{ display: block; width: 100%; height: auto; aspect-ratio: 480 / 66; overflow: visible; }
+.dq .rg-borde__papel{ fill: var(--c-papel); }
+.dq .rg-borde__fibra{ fill: #fffdf8; }
+.dq .dq-kraft__letras{ position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 3.5%; font-family: var(--font-bodoni), serif; font-weight: 500; font-size: clamp(4.4rem, 21vw, 6rem); color: #1d1614; }
+.dq .dq-kraft__letras span{ opacity: 0; transition: opacity 0.9s 0.3s, transform 1.1s var(--salida) 0.3s; }
+.dq .dq-kraft__letras span:first-child{ transform: translateX(-40px); }
+.dq .dq-kraft__letras span:last-child{ transform: translateX(40px); }
+.dq .dq-kraft__letras[data-visible="true"] span{ opacity: 1; transform: none; }
+.dq .dq-amor__foto{ position: relative; width: 60%; margin: 0 auto; aspect-ratio: 0.76; overflow: hidden; box-shadow: 0 16px 30px rgb(20 10 10 / 0.4); }
+.dq .dq-amor__foto img{ scale: 1.18; transition: scale 3.2s var(--salida); }
+.dq .dq-amor__foto[data-visible="true"] img{ scale: 1; }
+.dq .dq-casamos{ padding-block: 0.6rem 2.6rem; }
+
+/* ── Te esperamos ── */
+.dq .dq-lugar{ --c-fuerte: #fff3e2; --c-suave: #f0cfc3; --c-acento: #f4ece0; --c-sobre: #6d0a12; background: linear-gradient(#7a0b14, #8c0f19 50%, #6a0810); color: #fbe6da; overflow: clip; padding-block: 2.8rem 3rem; }
+.dq .dq-luces i{ position: absolute; top: -8%; width: 62%; height: 78%; background: linear-gradient(rgb(255 224 180 / 0.55), transparent 85%); filter: blur(8px); mix-blend-mode: soft-light; clip-path: polygon(0 0, 14% 0, 100% 100%, 46% 100%); transform-origin: 0 0; animation: dq-barre 6s ease-in-out infinite; }
+.dq .dq-luces i:first-child{ left: -6%; }
+.dq .dq-luces i:last-child{ right: -6%; scale: -1 1; animation-delay: -3s; }
+@keyframes dq-barre{ 0%, 100%{ rotate: -7deg; } 50%{ rotate: 9deg; } }
+.dq .dq-lugar > *:not(.dq-luces){ position: relative; }
+.dq .dq-lugar__foto{ width: 100%; aspect-ratio: 1; margin: 1.3rem 0 1.4rem; overflow: hidden; }
+.dq .dq-lugar__foto img{ scale: 1.15; filter: brightness(0.5); transition: scale 3s var(--salida), filter 2s 0.4s; }
+.dq [data-visible="true"] .dq-lugar__foto img{ scale: 1; filter: none; }
+.dq .dq-lugar .cm-clave{ font-family: var(--font-dmserif); font-weight: 400; font-size: clamp(1.9rem, 9vw, 2.5rem); margin-top: 0.3rem; }
+.dq .dq-lugar__dir{ color: var(--c-suave); margin-top: 0.3rem; }
+
+/* ── Programa ── */
+.dq .dq-programa{ --s: 0; position: relative; padding: 3.4rem 0 2rem; }
+.dq .dq-programa__beso{ position: absolute; z-index: 3; left: -0.4rem; top: -1.6rem; width: 6rem; rotate: -16deg; color: #a50f1d; opacity: 0; scale: 1.8; transition: scale 0.4s cubic-bezier(0.5, 0, 0.9, 0.6), opacity 0.2s; }
+.dq .dq-programa__beso[data-visible="true"]{ opacity: 1; scale: 1; }
+.dq .dq-beso{ display: block; width: 100%; overflow: visible; }
+.dq .dq-programa ol{ position: relative; margin-top: 1.6rem; }
+.dq .dq-programa ol::before{ content: ""; position: absolute; left: 50%; top: 0; bottom: 3rem; width: 2px; margin-left: -1px; background: #4a3c39; transform-origin: 0 0; scale: 1 calc(clamp(0, var(--s) * 1.18 - 0.1, 1)); }
+.dq .dq-programa li{ display: flex; margin-bottom: -2.2rem; }
+.dq .dq-programa li:nth-child(even){ justify-content: flex-end; }
+.dq .dq-hito{ position: relative; width: 50%; padding: 0 1rem 1.6rem; display: flex; flex-direction: column; align-items: center; }
+.dq .dq-icono{ width: 5.2rem; color: #1f1716; overflow: visible; }
+.dq .dq-icono path{ stroke-width: 2.1; }
+.dq .dq-hito .cm-hora{ margin-top: 0.35rem; font-size: clamp(1.7rem, 8vw, 2.1rem); color: var(--c-acento); }
+.dq .dq-hito__que{ font-family: var(--font-mano); font-size: 1.3rem; line-height: 1.2; color: var(--c-fuerte); }
+.dq .dq-hito__corazon{ position: absolute; top: 1.4rem; right: -0.62rem; width: 1.24rem; fill: #b8131f; scale: 0; transition: scale 0.6s cubic-bezier(0.3, 2, 0.5, 1) 0.2s; }
+.dq .dq-programa li:nth-child(even) .dq-hito__corazon{ right: auto; left: -0.62rem; }
+.dq .dq-hito[data-visible="true"] .dq-hito__corazon{ scale: 1; }
+
+/* ── Vestimenta, encaje y cinta ── */
+.dq .dq-ropa{ padding-top: 4.4rem; padding-bottom: 1.2rem; }
+.dq .dq-sobrecito{ position: absolute; right: -0.4rem; top: 0.4rem; width: 6.6rem; rotate: -12deg; filter: drop-shadow(0 6px 8px rgb(60 40 20 / 0.28)); }
+.dq .dq-codigo{ font-family: var(--font-bodoni), serif; font-weight: 500; text-transform: uppercase; font-size: clamp(1.5rem, 7.2vw, 2rem); line-height: 1.1; color: var(--c-fuerte); }
+.dq .dq-etiqueta{ font-family: var(--font-mano); color: var(--c-acento); font-size: clamp(2.1rem, 10.5vw, 2.8rem); line-height: 1.15; }
+.dq .dq-encaje{ position: relative; height: clamp(31rem, 138vw, 41rem); overflow: clip; }
+.dq .dq-encaje img{ position: absolute; left: -4%; top: 0; width: 92%; height: auto; -webkit-mask: linear-gradient(#000 72%, transparent 96%); mask: linear-gradient(#000 72%, transparent 96%); }
+.dq .dq-pelicula{ position: absolute; inset: 30% 0 4%; width: 100%; height: 66%; filter: drop-shadow(0 10px 10px rgb(20 10 10 / 0.35)); }
+.dq .dq-sticker{ position: absolute; right: 6%; bottom: 1%; font-family: var(--font-seco); font-size: clamp(2rem, 9.6vw, 2.7rem); line-height: 0.95; color: #b8131f; rotate: -8deg; -webkit-text-stroke: 9px #fffaf2; paint-order: stroke fill; filter: drop-shadow(0 3px 4px rgb(40 20 10 / 0.3)); }
+
+/* ── Detalles, confirmación y cierre ── */
+.dq .dq-detalles .cm-texto:first-of-type{ margin-top: 0.8rem; }
+.dq .dq-boton-banco{ margin-top: 1.4rem; }
+.dq .dq-pliegue{ width: 100%; margin-top: 0 !important; }
+.dq .dq-pliegue > div{ gap: 0.4rem; }
+.dq .dq-rsvp{ padding-top: 1rem; }
+.dq .dq-limite{ font-weight: 600; font-size: 1.15em; color: var(--c-fuerte); white-space: nowrap; }
+.dq .dq-ficha{ width: 100%; margin-top: 1.4rem; padding: 1.8rem 1.4rem 2rem; background: #fffaf1; border: 1px solid #dfd2bf; border-radius: 6px; box-shadow: 0 10px 26px rgb(60 30 20 / 0.12); }
+.dq .dq-beso--sello{ width: 9rem; color: #a50f1d; rotate: -10deg; animation: dq-sello 0.5s cubic-bezier(0.5, 0, 0.9, 0.6) 0.2s both; }
+@keyframes dq-sello{ from{ opacity: 0; scale: 2.2; } }
+.dq .dq-si--listo{ margin-top: 0.6rem; font-size: clamp(3rem, 14vw, 4rem); }
+.dq .dq-cierre{ padding-block: 1rem 4rem; }

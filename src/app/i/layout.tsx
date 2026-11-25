@@ -1,4 +1,4 @@
-import { Alfa_Slab_One, Arvo, Bodoni_Moda, DM_Sans, DM_Serif_Display, Mrs_Saint_Delafield, Frank_Ruhl_Libre, Cormorant_Garamond, DM_Mono, Cedarville_Cursive, Fraunces, Instrument_Serif, Kaushan_Script, Newsreader, La_Belle_Aurore, Pinyon_Script, Shadows_Into_Light_Two } from "next/font/google";
+import { Comforter_Brush, Italiana, Italianno, WindSong, Alfa_Slab_One, Arvo, Bodoni_Moda, DM_Sans, DM_Serif_Display, Mrs_Saint_Delafield, Frank_Ruhl_Libre, Cormorant_Garamond, DM_Mono, Cedarville_Cursive, Fraunces, Instrument_Serif, Kaushan_Script, Newsreader, La_Belle_Aurore, Pinyon_Script, Shadows_Into_Light_Two } from "next/font/google";
 import "./invitacion.css";
 import "./fotomaton.css";
 import "./funcion.css";
@@ -15,6 +15,15 @@ import "./jardin.css";
 import "./cincuenta.css";
 import "./ejecutiva.css";
 import "./noir.css";
+import "./rasgado.css";
+import "./rosedal.css";
+import "./comun.css";
+import "./cupido.css";
+import "./hilo.css";
+import "./dijosi.css";
+import "./vinilo.css";
+import "./xoxo.css";
+import "./guirnalda.css";
 
 /* Dos familias y ninguna más.
    Pinyon es una spenceriana de verdad: Dancing Script y Great Vibes son las
@@ -92,6 +101,12 @@ const delafield = Mrs_Saint_Delafield({ variable: "--font-delafield", subsets: [
 const dmSerif = DM_Serif_Display({ variable: "--font-dmserif", subsets: ["latin"], weight: "400", style: ["normal", "italic"], display: "swap", preload: false });
 const dmSans = DM_Sans({ variable: "--font-dmsans", subsets: ["latin"], display: "swap", preload: false });
 
+/* Las de las invitaciones por referencia: pluma, pincel seco y dos de título. */
+const windsong = WindSong({ variable: "--font-windsong", subsets: ["latin"], weight: "500", display: "swap", preload: false });
+const pincelSeco = Comforter_Brush({ variable: "--font-seco", subsets: ["latin"], weight: "400", display: "swap", preload: false });
+const italiana = Italiana({ variable: "--font-italiana", subsets: ["latin"], weight: "400", display: "swap", preload: false });
+const italianno = Italianno({ variable: "--font-italianno", subsets: ["latin"], weight: "400", display: "swap", preload: false });
+
 export default function InvitacionLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`inv ${pinyon.variable} ${cormorant.variable} ${bodoni.variable} ${mono.variable} ${mano.variable} ${firma.variable} ${pincel.variable} ${birome.variable} ${fraunces.variable} ${instrument.variable} ${newsreader.variable} ${arvo.variable} ${alfa.variable} ${frank.variable} ${delafield.variable} ${dmSerif.variable} ${dmSans.variable}`}>{children}</div>;
+  return <div className={`inv ${pinyon.variable} ${cormorant.variable} ${bodoni.variable} ${mono.variable} ${mano.variable} ${firma.variable} ${pincel.variable} ${birome.variable} ${fraunces.variable} ${instrument.variable} ${newsreader.variable} ${arvo.variable} ${alfa.variable} ${frank.variable} ${delafield.variable} ${dmSerif.variable} ${dmSans.variable} ${windsong.variable} ${pincelSeco.variable} ${italiana.variable} ${italianno.variable}`}>{children}</div>;
 }

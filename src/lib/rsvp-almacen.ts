@@ -59,6 +59,7 @@ function asegurarTabla() {
       )`;
     // Agregada con los links personales: las tablas viejas la suman solas.
     await q`ALTER TABLE confirmaciones ADD COLUMN IF NOT EXISTS familia text NOT NULL DEFAULT ''`;
+    await q`ALTER TABLE confirmaciones ADD COLUMN IF NOT EXISTS mensaje text NOT NULL DEFAULT ''`;
     await q`
       CREATE INDEX IF NOT EXISTS confirmaciones_slug_idx
       ON confirmaciones (slug, enviada DESC)`;
@@ -105,9 +106,9 @@ export async function guardar(slug: string, datos: Confirmacion) {
   if (hayPostgres()) {
     await asegurarTabla();
     await sql()`
-      INSERT INTO confirmaciones (slug, nombre, asiste, acompanantes, comidas, cancion, enviada, familia)
+      INSERT INTO confirmaciones (slug, nombre, asiste, acompanantes, comidas, cancion, enviada, familia, mensaje)
       VALUES (${slug}, ${datos.nombre}, ${datos.asiste}, ${datos.acompanantes},
-              ${datos.comidas}, ${datos.cancion}, ${datos.enviada}, ${datos.familia ?? ""})`;
+              ${datos.comidas}, ${datos.cancion}, ${datos.enviada}, ${datos.familia ?? ""}, ${datos.mensaje ?? ""})`;
     return;
   }
 
@@ -123,7 +124,7 @@ export async function listar(slug: string): Promise<Confirmacion[]> {
   if (hayPostgres()) {
     await asegurarTabla();
     const filas = await sql()`
-      SELECT nombre, asiste, acompanantes, comidas, cancion, enviada, familia
+      SELECT nombre, asiste, acompanantes, comidas, cancion, enviada, familia, mensaje
       FROM confirmaciones
       WHERE slug = ${slug}
       ORDER BY enviada DESC
@@ -137,6 +138,7 @@ export async function listar(slug: string): Promise<Confirmacion[]> {
       cancion: String(f.cancion ?? ""),
       enviada: new Date(f.enviada as string).toISOString(),
       familia: String(f.familia ?? ""),
+      mensaje: String(f.mensaje ?? ""),
     }));
   }
 

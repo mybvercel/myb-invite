@@ -1,0 +1,150 @@
+/* Estilo Vinilo. Todo bajo .vi. Base en comun.css. */
+
+.vi.inv-columna{
+  --c-papel: #fdf5ea;
+  --c-tinta: #3d2a27;
+  --c-fuerte: #2a1714;
+  --c-suave: #6a514b;
+  --c-acento: #7a1f22;
+  --c-sobre: #fff5ea;
+  --c-mapa: sepia(0.25) saturate(0.65);
+  --c-radio: 99px;
+  font-family: var(--font-dmsans), Arial, sans-serif;
+  font-size: clamp(1.0625rem, 4.4vw, 1.125rem);
+}
+.inv:has(.vi.inv-columna), body:has(.vi.inv-columna){ background: #380b0f; }
+.vi .cm-mapa__marco{ border-radius: 10px; }
+.vi .vi-titulo{ font-weight: 700; text-transform: uppercase; color: var(--c-fuerte); font-size: clamp(1.45rem, 6.8vw, 1.8rem); line-height: 1.12; letter-spacing: 0.01em; display: flex; flex-direction: column; align-items: center; }
+.vi .vi-titulo--grande{ font-size: clamp(1.9rem, 9vw, 2.4rem); }
+.vi .vi-cursiva{ font-family: var(--font-bodoni), Georgia, serif; font-style: italic; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--c-acento); font-size: 1.28em; line-height: 1.1; }
+.vi .vi-titulo + .cm-texto{ margin-top: 0.9rem; }
+.vi .cm-hora small{ font-size: 0.5em; }
+.vi .cm-clave, .vi .cm-hora{ font-weight: 700; }
+
+/* ── El disco ── */
+.vi .vi-disco{ position: relative; display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; background: #0f0d0d; box-shadow: 0 12px 26px rgb(20 0 0 / 0.5); }
+.vi .vi-disco__surcos{ position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle, #1b1818 0 1.2px, #0b0a0a 1.2px 2.8px), #0f0d0d; animation: vi-gira 2.4s linear infinite paused; }
+.vi .vi-disco__etiqueta{ position: absolute; inset: 33%; border-radius: 50%; background: radial-gradient(circle, #f7b6be 0 8%, #f0919d 60%, #e27c8b); display: grid; place-items: center; animation: vi-gira 2.4s linear infinite paused; }
+.vi .vi-disco__etiqueta svg{ width: 46%; fill: #fff6ee; }
+.vi .vi-disco__etiqueta i{ position: absolute; font-style: normal; font-weight: 700; font-size: 1.1rem; color: #7a1f22; }
+.vi .vi-disco__luz{ position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 20deg, transparent 0 8%, rgb(255 255 255 / 0.22) 13%, transparent 19% 50%, rgb(255 255 255 / 0.16) 63%, transparent 70%); mix-blend-mode: screen; }
+.vi .vi-disco[data-gira="true"] :is(.vi-disco__surcos, .vi-disco__etiqueta){ animation-play-state: running; }
+@keyframes vi-gira{ to{ rotate: 360deg; } }
+.vi .vi-brazo{ position: absolute; overflow: visible; filter: drop-shadow(4px 8px 6px rgb(0 0 0 / 0.35)); transform-origin: 75% 13%; }
+
+/* ── Entrada ── */
+.vi .vi-tapa{ --pua: 0; cursor: grab; }
+.vi .vi-tapa__hoja{ position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 42%, #8d262a, #661317 70%, #4c0c10); color: #fdeee0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(1rem, 3.4svh, 2rem); padding: 1.4rem; }
+.vi .vi-tapa__titulo{ display: flex; flex-direction: column; text-transform: uppercase; font-size: clamp(1.5rem, 7vw, 2rem); line-height: 1.1; }
+.vi .vi-tapa__titulo i{ font-family: var(--font-bodoni), serif; text-transform: none; font-size: 1.4em; color: #f5b9b4; }
+.vi .vi-plato{ position: relative; width: min(66vw, 42svh); margin-right: 12vw; }
+@media (min-width: 40rem){ .vi .vi-plato{ margin-right: 0; } }
+.vi .vi-plato .vi-brazo{ width: 46%; right: -17%; top: -13%; rotate: calc(-12deg + var(--pua) * 22deg); transition: rotate 0.25s ease-out; }
+.vi .vi-tapa__nombres{ font-family: var(--font-bodoni), serif; font-style: italic; font-size: clamp(1.7rem, 7.6vw, 2.2rem); line-height: 1.1; }
+.vi .vi-tapa__borde{ --papel-rg: #4c0c10; position: absolute; inset-inline: 0; top: calc(100% - 1px); }
+.vi .rg-borde{ display: block; width: 100%; height: auto; aspect-ratio: 480 / 66; overflow: visible; }
+.vi .rg-borde__papel{ fill: var(--papel-rg, var(--c-papel)); }
+.vi .rg-borde__fibra{ fill: #fffaf4; }
+.vi .vi-tapa[data-estado="abriendo"] .vi-tapa__hoja{ transform: translateY(-125%) rotate(-3deg); transition: transform 1.5s cubic-bezier(0.65, 0, 0.25, 1) 1.9s; }
+.vi .vi-tapa[data-estado="abriendo"] .cm-tapa__indica{ opacity: 0; animation: none; }
+
+/* ── Cinta de arriba ── */
+.vi .vi-cinta{ overflow: hidden; background: #5f1518; color: #fdeee0; white-space: nowrap; }
+.vi .vi-cinta p{ display: inline-block; padding: 0.55rem 0; font-weight: 600; font-size: 1rem; white-space: pre; animation: cm-corre 40s linear infinite; }
+
+/* ── Portada ── */
+.vi .vi-portada{ padding-bottom: 6.5rem; }
+.vi .vi-portada .cm-texto{ margin-top: 0.8rem; }
+.vi .vi-polas{ position: relative; width: 100%; margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; }
+.vi .vi-pola{ margin: 0; padding: 0.6rem 0.6rem 0.3rem; background: #fffdf6; box-shadow: 0 10px 22px rgb(60 30 20 / 0.24); opacity: 0; transition: transform 1.1s cubic-bezier(0.2, 1.2, 0.35, 1), opacity 0.5s; }
+.vi .vi-pola--izq{ transform: translate(-30px, 50px) rotate(-24deg); transition-delay: 0.3s; }
+.vi .vi-pola--der{ transform: translate(30px, 60px) rotate(24deg); transition-delay: 0.5s; }
+.vi [data-visible="true"] .vi-pola--izq{ opacity: 1; transform: translate(-2px, 8px) rotate(-5deg); }
+.vi [data-visible="true"] .vi-pola--der{ opacity: 1; transform: translate(4px, -6px) rotate(5deg); }
+/* Las polaroids se revelan: de casi blancas a su color. */
+.vi .vi-pola__foto{ position: relative; aspect-ratio: 0.8; overflow: hidden; filter: brightness(1.9) saturate(0.1) sepia(0.5); transition: filter 3.2s ease 1.1s; }
+.vi [data-visible="true"] .vi-pola__foto{ filter: sepia(0.14) saturate(0.92); }
+.vi .vi-pola figcaption{ font-family: var(--font-firma), cursive; font-size: 1.9rem; line-height: 1.5; color: var(--c-acento); }
+
+/* ── Bloques granates con borde rasgado ── */
+.vi .vi-granate{ --c-papel-borde: var(--c-papel); position: relative; background: #72201f; color: #f7e2d6; }
+.vi .vi-granate .cm-escena, .vi .vi-dia{ --c-fuerte: #fff2e6; --c-suave: #f0d3c6; --c-tinta: #f7e2d6; --c-acento: #ffd9cf; --c-sobre: #5f1518; --c-linea: #c58a82; }
+.vi .vi-rasgo{ position: absolute; inset-inline: 0; pointer-events: none; }
+.vi .vi-rasgo--arriba{ top: -1px; }
+.vi .vi-rasgo--abajo{ bottom: -1px; }
+.vi .vi-granate--disco{ padding: 8.6rem 0 2.8rem; }
+.vi .vi-giradiscos{ position: absolute; z-index: 2; left: 50%; top: -3.8rem; width: 12.2rem; margin-left: -6.1rem; }
+.vi .vi-giradiscos button{ display: block; width: 100%; border-radius: 50%; }
+.vi .vi-giradiscos .vi-brazo{ width: 48%; right: -27%; top: -11%; rotate: -20deg; transition: rotate 0.9s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+.vi .vi-giradiscos[data-suena="true"] .vi-brazo{ rotate: 9deg; }
+.vi .vi-queridos{ padding-top: 0.6rem; }
+.vi .vi-queridos > .cm-texto{ margin-top: 0.9rem; }
+.vi .vi-raya{ width: 1px; height: 3.2rem; margin: 1.6rem 0 1.4rem; background: currentColor; transform-origin: 50% 0; scale: 1 0; transition: scale 1.2s var(--salida) 0.4s; }
+.vi [data-visible="true"] .vi-raya{ scale: 1 1; }
+.vi .vi-semana{ width: 100%; max-width: 21rem; }
+.vi .vi-semana__mes{ display: flex; justify-content: space-between; text-transform: uppercase; font-size: 1.15em; color: var(--c-fuerte); }
+.vi .vi-semana ol{ display: grid; grid-template-columns: repeat(7, 1fr); margin-top: 0.9rem; }
+.vi .vi-semana li{ display: flex; flex-direction: column; gap: 0.3rem; }
+.vi .vi-semana li > span{ text-transform: uppercase; font-size: 1rem; }
+.vi .vi-semana b{ position: relative; display: grid; place-items: center; height: 3.2rem; font-weight: 400; font-size: 1.2rem; }
+.vi .vi-semana i{ position: relative; font-style: normal; }
+.vi .vi-semana svg{ position: absolute; width: 3.3rem; left: 50%; top: 50%; translate: -50% -48%; fill: #fff2e6; scale: 0; transition: scale 0.7s cubic-bezier(0.3, 1.9, 0.5, 1) 0.7s; }
+.vi [data-visible="true"] .vi-semana svg{ scale: 1; animation: vi-late 1.8s ease-in-out 1.6s infinite; }
+@keyframes vi-late{ 0%, 46%, 100%{ scale: 1; } 14%{ scale: 1.14; } 28%{ scale: 1.02; } 36%{ scale: 1.1; } }
+.vi .vi-semana .vi-es span{ font-weight: 700; color: var(--c-fuerte); }
+.vi .vi-semana .vi-es i{ font-weight: 700; font-size: 1.35rem; color: #72201f; }
+.vi .cm-cuenta{ margin: 1.6rem 0 0.4rem; }
+
+/* ── Lugar ── */
+.vi .vi-lugar .cm-hora{ margin: 1rem 0 0.5rem; color: var(--c-acento); }
+.vi .vi-lugar .cm-texto{ margin-top: 0.4rem; }
+.vi .vi-pegada{ position: relative; width: 78%; margin-top: 2.6rem; padding: 0.7rem; background: #fffdf7; box-shadow: 0 12px 26px rgb(60 30 20 / 0.22); opacity: 0; transform: rotate(9deg) translateY(30px); transition: transform 1.2s cubic-bezier(0.2, 1.2, 0.35, 1), opacity 0.6s; }
+.vi .vi-pegada[data-visible="true"]{ opacity: 1; transform: rotate(-2deg); }
+.vi .vi-pegada i{ position: absolute; z-index: 2; left: 50%; top: -1rem; width: 7rem; height: 2rem; margin-left: -3.5rem; background: rgb(244 232 208 / 0.86); box-shadow: 0 2px 5px rgb(60 30 20 / 0.16); clip-path: polygon(0 0, 100% 0, 98% 22%, 100% 44%, 98% 66%, 100% 100%, 0 100%, 2% 70%, 0 46%, 2% 24%); }
+.vi .vi-pegada__foto{ position: relative; aspect-ratio: 0.9; overflow: hidden; }
+
+/* ── El día ── */
+.vi .vi-dia{ --s: 0; padding: 6.4rem 1.4rem 6.6rem; }
+.vi .vi-hito{ position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 1rem; }
+.vi .vi-hito__raya{ width: 1px; height: 2.8rem; margin: 0.8rem 0 0.9rem; background: #f7e2d6; transform-origin: 50% 0; scale: 1 0; transition: scale 0.9s var(--salida); }
+.vi .vi-hito[data-visible="true"] .vi-hito__raya{ scale: 1 1; }
+.vi .vi-hito .vi-cursiva{ font-size: 1.6rem; margin: 0.2rem 0 0.3rem; }
+.vi .vi-hito .cm-texto{ max-width: 24ch; }
+.vi .vi-dibujo{ position: absolute; color: #fff2e6; overflow: visible; }
+.vi .vi-dibujo path{ stroke-width: 1.7; }
+.vi .vi-dibujo--copas{ right: -0.5rem; top: 0.6rem; width: 4.6rem; }
+.vi .vi-dibujo--plato{ left: -1.6rem; top: 1.6rem; width: 5.6rem; }
+.vi .vi-dibujo--pastel{ right: -1rem; top: -1.8rem; width: 5rem; }
+.vi .vi-dibujo--alas{ position: static; width: 5.6rem; margin: 0.7rem 0 0.9rem; }
+
+/* ── Vestimenta ── */
+.vi .vi-colores{ display: flex; gap: 0.7rem; margin-top: 1.4rem; }
+.vi .vi-colores button{ width: 2.9rem; height: 2.9rem; border-radius: 50%; scale: 0; transition: scale 0.7s cubic-bezier(0.3, 1.7, 0.5, 1) calc(var(--i) * 0.08s + 0.2s); box-shadow: inset 0 -6px 10px rgb(0 0 0 / 0.22); }
+.vi [data-visible="true"] .vi-colores button{ scale: 1; }
+.vi .vi-colores button[aria-pressed="true"]{ outline: 2px solid var(--c-acento); outline-offset: 3px; }
+.vi .vi-colores__nombre{ margin-top: 0.7rem; font-weight: 600; color: var(--c-fuerte); }
+.vi .vi-muestras{ width: 100%; margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 24%; gap: 0.7rem; }
+.vi .vi-muestras > div:last-child{ display: grid; gap: 0.7rem; }
+.vi .vi-muestras__grupo{ position: relative; aspect-ratio: 0.92; overflow: hidden; }
+.vi .vi-muestras__chica{ position: relative; overflow: hidden; transition: background 0.5s; }
+.vi .vi-titulo--looks{ margin-top: 2.6rem; }
+.vi .vi-flechas{ width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: 0.6rem; }
+.vi .vi-flechas button{ width: 3rem; height: 2.75rem; font-size: 1.5rem; }
+.vi .vi-ropa{ padding-bottom: 0.8rem; }
+.vi .vi-carrusel{ display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.vi .vi-carrusel::-webkit-scrollbar{ display: none; }
+.vi .vi-carrusel > div{ flex: 0 0 46%; scroll-snap-align: start; }
+.vi .vi-carrusel__foto{ position: relative; aspect-ratio: 0.62; }
+
+/* ── Deseos, confirmación, cierre ── */
+.vi .vi-granate--deseos{ padding-bottom: 3.4rem; }
+.vi .vi-boton-banco{ margin-top: 1.4rem; background: #fff2e6; color: #5f1518; }
+.vi .vi-pliegue{ width: 100%; margin-top: 0 !important; }
+.vi .vi-pliegue > div{ gap: 0.4rem; }
+.vi .vi-rsvp .cm-form{ margin-top: 1.6rem; }
+.vi .vi-limite{ font-weight: 700; color: var(--c-fuerte); white-space: nowrap; }
+.vi .vi-single{ width: 9.5rem; margin-bottom: 1.2rem; animation: vi-cae 0.9s cubic-bezier(0.2, 1.2, 0.4, 1) both; }
+@keyframes vi-cae{ from{ transform: translateY(-80px) rotate(-40deg); opacity: 0; } }
+.vi .vi-cursiva--listo{ font-size: 2rem; }
+.vi .vi-cierre{ padding-block: 0.6rem 4rem; }
+.vi .vi-cierre .vi-cursiva{ font-size: 2.2rem; }

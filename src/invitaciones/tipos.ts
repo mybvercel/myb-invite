@@ -27,7 +27,7 @@ export type Carta = {
 /* ── Bloques de contenido ──────────────────────────────────── */
 
 /** Un momento del día. Ej: 21:00 · Cena. */
-export type Hito = { hora: string; titulo: string };
+export type Hito = { hora: string; titulo: string; detalle?: string };
 
 export type Lugar = {
   tipo: "Ceremonia" | "Fiesta" | "Civil";
@@ -408,6 +408,115 @@ export type InvitacionNoir = InvitacionBase & {
   };
 };
 
+/**
+ * Guirnalda: una noche de luces cálidas sobre verde profundo. La foto de la
+ * pareja ocupa la portada entera, una guirnalda de focos se enciende uno por
+ * uno al llegar a ella, y en el cronograma cada hora es un foco que se prende
+ * cuando el invitado llega. Las fotos son de la pareja, no hay ilustración.
+ */
+export type InvitacionGuirnalda = InvitacionBase & {
+  estilo: "guirnalda";
+  guirnalda: {
+    /** La imagen que se ve al compartir el link por WhatsApp. */
+    compartir: string;
+    /** Foto vertical a pantalla completa. Los nombres van sobre su parte baja. */
+    portada: { src: string; alt: string };
+    /** Foto enmarcada en un arco, a mitad de la invitación. */
+    arco: { src: string; alt: string; pie: string };
+    /** Lo último que se lee, debajo de los nombres. */
+    cierre: string;
+  };
+};
+
+/**
+ * Rosedal: hermano de Rosa. Sobre lacrado, papel y flores, pero con la foto de
+ * la pareja dentro del arco y rosas rojas.
+ */
+export type InvitacionRosedal = InvitacionBase & {
+  estilo: "rosedal";
+  carta: Carta;
+  rosedal: {
+    compartir: string;
+    /** Qué se celebra, para el calendario. Ej: "Nuestra boda". */
+    evento: string;
+    /** El arco de flores, recortado con alpha. Va sobre la foto. */
+    arco: string;
+    /** Dos cenefas: rosas y botánica. */
+    flores: [string, string];
+    sello: string;
+    portada: { src: string; alt: string };
+    foto: { src: string; alt: string; pie: string };
+    paleta: { nombre: string; color: string }[];
+  };
+};
+
+/**
+ * Rasgado: papel crema y azul polvo, con las fotos de la pareja asomando por
+ * bordes de papel rasgado. La entrada es un papel que el invitado rasga con el
+ * dedo. Todo el borde es SVG generado: sirve cualquier foto.
+ */
+export type FotoRasgada = {
+  src: string;
+  alt: string;
+  /** Ancho sobre alto del recorte visible. */
+  proporcion: number;
+  /** Dónde está la pareja, para que el recorte no la corte. Ej: "50% 30%". */
+  foco?: string;
+};
+
+export type InvitacionRasgado = InvitacionBase & {
+  estilo: "rasgado";
+  rasgado: {
+    compartir: string;
+    /** Título del evento en el calendario. */
+    evento: string;
+    /** "fogata": el papel se quema en vez de sólo rasgarse, con brasas y granate. */
+    tema?: "fogata";
+    /** Las dos iniciales: la primera en caligrafía, la segunda en romana. Sin iniciales va el emblema del tema. */
+    monograma?: [string, string];
+    fotos: Record<"portada" | "lugar" | "vestimenta" | "pausa" | "cierre", FotoRasgada>;
+    bendicion: string;
+    padres: { titulo: string; nombres: string[] }[];
+    listaRegalos?: { titulo: string; boton: string; enlace: string };
+    sobres?: { titulo: string; detalle: string };
+    /** El pase que se ve en la demo. Con un link personal sale el de la familia. */
+    pase: { invitado: string; lugares: number };
+    soloAdultos?: string;
+    gracias: string;
+  };
+};
+
+/**
+ * Invitaciones hechas sobre una referencia, con una entrada interactiva propia.
+ * Comparten formulario, mapa, música y calendario (components/invitacion/comun).
+ *  - cupido: papel arrugado y tinta roja; se tensa el arco y la flecha abre.
+ *  - hilo: crema, blanco y negro y un hilo rojo; se tira del moño.
+ *  - dijosi: teatro, telón y tele retro; se tira del cordón.
+ *  - vinilo: granate, polaroids y un disco; se baja la púa.
+ *  - xoxo: rojo, pincel y parches; se despega el corazón.
+ */
+export type FotoEscena = { src: string; alt: string; foco?: string };
+export type InvitacionEscena = InvitacionBase & {
+  estilo: "cupido" | "hilo" | "dijosi" | "vinilo" | "xoxo";
+  escena: {
+    compartir: string;
+    /** Título del evento en el calendario. */
+    evento: string;
+    /** El saludo a los invitados. */
+    intro: string[];
+    fotos: Record<string, FotoEscena>;
+    /** Colores o telas sugeridas. `imagen` si la muestra es una tela. */
+    paleta?: { nombre: string; color: string; imagen?: string }[];
+    /** Pedidos y avisos, en frases cortas. */
+    notas?: string[];
+    /** Preferencias de bebida del formulario. */
+    bebidas?: string[];
+    /** XOXO: las palabras imantadas. */
+    palabras?: string[];
+    gracias: string;
+  };
+};
+
 export type Invitacion =
   | InvitacionRosa
   | InvitacionFotomaton
@@ -423,11 +532,19 @@ export type Invitacion =
   | InvitacionJardin
   | InvitacionCincuenta
   | InvitacionEjecutiva
-  | InvitacionNoir;
+  | InvitacionNoir
+  | InvitacionRosedal
+  | InvitacionRasgado
+  | InvitacionEscena
+  | InvitacionGuirnalda;
 
 /** La imagen de la previsualización en WhatsApp, sea cual sea el estilo. */
 export const imagenCompartir = (inv: Invitacion) =>
-  inv.estilo === "noir"
+  "escena" in inv ? inv.escena.compartir
+  : inv.estilo === "rasgado" ? inv.rasgado.compartir
+  : inv.estilo === "rosedal" ? inv.rosedal.compartir
+  : inv.estilo === "guirnalda" ? inv.guirnalda.compartir
+  : inv.estilo === "noir"
     ? inv.noir.compartir
     : inv.estilo === "fotomaton"
     ? inv.fotomaton.compartir

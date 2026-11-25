@@ -94,6 +94,12 @@ export default async function ListaRsvp({ params, searchParams }: Props) {
                 </p>
               )}
 
+              {c.mensaje && (
+                <p className="mt-1 text-[0.9rem] font-light italic text-[var(--tinta-tenue)]">
+                  “{c.mensaje}”
+                </p>
+              )}
+
               {c.cancion && (
                 <p className="mt-1 text-[0.9rem] font-light italic text-[var(--tinta-tenue)]">
                   ♪ {c.cancion}

@@ -19,6 +19,8 @@ export type Confirmacion = {
   acompanantes: number;
   comidas: string[];
   cancion: string;
+  /** Unas palabras para los novios. Sólo lo piden algunos estilos. */
+  mensaje?: string;
   /** ISO. Sirve para ordenar y para saber si alguien cambió de idea. */
   enviada: string;
   /** Token del link personal con el que confirmó, o "" si fue el general. */

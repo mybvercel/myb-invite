@@ -1,4 +1,12 @@
 import type { Invitacion as Datos } from "@/invitaciones/tipos";
+import InvitacionRasgado from "./rasgado/InvitacionRasgado";
+import InvitacionRosedal from "./rosedal/InvitacionRosedal";
+import InvitacionGuirnalda from "./guirnalda/InvitacionGuirnalda";
+import InvitacionCupido from "./cupido/InvitacionCupido";
+import InvitacionHilo from "./hilo/InvitacionHilo";
+import InvitacionDijoSi from "./dijosi/InvitacionDijoSi";
+import InvitacionVinilo from "./vinilo/InvitacionVinilo";
+import InvitacionXoxo from "./xoxo/InvitacionXoxo";
 import Carta from "./Carta";
 import InvitacionFotomaton from "./fotomaton/InvitacionFotomaton";
 import InvitacionCinta from "./cinta/InvitacionCinta";
@@ -31,6 +39,31 @@ import SeccionVestimenta from "./SeccionVestimenta";
  * debajo de la portada y un formulario que ya sabe quién es.
  */
 export default function Invitacion({ invitacion, personal }: { invitacion: Datos; personal?: Personal }) {
+  if ("escena" in invitacion) {
+    switch (invitacion.estilo) {
+      case "cupido":
+        return <InvitacionCupido invitacion={invitacion} personal={personal} />;
+      case "hilo":
+        return <InvitacionHilo invitacion={invitacion} personal={personal} />;
+      case "dijosi":
+        return <InvitacionDijoSi invitacion={invitacion} personal={personal} />;
+      case "vinilo":
+        return <InvitacionVinilo invitacion={invitacion} personal={personal} />;
+      case "xoxo":
+        return <InvitacionXoxo invitacion={invitacion} personal={personal} />;
+      default:
+        return null;
+    }
+  }
+  if (invitacion.estilo === "rasgado") {
+    return <InvitacionRasgado invitacion={invitacion} personal={personal} />;
+  }
+  if (invitacion.estilo === "rosedal") {
+    return <InvitacionRosedal invitacion={invitacion} personal={personal} />;
+  }
+  if (invitacion.estilo === "guirnalda") {
+    return <InvitacionGuirnalda invitacion={invitacion} personal={personal} />;
+  }
   if (invitacion.estilo === "noir") {
     return <InvitacionNoir invitacion={invitacion} personal={personal} />;
   }

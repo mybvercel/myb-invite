@@ -16,7 +16,7 @@ export async function GET(pedido: Request) {
 
   const lista = await listar(slug);
   const filas = [
-    ["Nombre", "Viene", "Personas", "Restricciones", "Canción", "Fecha"].map(celda).join(";"),
+    ["Nombre", "Viene", "Personas", "Restricciones", "Canción", "Mensaje", "Fecha"].map(celda).join(";"),
     ...lista.map((c) =>
       [
         celda(c.nombre),
@@ -24,6 +24,7 @@ export async function GET(pedido: Request) {
         celda(c.acompanantes),
         celda(c.comidas.join(", ")),
         celda(c.cancion),
+        celda(c.mensaje ?? ""),
         celda(new Date(c.enviada).toLocaleString("es-AR")),
       ].join(";"),
     ),

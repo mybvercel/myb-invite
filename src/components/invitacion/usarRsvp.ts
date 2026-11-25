@@ -25,6 +25,7 @@ export function usarRsvp({ slug, personal, invitado }: { slug: string; personal?
   const [acompanantes, setAcompanantes] = useState(previa?.asiste ? previa.personas : (personal?.cupo ?? 1));
   const [comidas, setComidas] = useState<string[]>(previa?.comidas ?? []);
   const [cancion, setCancion] = useState("");
+  const [mensaje, setMensaje] = useState("");
   const [falta, setFalta] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState("");
@@ -71,6 +72,7 @@ export function usarRsvp({ slug, personal, invitado }: { slug: string; personal?
           acompanantes: Math.min(cupo, Math.max(1, acompanantes || 1)),
           comidas,
           cancion,
+          mensaje,
           familia: personal?.token ?? "",
         }),
       });
@@ -91,5 +93,5 @@ export function usarRsvp({ slug, personal, invitado }: { slug: string; personal?
     }
   };
 
-  return { abierto, setAbierto, enviado, setEnviado, cerrado, setCerrado, nombre, setNombre, asiste, setAsiste, acompanantes, setAcompanantes, comidas, setComidas, cancion, setCancion, falta, setFalta, enviando, setEnviando, errorEnvio, setErrorEnvio, formRef, previa, cupo, abrir, alternarComida, enviar };
+  return { abierto, setAbierto, enviado, setEnviado, cerrado, setCerrado, nombre, setNombre, asiste, setAsiste, acompanantes, setAcompanantes, comidas, setComidas, cancion, setCancion, mensaje, setMensaje, falta, setFalta, enviando, setEnviando, errorEnvio, setErrorEnvio, formRef, previa, cupo, abrir, alternarComida, enviar };
 }
