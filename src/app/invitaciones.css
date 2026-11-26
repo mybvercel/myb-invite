@@ -123,7 +123,7 @@
 
 /* ── Encabezado ────────────────────────────────────────────── */
 
-.tid-hero { padding-top: clamp(3rem, 6vw, 5rem); text-align: center; }
+.tid-hero { padding-top: clamp(1rem, 2.5vw, 1.75rem); text-align: center; }
 .tid-hero__interior { display: flex; flex-direction: column; align-items: center; }
 .tid-hero__titulo { margin-top: 1.1rem; max-width: none; font-size: clamp(1.8rem, 1rem + 3.2vw, 2.9rem); font-weight: 600; letter-spacing: -0.04em; line-height: 1.04; color: var(--negro); }
 .tid-hero__bajada { margin-top: 1.3rem; text-align: center; }
@@ -131,10 +131,26 @@
 @media (max-width: 47.99rem) { .tid-hero__titulo br { display: none; } }
 .tid .tid-hero__bajada { margin-top: clamp(1rem, 2.4vw, 1.5rem); }
 
+/* Franja del título con video de eventos detrás. Alto justo para título y bajada. */
+.tid-portada {
+  position: relative; isolation: isolate; width: 100%; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  padding: clamp(2.75rem, 7vw, 5rem) clamp(1.25rem, 4vw, 3rem);
+  border-radius: clamp(18px, 2.4vw, 28px); background: #1b1f1d; box-shadow: var(--sombra-alta);
+}
+.tid-portada__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+/* Video en blanco y negro teñido con el verde de la marca: se lee como parte de MyB, no como stock. */
+.tid-portada::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(160deg, rgba(31, 92, 64, 0.82) 0%, rgba(12, 40, 27, 0.9) 100%);
+}
+.tid .tid-portada .tid-hero__titulo { margin-top: 0; color: #fff; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5); }
+.tid .tid-portada .tid-hero__bajada { color: #fff; font-weight: 500; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55); max-width: 40rem; }
+
 /* ── Elección de evento ────────────────────────────────────── */
 
 /* Video de venta en el encabezado */
-.tid-video { position: relative; width: 100%; max-width: 54rem; margin-top: clamp(2rem, 4.5vw, 3rem); aspect-ratio: 16 / 9; border-radius: clamp(14px, 2vw, 22px); overflow: hidden; background: var(--hueso); box-shadow: var(--sombra-alta); }
+.tid-video { position: relative; width: 100%; max-width: 38rem; margin-top: clamp(2rem, 4.5vw, 3rem); aspect-ratio: 16 / 9; border-radius: clamp(14px, 2vw, 22px); overflow: hidden; background: var(--hueso); box-shadow: var(--sombra-alta); }
 .tid-video__medio { display: block; width: 100%; height: 100%; object-fit: cover; }
 .tid-video__play { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: flex-start; padding: clamp(0.8rem, 3vw, 1.6rem); border: 0; background: linear-gradient(to top, rgba(13, 18, 16, 0.22), transparent 40%); cursor: pointer; }
 .tid-video__pastilla { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.4rem 1.1rem 0.4rem 0.4rem; border-radius: 999px; background: var(--blanco); color: var(--negro); box-shadow: var(--sombra-alta); transition: transform 0.35s var(--salida); }

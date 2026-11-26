@@ -200,20 +200,41 @@ export default function Invitaciones() {
     return () => cancelAnimationFrame(cuadro);
   }, [elegido]);
 
+  // Con "reducir movimiento" el video queda quieto en su primer cuadro.
+  const portadaRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) portadaRef.current?.pause();
+  }, []);
+
   return (
     <>
       {/* ── Encabezado y elección ── */}
       <section className="tid-seccion tid-hero">
         <div className="tid-marco tid-hero__interior">
-          {/* Una sola idea, una tipografía y un color: el deseo (lucirse) y la necesidad (llegar con todo organizado). */}
-          <h1 className="tid-titulo tid-h1 tid-hero__titulo">
-            Tu evento merece una invitación única{" "}
-            <br />
-            y una organización sin estrés.
-          </h1>
-          <p className="tid-plomo tid-hero__bajada">
-            Tus invitados confirman en un minuto y vos ves en un panel quién viene, qué come y dónde se sienta.
-          </p>
+          {/* Franja con video de eventos de fondo: muestra el deseo (la fiesta) sin ocupar la pantalla entera. */}
+          <div className="tid-portada">
+            <video
+              ref={portadaRef}
+              className="tid-portada__video"
+              src="/invitaciones/hero/eventos.mp4"
+              poster="/invitaciones/hero/eventos.jpg"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              aria-hidden="true"
+            />
+            {/* Una sola idea, una tipografía y un color: el deseo (lucirse) y la necesidad (llegar con todo organizado). */}
+            <h1 className="tid-titulo tid-h1 tid-hero__titulo">
+              Tu evento merece una invitación única{" "}
+              <br />
+              y una organización sin estrés.
+            </h1>
+            <p className="tid-plomo tid-hero__bajada">
+              Tus invitados confirman en un minuto y vos ves en un panel quién viene, qué come y dónde se sienta.
+            </p>
+          </div>
 
           <VideoPresentacion />
 
