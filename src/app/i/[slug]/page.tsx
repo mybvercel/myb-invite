@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import BotonVolver from "@/components/invitacion/BotonVolver";
 import Invitacion from "@/components/invitacion/Invitacion";
 import { imagenCompartir } from "@/invitaciones/tipos";
+import { modeloPorSlug } from "@/lib/armar";
 import { buscarInvitacion, slugsDeInvitaciones } from "@/invitaciones";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -38,7 +39,7 @@ export default async function PaginaInvitacion({ params }: Props) {
 
   return (
     <>
-      <BotonVolver catalogo="/" />
+      <BotonVolver catalogo="/" modelo={modeloPorSlug(slug) && slug} />
       <Invitacion invitacion={invitacion} />
     </>
   );

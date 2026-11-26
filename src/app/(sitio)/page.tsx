@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ArrowRight, Briefcase, Cake, Heart, MessageCircle, Play } from "lucide-react";
 import ResenasGoogle from "@/components/ResenasGoogle";
 import PreciosBento from "@/components/PreciosBento";
@@ -10,16 +10,20 @@ import { GlowCard } from "@/components/ui/spotlight-card";
 import {
   CATEGORIAS,
   DISENOS,
+  GOOGLE_RESUMEN,
   INCLUYE,
   INCLUYE_GENERAL,
   PLANES,
   PREGUNTAS,
   WHATSAPP,
   enlaceDemo,
+  nombreDe,
   whatsappPara,
   type Categoria,
   type TipoEvento,
 } from "@/lib/invitaciones";
+import Armar from "@/components/armar/Armar";
+import { eventoDeModelo, slugDe } from "@/lib/armar";
 
 const ICONO: Record<TipoEvento, typeof Heart> = {
   bodas: Heart,
@@ -151,6 +155,24 @@ export default function Invitaciones() {
   const [elegido, setElegido] = useState<TipoEvento | null>(null);
   const resultadoRef = useRef<HTMLDivElement>(null);
   const carrilRef = useRef<HTMLUListElement>(null);
+  const armarRef = useRef<HTMLElement>(null);
+  const [pedido, setPedido] = useState<{ m: string; n: number }>();
+  const [enArmar, setEnArmar] = useState(false);
+
+  // "Verla con mis datos" en un modelo: el formulario lo toma y baja hasta ahí.
+  const verConMisDatos = (d: (typeof DISENOS)[number]) => {
+    setPedido((p) => ({ m: slugDe(d), n: (p?.n ?? 0) + 1 }));
+    armarRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // El botón flotante se esconde mientras el formulario está en pantalla.
+  useEffect(() => {
+    const nodo = armarRef.current;
+    if (!nodo) return;
+    const obs = new IntersectionObserver(([e]) => setEnArmar(e.isIntersecting), { rootMargin: "-20% 0px -20% 0px" });
+    obs.observe(nodo);
+    return () => obs.disconnect();
+  }, []);
 
   // Las flechas mueven el carril casi una pantalla, así el siguiente modelo asoma.
   const desplazar = (dir: 1 | -1) => {
@@ -183,13 +205,14 @@ export default function Invitaciones() {
       {/* ── Encabezado y elección ── */}
       <section className="tid-seccion tid-hero">
         <div className="tid-marco tid-hero__interior">
+          {/* Una sola idea, una tipografía y un color: el deseo (lucirse) y la necesidad (llegar con todo organizado). */}
           <h1 className="tid-titulo tid-h1 tid-hero__titulo">
-            La invitación que nadie olvida.{" "}
-            <span className="tid-fuerte">La lista que se arma sola.</span>
+            Tu evento merece una invitación única{" "}
+            <br />
+            y una organización sin estrés.
           </h1>
           <p className="tid-plomo tid-hero__bajada">
-            Elegís el diseño, la mandás por WhatsApp y cada confirmación entra sola a tu lista.
-            Sin perseguir a nadie.
+            Tus invitados confirman en un minuto y vos ves en un panel quién viene, qué come y dónde se sienta.
           </p>
 
           <VideoPresentacion />
@@ -206,16 +229,16 @@ export default function Invitaciones() {
               ))}
             </div>
             <div className="tid-hero__acciones">
-              <a
-                href={whatsappPara("Hola! Quiero mi invitación digital. ¿Me ayudan a elegir?")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tid-boton tid-boton--lleno"
-              >
-                <MessageCircle size={18} aria-hidden="true" />
-                Quiero mi invitación
+              <a href="#armar" className="tid-boton tid-boton--lleno tid-boton--grande">
+                Armá la tuya en un minuto
+                <ArrowRight size={18} aria-hidden="true" />
               </a>
-              <p className="tid-hero__nota">¿No sabés cuál elegir? Te ayudamos por WhatsApp.</p>
+              <p className="tid-hero__nota">Cinco toques y la ves con tus nombres. Sin registrarte.</p>
+              {GOOGLE_RESUMEN && (
+                <p className="tid-hero__prueba">
+                  <span aria-hidden="true">★★★★★</span> {GOOGLE_RESUMEN.puntaje.toFixed(1).replace(".", ",")} en Google, {GOOGLE_RESUMEN.cantidad} reseñas
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -247,25 +270,31 @@ export default function Invitaciones() {
                           <span className="tid-modelo__marco">
                             <Image
                               src={d.imagen}
-                              alt={`Modelo ${d.nombre}`}
+                              alt={`Modelo ${nombreDe(d)}`}
                               fill
                               sizes="(max-width: 48rem) 70vw, 26vw"
                               className="tid-modelo__img"
                             />
                             <span className="tid-modelo__abrir">Abrir demo</span>
                           </span>
-                          <span className="tid-modelo__nombre">{d.nombre}</span>
+                          <span className="tid-modelo__nombre">{nombreDe(d)}</span>
                         </Link>
-                        <a
-                          href={whatsappPara(
-                            `Hola! Quiero la invitación "${d.nombre}" para ${categoria.titulo.toLowerCase()}.`
-                          )}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tid-boton tid-boton--lleno tid-modelo__pedir"
-                        >
-                          Quiero este
-                        </a>
+                        {eventoDeModelo(d) ? (
+                          <button type="button" onClick={() => verConMisDatos(d)} className="tid-boton tid-boton--lleno tid-modelo__pedir">
+                            {d.tipo === "bodas" ? "Verla con nuestros nombres" : "Verla con mis datos"}
+                          </button>
+                        ) : (
+                          <a
+                            href={whatsappPara(
+                              `Hola! Quiero la invitación "${nombreDe(d)}" (${d.nombre}) para ${categoria.titulo.toLowerCase()}.`
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="tid-boton tid-boton--lleno tid-modelo__pedir"
+                          >
+                            Quiero este
+                          </a>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -298,19 +327,25 @@ export default function Invitaciones() {
           </div>
         )}
 
+        {/* El formulario: cinco toques y la ven con sus nombres */}
+        <section id="armar" ref={armarRef} className="tid-seccion tid-armar">
+          <Suspense fallback={<div className="ar" />}>
+            <Armar pedido={pedido} />
+          </Suspense>
+        </section>
+
         {/* Precios: siempre a la vista, sin tener que elegir un evento */}
             <section className="tid-seccion">
               <div className="tid-marco">
                 <div className="tid-encabezado tid-encabezado--centro">
                   <h2 className="tid-titulo tid-h2">Un pago, todo incluido.</h2>
                   <p className="tid-plomo">
-                    La invitación que reciben tus invitados y el panel con el que organizás todo.
+                    La invitación para tus invitados y el panel para organizar.
                   </p>
                 </div>
 
                 <PreciosBento
                   plan={PLANES[0]}
-                  evento={categoria ? categoria.titulo.toLowerCase() : "mi evento"}
                   incluye={categoria ? INCLUYE[categoria.id] : INCLUYE_GENERAL}
                   modelos={modelos.length > 0 ? modelos : DISENOS.slice(0, 3)}
                 />
@@ -334,31 +369,28 @@ export default function Invitaciones() {
         <section className="tid-seccion tid-cierre">
           <div className="tid-marco tid-marco--angosto">
             <h2 className="tid-titulo tid-h2">Tu lista se arma sola. Empezá hoy.</h2>
-            <p className="tid-plomo">Escribinos y en minutos te mostramos cómo quedaría tu invitación.</p>
-            <a
-              href={WHATSAPP}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tid-boton tid-boton--lleno tid-boton--grande"
-            >
-              <MessageCircle size={18} aria-hidden="true" />
-              Quiero mi invitación
+            <p className="tid-plomo">Elegí un diseño, poné los nombres y mirala en tu celular antes de escribirnos.</p>
+            <a href="#armar" className="tid-boton tid-boton--lleno tid-boton--grande">
+              Armá tu invitación
+              <ArrowRight size={18} aria-hidden="true" />
             </a>
           </div>
         </section>
       </div>
 
-      {/* ── Contacto ── */}
+      {/* ── WhatsApp siempre a mano (se esconde sobre el formulario, que ya termina en WhatsApp). ── */}
       <a
         href={WHATSAPP}
         target="_blank"
         rel="noopener noreferrer"
         className="tid-globo"
-        aria-label="Escribinos por WhatsApp"
+        onClick={() => (window as unknown as { fbq?: (...a: unknown[]) => void }).fbq?.("track", "Contact", { content_name: "Globo Escribinos" })}
+        data-oculto={enArmar || undefined}
+        aria-hidden={enArmar || undefined}
+        tabIndex={enArmar ? -1 : undefined}
       >
         <MessageCircle size={20} strokeWidth={2} aria-hidden="true" />
-        <span className="tid-globo__texto">Escribinos</span>
-        <span className="tid-globo__barra">Quiero mi invitación</span>
+        Escribinos
       </a>
     </>
   );

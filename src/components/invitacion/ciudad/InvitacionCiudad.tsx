@@ -207,7 +207,7 @@ export default function InvitacionCiudad({ invitacion, personal }: { invitacion:
               {c.hebreo}
             </p>
             <div className="cd-grupo">
-              <p className="cd-caps">es llamado a la Torá como</p>
+              <p className="cd-caps">es {c.vinculo.endsWith("hija") ? "llamada" : "llamado"} a la Torá como</p>
               <p className="cd-evento">{c.evento}</p>
             </div>
             <div className="cd-grupo">

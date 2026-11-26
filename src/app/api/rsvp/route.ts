@@ -1,3 +1,4 @@
+import { PREFIJO_VISTA } from "@/lib/personalizar";
 import { buscarInvitacion } from "@/invitaciones";
 import { leerPanel } from "@/lib/panel-almacen";
 import { demasiadoSeguido, guardar, listar, puedeVerLista, validar } from "@/lib/rsvp";
@@ -21,6 +22,10 @@ export async function POST(pedido: Request) {
   } catch {
     return Response.json({ error: "Cuerpo inválido" }, { status: 400 });
   }
+
+  // Vista previa de /armar: se puede probar el formulario, no hay nada que guardar.
+  const slug = (cuerpo as { slug?: unknown } | null)?.slug;
+  if (typeof slug === "string" && slug.startsWith(PREFIJO_VISTA)) return Response.json({ ok: true });
 
   const revisado = validar(cuerpo);
   if ("error" in revisado) return Response.json(revisado, { status: 400 });

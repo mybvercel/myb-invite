@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 /**
@@ -7,8 +8,9 @@ import { useEffect, useState } from "react";
  * si el enlace trae `?v=1` (lo agrega el catálogo), así que las invitaciones
  * que reciben los invitados no lo muestran. El catálogo abre la demo en otra
  * pestaña: se intenta cerrarla y, si el navegador no lo permite, se navega.
+ * Con `modelo`, suma el acceso a verla con los datos propios.
  */
-export default function BotonVolver({ catalogo }: { catalogo: string }) {
+export default function BotonVolver({ catalogo, modelo }: { catalogo: string; modelo?: string }) {
   const [ver, setVer] = useState(false);
   useEffect(() => setVer(new URLSearchParams(window.location.search).has("v")), []);
   if (!ver) return null;
@@ -22,8 +24,15 @@ export default function BotonVolver({ catalogo }: { catalogo: string }) {
   };
 
   return (
-    <button type="button" className="inv-volver" onClick={volver}>
-      <span aria-hidden="true">←</span> Volver
-    </button>
+    <>
+      <button type="button" className="inv-volver" onClick={volver}>
+        <span aria-hidden="true">←</span> Volver
+      </button>
+      {modelo && (
+        <Link href={`/?m=${modelo}#armar`} className="inv-volver inv-volver--pedir">
+          Verla con mis datos
+        </Link>
+      )}
+    </>
   );
 }

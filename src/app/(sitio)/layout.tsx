@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Cormorant_Garamond } from "next/font/google";
 import { WHATSAPP } from "@/lib/invitaciones";
 
 /**
@@ -7,12 +8,15 @@ import { WHATSAPP } from "@/lib/invitaciones";
  * en el layout de arriba a propósito: las demos de /demo tienen que verse como
  * la invitación de verdad, sin chrome alrededor.
  */
+// La letra de la tarjeta del formulario de la home.
+const cormorant = Cormorant_Garamond({ variable: "--font-cormorant", subsets: ["latin"], weight: ["500"], style: ["normal", "italic"], display: "swap" });
+
 export default function SitioLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="tid-fondo" aria-hidden="true" />
 
-      <div className="tid-capa">
+      <div className={`tid-capa ${cormorant.variable}`}>
         <header className="tid-barra">
           <div className="tid-marco tid-barra__interior">
             <Link href="/" className="tid-logo">

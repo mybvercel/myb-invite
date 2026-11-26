@@ -93,7 +93,7 @@ export const DISENOS: Diseno[] = [
     nombre: "Recuerdos en rojo",
     imagen: "/invitaciones/recuerdos-rojo/miniatura.webp",
     acento: "#ad241b",
-    enlace: "/invitaciones/recuerdos-rojo/index.html",
+    enlace: "/i/vista/recuerdos-rojo",
   },
   {
     id: 4,
@@ -189,7 +189,7 @@ export const DISENOS: Diseno[] = [
     nombre: "Nocturna",
     imagen: "/invitaciones/nocturna/miniatura.webp",
     acento: "#172b49",
-    enlace: "/invitaciones/nocturna/index.html",
+    enlace: "/i/vista/nocturna",
   },
   {
     id: 19,
@@ -197,7 +197,7 @@ export const DISENOS: Diseno[] = [
     nombre: "Noche de cine",
     imagen: "/invitaciones/cine-chateau/miniatura.webp",
     acento: "#b68b50",
-    enlace: "/invitaciones/cine-chateau/index.html",
+    enlace: "/i/vista/cine-chateau",
   },
   {
     id: 20,
@@ -252,49 +252,80 @@ export const DISENOS: Diseno[] = [
 export const enlaceDemo = (d: Diseno) =>
   d.enlace ?? `/demo/${d.id}?t=${d.tipo}`;
 
+/**
+ * El nombre que ve el cliente: estilo + color o rasgo, para que se entienda
+ * solo y se repita entre modelos (Vintage Bordó, Vintage Rojo). `nombre`
+ * queda como nombre interno: lo usan las skills, las demos y el equipo.
+ */
+const NOMBRE_VENTA: Record<number, string> = {
+  0: "Carta Rosa",
+  19: "Clásica Marfil",
+  1: "Vintage Bordó",
+  17: "Vintage Rojo",
+  24: "Retro Rojo",
+  25: "Retro Crema",
+  2: "Ilustrada Roja",
+  3: "Ilustrada Blanco y negro",
+  15: "Ilustrada Mascotas",
+  20: "Fotográfica Natural",
+  22: "Fotográfica Blanco y negro",
+  26: "Fotográfica Roja",
+  23: "Moderna Roja",
+  11: "Clásica Lila",
+  4: "Moderna Plateada",
+  10: "Carta Bordó",
+  5: "Ilustrada Azul",
+  6: "Premium Azul",
+  7: "Moderna Azul",
+  8: "Editorial Blanca",
+  13: "Editorial Amarilla",
+  9: "Editorial Collage",
+  12: "Premium Bordó",
+  14: "Premium Negra",
+  16: "Artística Azul",
+};
+
+export const nombreDe = (d: Diseno) => NOMBRE_VENTA[d.id] ?? d.nombre;
+
 /* ── Qué incluye ───────────────────────────────────────────── */
 
-/** Lo que se ve antes de elegir un evento: lo que sirve para cualquiera. */
+/**
+ * Lo que trae la invitación, en etiquetas cortas: se leen de un vistazo en la
+ * tarjeta "Lo que ven tus invitados". Antes de elegir evento va la general.
+ */
 export const INCLUYE_GENERAL: string[] = [
-  "Cuenta regresiva hasta la hora del evento",
-  "Ubicación con su mapa",
-  "Confirmación de asistencia automática",
-  "Restricciones de comida por invitado",
-  "Álbum de fotos con QR para las mesas",
-  "Dress code y datos para el regalo",
-  "Tu canción sonando de fondo",
-  "Un link por invitado, con su nombre",
+  "Cuenta regresiva",
+  "Mapa del lugar",
+  "Confirmar en 1 minuto",
+  "Tu canción de fondo",
+  "Álbum con QR",
+  "Dress code y regalo",
 ];
 
 export const INCLUYE: Record<TipoEvento, string[]> = {
   bodas: [
-    "Cuenta regresiva hasta la hora de la fiesta",
-    "Ceremonia y salón, cada uno con su mapa",
-    "Confirmación de asistencia automática",
-    "Restricciones de comida por invitado",
-    "Alias y CBU para el regalo",
-    "Álbum de fotos con QR para las mesas",
-    "Dress code, hoteles y horario del micro",
-    "Tu canción sonando de fondo",
+    "Cuenta regresiva",
+    "Ceremonia y salón con mapa",
+    "Confirmar en 1 minuto",
+    "Alias y CBU (Argentina)",
+    "Álbum con QR",
+    "Tu canción de fondo",
   ],
   cumples: [
-    "Cuenta regresiva hasta la hora de la fiesta",
-    "Ubicación con botón al mapa",
-    "Confirmación de asistencia automática",
-    "Lista de invitados en vivo",
-    "Álbum de fotos con QR para las mesas",
-    "Galería de fotos y música",
-    "Dress code y datos para el regalo",
-    "Un link por invitado, con su nombre",
+    "Cuenta regresiva",
+    "Mapa del lugar",
+    "Confirmar en 1 minuto",
+    "Galería y música",
+    "Álbum con QR",
+    "Dress code y regalo",
   ],
   profesional: [
-    "Cuenta regresiva hasta el inicio",
+    "Cuenta regresiva",
     "Sede y accesos con mapa",
-    "Registro de asistentes automático",
-    "Agenda del evento por bloques",
-    "Logos y colores de tu marca",
-    "Restricciones alimentarias del catering",
-    "Acreditación con QR en la puerta",
+    "Registro de asistentes",
+    "Agenda por bloques",
+    "Tu logo y tus colores",
+    "Acreditación con QR",
   ],
 };
 

@@ -140,7 +140,7 @@ export default function InvitacionHorizonte({ invitacion, personal }: { invitaci
           <div className="hz-portada-texto">
             <Estrella />
             <p className="hz-invitacion">Con mucha alegría, te invito a mi</p>
-            <p className="hz-caligrafia">Bar Mitzvá</p>
+            <p className="hz-caligrafia">{h.evento.replace(/^Mi /, "")}</p>
             <h1 ref={titulo} tabIndex={-1}>
               {invitacion.nombres}
             </h1>

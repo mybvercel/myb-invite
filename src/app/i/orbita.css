@@ -141,3 +141,6 @@
   .or-fecha strong { font-size: 38px; }
   .or-fecha p { font-size: 11px; letter-spacing: 0.02em; }
 }
+
+/* Una marca larga no entra a tamaño de isotipo: pisaría las fotos. */
+.or-copy h1[data-largo] { font-size: clamp(22px, 6.4cqw, 40px); line-height: 1.05; letter-spacing: -0.03em; max-width: 62%; overflow-wrap: anywhere; }

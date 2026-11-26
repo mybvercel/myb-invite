@@ -110,7 +110,7 @@ export default function InvitacionOrbita({ invitacion, personal }: { invitacion:
         </div>
         <div className="or-copy">
           <p className="or-invita">Tenemos una invitación para vos.</p>
-          <h1 aria-label={o.marca}>
+          <h1 aria-label={o.marca} data-largo={o.marca.length > 7 || undefined}>
             {o.marca}
             <span>{o.tipo}</span>
           </h1>

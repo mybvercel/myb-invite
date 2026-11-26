@@ -11,7 +11,7 @@ const PIXEL_ID = "988182571003292";
  * el panel del organizador ni en los links personales de cada familia: esas
  * URLs llevan la clave o el nombre de gente real y no deben viajar a Meta.
  */
-const PRIVADAS = [/^\/panel(\/|$)/, /^\/i\/[^/]+\/para(\/|$)/, /^\/i\/[^/]+\/lista(\/|$)/];
+const PRIVADAS = [/^\/panel(\/|$)/, /^\/i\/[^/]+\/para(\/|$)/, /^\/i\/[^/]+\/lista(\/|$)/, /^\/i\/vista(\/|$)/];
 
 type Fbq = (...args: unknown[]) => void;
 
@@ -31,8 +31,9 @@ export default function MetaPixel() {
     (window as unknown as { fbq?: Fbq }).fbq?.("track", "PageView");
   }, [pathname, privada]);
 
-  // Lead: cada toque a un enlace de WhatsApp ("Quiero esta", "Escribinos",
-  // "Consultar diseño"). WhatsApp abre afuera del sitio, así que no se puede
+  // Contact: cada toque a un enlace de WhatsApp. El Lead lo manda /armar cuando
+  // alguien termina de armar su invitación: así los anuncios aprenden de quien
+  // dejó datos y no de quien sólo preguntó. WhatsApp abre afuera del sitio, así que no se puede
   // medir por URL: el evento sale en el momento del clic.
   useEffect(() => {
     if (privada) return;
@@ -40,7 +41,7 @@ export default function MetaPixel() {
       const enlace = (e.target as HTMLElement | null)?.closest?.("a[href*='wa.me']");
       if (!enlace) return;
       const nombre = (enlace.textContent ?? "").trim().slice(0, 60) || "WhatsApp";
-      (window as unknown as { fbq?: Fbq }).fbq?.("track", "Lead", { content_name: nombre });
+      (window as unknown as { fbq?: Fbq }).fbq?.("track", "Contact", { content_name: nombre });
     };
     document.addEventListener("click", alTocar);
     return () => document.removeEventListener("click", alTocar);

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function MisHumanosSeCasan() {
   return (
     <>
-      <BotonVolver catalogo="/" />
+      <BotonVolver catalogo="/" modelo="mis-humanos-se-casan" />
       <iframe
         title="Invitación de casamiento de Inés y Matías"
         src={recursos + "/index.html"}
