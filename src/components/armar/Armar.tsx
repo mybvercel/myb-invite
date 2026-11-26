@@ -18,7 +18,7 @@ import {
   type EventoArmar,
   type Preocupacion,
 } from "@/lib/armar";
-import { WHATSAPP, nombreDe, type Diseno } from "@/lib/invitaciones";
+import { WHATSAPP, nombreDe, whatsappPara, type Diseno } from "@/lib/invitaciones";
 import {
   LARGO_EMPRESA,
   LARGO_NOMBRE,
@@ -149,6 +149,15 @@ export default function Armar({ pedido }: { pedido?: { m: string; n: number } })
   const elegirEvento = (e: EventoArmar) =>
     ir(1, e.id === s.evento ? {} : { evento: e.id, modelo: slugDe(modelosDe(e)[0]), porNosotros: false, a: "", b: "" });
 
+  // No encontró el modelo que quería: pide uno hecho a medida por WhatsApp.
+  const pedirPersonalizado = () => {
+    avisar("track", "Contact", { content_name: "Quiero uno personalizado" });
+    const url = whatsappPara(`Hola! Estoy armando mi invitación de ${evento.mensaje.toLowerCase()} y no encontré el modelo que quiero. Quiero una personalizada, ¿me ayudan?`);
+    const pestana = window.matchMedia("(pointer: fine)").matches ? window.open(url, "_blank") : null;
+    if (pestana) Object.assign(pestana, { opener: null });
+    else window.location.assign(url);
+  };
+
   const pedir = () => {
     avisar("track", "Contact", { content_name: "Quiero esta" });
     const url = mensajeArmar({ evento, modelo, elegidoPorNosotros: s.porNosotros, vista, preocupacion });
@@ -195,12 +204,10 @@ export default function Armar({ pedido }: { pedido?: { m: string; n: number } })
           <>
             <h2 ref={tituloRef} tabIndex={-1} className="tid-titulo ar-titulo">¿Cuál abrirías primero?</h2>
             <p className="tid-plomo ar-bajada">Después la ves con tus datos y la podés cambiar.</p>
-            {modelos.length > 1 && (
-              <button type="button" className="tid-boton tid-boton--linea ar-boton" onClick={() => ir(2, { modelo: slugDe(modelos[0]), porNosotros: true })}>
-                No me decido, elijan por mí
-              </button>
-            )}
             <Modelos modelos={modelos} elegir={(m) => ir(2, { modelo: slugDe(m), porNosotros: false })} />
+            <button type="button" className="tid-boton tid-boton--linea ar-boton" onClick={pedirPersonalizado}>
+              No encuentro el que quiero, quiero uno personalizado
+            </button>
           </>
         )}
 
