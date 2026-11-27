@@ -22,6 +22,7 @@ import "./hilo.css";
 import "./dijosi.css";
 import "./vinilo.css";
 import "./xoxo.css";
+import CorteServicio from "@/components/invitacion/CorteServicio";
 
 /* Dos familias y ninguna más.
    Pinyon es una spenceriana de verdad: Dancing Script y Great Vibes son las
@@ -106,5 +107,5 @@ const italiana = Italiana({ variable: "--font-italiana", subsets: ["latin"], wei
 const italianno = Italianno({ variable: "--font-italianno", subsets: ["latin"], weight: "400", display: "swap", preload: false });
 
 export default function InvitacionLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`inv ${pinyon.variable} ${cormorant.variable} ${bodoni.variable} ${mono.variable} ${mano.variable} ${firma.variable} ${pincel.variable} ${birome.variable} ${fraunces.variable} ${instrument.variable} ${newsreader.variable} ${arvo.variable} ${alfa.variable} ${frank.variable} ${delafield.variable} ${dmSerif.variable} ${dmSans.variable} ${windsong.variable} ${pincelSeco.variable} ${italiana.variable} ${italianno.variable}`}>{children}</div>;
+  return <div className={`inv ${pinyon.variable} ${cormorant.variable} ${bodoni.variable} ${mono.variable} ${mano.variable} ${firma.variable} ${pincel.variable} ${birome.variable} ${fraunces.variable} ${instrument.variable} ${newsreader.variable} ${arvo.variable} ${alfa.variable} ${frank.variable} ${delafield.variable} ${dmSerif.variable} ${dmSans.variable} ${windsong.variable} ${pincelSeco.variable} ${italiana.variable} ${italianno.variable}`}>{children}<CorteServicio /></div>;
 }
